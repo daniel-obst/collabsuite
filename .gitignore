@@ -1,2 +1,4 @@
 virtualenv/**
+platform_data/**
+platform_vault/**
 **/__pycache__
