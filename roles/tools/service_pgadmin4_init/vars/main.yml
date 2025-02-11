@@ -1,0 +1,7 @@
+---
+service_pgadmin4_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_pgadmin4.production, platform_service_pgadmin4.staging) }}"
+
+service_pgadmin4_init_username: "{{ service_pgadmin4_init_config.service_account.username }}"
+service_pgadmin4_init_fqdn_service: "{{ service_pgadmin4_init_config.fqdn_service }}"
+service_pgadmin4_init_fqdn_server: "{{ service_pgadmin4_init_config.fqdn_server }}"

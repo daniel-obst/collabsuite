@@ -1,0 +1,2 @@
+---
+server_firewall_forward_ports_network_interface: "{{ ansible_interfaces | select('match', ansible_network_card_filter) | first }}"

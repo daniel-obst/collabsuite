@@ -1,0 +1,6 @@
+---
+pki_server_certificate_info_server_cert_file:
+  "{{ pki_server_certificate_info_issued_certificates_dir }}/{{ pki_server_certificate_info_fqdn_server }}.crt"
+pki_server_certificate_info_server_key_file:
+  "{{ pki_server_certificate_info_pki_dir }}/private/{{ pki_server_certificate_info_fqdn_server }}.key"
+pki_server_certificate_info_dh_file: "{{ pki_server_certificate_info_pki_dir }}/dh.pem"

@@ -1,0 +1,14 @@
+---
+- name: Platform server - package updates
+  when: facts_machine_linux_use_apt
+  ansible.builtin.apt:
+    name: "*"
+    update_cache: true
+    state: latest
+
+- name: Platform server - package updates
+  when: facts_machine_linux_use_apk
+  community.general.apk:
+    upgrade: true
+    state: latest
+    update_cache: true

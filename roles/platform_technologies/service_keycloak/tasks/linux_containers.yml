@@ -1,0 +1,100 @@
+---
+- name: Service (keycloak) - TLS web proxy configuration (internal/external)
+  ansible.builtin.include_role:
+    name: tls_web_proxy_config
+  vars:
+    tls_web_proxy_config_server_firewall_port: "{{ service_keycloak_server_firewall_port }}"
+    tls_web_proxy_config_fqdn_server: "{{ service_keycloak_fqdn_server }}"
+    tls_web_proxy_config_cert_file_path: "{{ service_keycloak_config_cert_file_path }}"
+    tls_web_proxy_config_key_file_path: "{{ service_keycloak_config_key_file_path }}"
+    tls_web_proxy_config_dh_file_path: "{{ service_keycloak_config_dh_file_path }}"
+    tls_web_proxy_config_ca_cert_file_path: "{{ service_keycloak_config_ca_cert_file_path }}"
+    tls_web_proxy_config_service_network_dns: "{{ service_keycloak_service_network_dns }}"
+    tls_web_proxy_config_x_forwarded_port: "{{ service_keycloak_config_x_forwarded_port }}"
+    tls_web_proxy_config_reverse_proxy_additional_headers: "{{ service_keycloak_config_reverse_proxy_additional_headers }}"
+    tls_web_proxy_config_reverse_proxy_enable_web_socket: "{{ service_keycloak_config_reverse_proxy_enable_web_socket }}"
+    tls_web_proxy_config_enable_secondary: true
+    tls_web_proxy_config_secondary_server_firewall_port: "{{ service_keycloak_secondary_server_firewall_port }}"
+    tls_web_proxy_config_secondary_fqdn_server: "{{ service_keycloak_secondary_fqdn_server }}"
+    tls_web_proxy_config_secondary_cert_file_path: "{{ service_keycloak_secondary_config_cert_file_path }}"
+    tls_web_proxy_config_secondary_key_file_path: "{{ service_keycloak_secondary_config_key_file_path }}"
+    tls_web_proxy_config_secondary_dh_file_path: "{{ service_keycloak_secondary_config_dh_file_path }}"
+    tls_web_proxy_config_secondary_ca_cert_file_path: "{{ service_keycloak_secondary_config_ca_cert_file_path }}"
+    tls_web_proxy_config_secondary_service_network_dns: "{{ service_keycloak_secondary_service_network_dns }}"
+    tls_web_proxy_config_secondary_x_forwarded_port: "{{ service_keycloak_secondary_config_x_forwarded_port }}"
+    tls_web_proxy_config_secondary_reverse_proxy_additional_headers: "{{ service_keycloak_secondary_config_reverse_proxy_additional_headers }}"
+    tls_web_proxy_config_secondary_reverse_proxy_enable_web_socket: "{{ service_keycloak_secondary_config_reverse_proxy_enable_web_socket }}"
+
+- name: Service (keycloak) - database configuration
+  ansible.builtin.include_role:
+    name: service_postgresql_init
+  vars:
+    service_postgresql_init_service_name: "{{ service_keycloak_service_name }}"
+    service_postgresql_init_service_config_dir: "{{ service_keycloak_service_config_dir }}"
+    service_postgresql_init_pgsql_db: "{{ service_keycloak_pgsql_db }}"
+    service_postgresql_init_pgsql_user: "{{ service_keycloak_pgsql_user }}"
+    service_postgresql_init_enable_pg_trgm_extension: "{{ service_keycloak_pgsql_enable_pg_trgm_extension }}"
+
+- name: Service (keycloak) - locations.conf (internal)
+  ansible.builtin.template:
+    src: "service_keycloak_locations.conf.j2"
+    dest: "{{ service_keycloak_config_locations_server_path }}"
+    owner: "{{ fact_tls_web_proxy_config_uid }}"
+    group: "{{ fact_tls_web_proxy_config_gid }}"
+    mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+    force: true
+  vars:
+    service_uri: "{{ service_keycloak_service_uri }}"
+    server_url: "{{ service_keycloak_server_url }}"
+    reverse_proxy_conf_path: "{{ service_keycloak_config_reverse_proxy_conf_container_path }}"
+    ext_gw_ip: "{{ service_keycloak_ext_gw_ip }}"
+
+- name: Service (keycloak) - keycloak_podman_environment
+  ansible.builtin.template:
+    src: "service_keycloak_podman_environment.j2"
+    dest: "{{ service_keycloak_podman_environment_server_path }}"
+    owner: "{{ fact_tls_web_proxy_config_uid }}"
+    group: "{{ fact_tls_web_proxy_config_gid }}"
+    mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+    force: true
+  vars:
+    bootstrap_admin_username: "{{ service_keycloak_config_bootstrap_admin_username }}"
+    bootstrap_admin_password_file_path: "{{ service_keycloak_config_bootstrap_admin_password_file_path }}"
+    http_port: "{{ service_keycloak_config_http_port }}"
+    https_port: "{{ service_keycloak_config_https_port }}"
+    max_queued_requests: "{{ service_keycloak_config_max_queued_requests }}"
+    external_base_uri: "{{ service_keycloak_config_external_uri }}"
+    internal_base_uri: "{{ service_keycloak_config_internal_uri }}"
+    db_username: "{{ service_keycloak_pgsql_user }}"
+    db_password_file_path: "{{ service_keycloak_pgsql_user_password_file_path }}"
+    db_name: "{{ service_keycloak_pgsql_db }}"
+    db_hostname: "{{ service_keycloak_url_host }}"
+    db_port: "{{ service_keycloak_url_port }}"
+
+- name: Service (keycloak) - data directory
+  ansible.builtin.file:
+    path: "data"
+    state: directory
+    owner: "{{ fact_tls_web_proxy_config_uid }}"
+    group: "{{ fact_tls_web_proxy_config_gid }}"
+    mode: "0740"
+
+- name: Service (keycloak) - locations.conf (external)
+  ansible.builtin.template:
+    src: "service_keycloak_locations_secondary.conf.j2"
+    dest: "{{ service_keycloak_secondary_config_locations_server_path }}"
+    owner: "{{ fact_tls_web_proxy_config_uid }}"
+    group: "{{ fact_tls_web_proxy_config_gid }}"
+    mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+    force: true
+  vars:
+    service_uri: "{{ service_keycloak_service_uri }}"
+    server_url: "{{ service_keycloak_server_url }}"
+    reverse_proxy_conf_path: "{{ service_keycloak_config_reverse_proxy_conf_container_path }}"
+
+- name: Service (keycloak) - deploy service
+  ansible.builtin.include_role:
+    name: oci_container_service
+  vars:
+    oci_container_service_config: "{{ service_keycloak_oci_service }}"
+    oci_container_service_workers: "{{ service_keycloak_oci_service_workers }}"

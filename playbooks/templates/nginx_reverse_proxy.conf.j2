@@ -1,0 +1,37 @@
+# See https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Host
+{% if reverse_proxy_header_x_host_with_port is defined %}
+proxy_set_header Host            {{ reverse_proxy_header_x_host_with_port }};
+{% else %}
+proxy_set_header Host            $host;
+{% endif %}
+proxy_set_header X-Real-IP       $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+# https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Host
+{% if reverse_proxy_header_set_x_forwarded_host %}
+{% if reverse_proxy_header_x_forwarded_host is defined %}
+proxy_set_header X-Forwarded-Host {{ reverse_proxy_header_x_forwarded_host }};
+{% else %}
+proxy_set_header X-Forwarded-Host $host;
+{% endif %}
+{% else %}
+# *** X-Forwarded-Host - proxy configured to not set HTTP header ***
+{% endif %}
+
+{% if reverse_proxy_header_x_forwarded_port is defined %}
+proxy_set_header X-Forwarded-Port    {{ reverse_proxy_header_x_forwarded_port }};
+{% else %}
+# *** X-Forwarded-Port - proxy configured to not set HTTP header ***
+{% endif %}
+proxy_set_header X-Forwarded-Proto   $scheme;
+{% for header in reverse_proxy_additional_headers %}
+proxy_set_header {{ header.http_header }} {{ header.value }};
+{% endfor %}
+
+{% if reverse_proxy_enable_web_socket %}
+proxy_http_version          1.1;
+proxy_set_header Upgrade    $http_upgrade;
+proxy_set_header Connection $connection_upgrade;
+{% else %}
+# *** Server configured to not enable web socket proxy ***
+{% endif %}

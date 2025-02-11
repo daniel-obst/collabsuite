@@ -1,0 +1,21 @@
+---
+gv_service_conf_dir: "conf.d"
+gv_service_conf_dir_mode: "0750"
+gv_service_conf_file_mode: "0640"
+gv_service_conf_executable_file_mode: "0555"
+
+gv_service_conf_includes_dir: "{{ gv_service_conf_dir }}/includes"
+
+gv_service_conf_html_dir: "{{ gv_service_conf_dir }}/html"
+gv_service_html_dir_mode:  "0755"
+gv_service_html_file_mode: "0644"
+
+gv_service_conf_container_file_mode: "0644"
+
+gv_tls_dir: "tls"
+gv_service_tls_dir: "{{ gv_service_conf_dir }}/{{ gv_tls_dir }}"
+
+gv_openid_http_header_email: "X-OpenID-Client-Email"
+gv_openid_http_header_email_value: "http_x_openid_client_email"
+gv_openid_http_header_authorization: "X-OpenID-Client-Sub"
+gv_openid_http_header_authorization_value: "http_x_openid_client_sub"

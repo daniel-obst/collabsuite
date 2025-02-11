@@ -1,0 +1,24 @@
+---
+service_node_red_pgsql_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_node_red_pgsql.production, platform_service_node_red_pgsql.staging) }}"
+
+service_node_red_pgsql_service_name: "{{ service_node_red_pgsql_config.service_uri }}"
+service_node_red_pgsql_service_config_dir: "{{ gv_service_conf_dir }}"
+service_node_red_pgsql_service_config_dir_mode: "{{ gv_service_conf_dir_mode }}"
+service_node_red_pgsql_pgsql_db: "{{ service_node_red_pgsql_config.db }}"
+service_node_red_pgsql_pgsql_user: "{{ service_node_red_pgsql_config.db_user }}"
+service_node_red_pgsql_pgsql_enable_pg_trgm_extension: true
+
+# service
+service_node_red_pgsql_oci_service:
+  image_name: "{{ service_node_red_pgsql_config.service_image_name }}"
+  image_tag: "{{ service_node_red_pgsql_config.service_image_tag }}"
+  service_name: "{{ service_node_red_pgsql_config.service_account.username }}"
+  server_dest_port: "{{ service_node_red_pgsql_config.server_port }}"
+  container_dest_port: "5432"
+  volumes: "{{ fact_service_postgresql_init_volumes }}"
+  readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
+  env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
+  added_capabilities: []
+
+service_node_red_pgsql_oci_service_workers: []

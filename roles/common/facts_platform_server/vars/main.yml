@@ -1,0 +1,2 @@
+---
+facts_platform_server_password_file_path: "{{ platform_management_passwords_path }}/{{ facts_platform_server_password_file }}"

@@ -1,0 +1,11 @@
+---
+- name: Service (quay.io) - init
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (quay.io) - container service init
+      ansible.builtin.include_role:
+        name: oci_container_service_init
+      vars:
+        oci_container_service_init_username: "{{ service_quay_io_init_username }}"
+        oci_container_service_init_fqdn_service: "{{ service_quay_io_init_fqdn_service }}"
+        oci_container_service_init_fqdn_server: "{{ service_quay_io_init_fqdn_server }}"

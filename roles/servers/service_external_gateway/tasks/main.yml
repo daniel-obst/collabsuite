@@ -1,0 +1,41 @@
+- name: Service external gateway
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (external gateway) - TLS web proxy configuration
+      ansible.builtin.include_role:
+        name: tls_web_proxy_config
+      vars:
+        tls_web_proxy_config_server_firewall_port: "{{ service_external_gateway_server_firewall_port }}"
+        tls_web_proxy_config_fqdn_server: "{{ service_external_gateway_fqdn_server }}"
+        tls_web_proxy_config_cert_file_path: "{{ service_external_gateway_config_cert_file_path }}"
+        tls_web_proxy_config_key_file_path: "{{ service_external_gateway_config_key_file_path }}"
+        tls_web_proxy_config_dh_file_path: "{{ service_external_gateway_config_dh_file_path }}"
+        tls_web_proxy_config_ca_cert_file_path: "{{ service_external_gateway_config_ca_cert_file_path }}"
+        tls_web_proxy_config_service_network_dns: "{{ service_external_gateway_service_network_dns }}"
+        tls_web_proxy_config_x_host_with_port: "{{ service_external_gateway_config_reverse_proxy_header_x_host_with_port }}"
+        tls_web_proxy_config_x_forwarded_host: "{{ service_external_gateway_config_reverse_proxy_header_x_forwarded_host }}"
+        tls_web_proxy_config_x_forwarded_port: "{{ service_external_gateway_config_x_forwarded_port }}"
+        tls_web_proxy_config_reverse_proxy_additional_headers: "{{ service_external_gateway_config_reverse_proxy_additional_headers }}"
+        tls_web_proxy_config_reverse_proxy_enable_web_socket: "{{ service_external_gateway_config_reverse_proxy_enable_web_socket }}"
+        tls_web_proxy_config_set_deny_root_uri_location: "{{ service_external_gateway_config_set_deny_root_uri_location }}"
+
+    - name: Service (external gateway) - locations.conf
+      ansible.builtin.template:
+        src: "service_external_gateway_locations.conf.j2"
+        dest: "{{ service_external_gateway_server_locations_conf_server_path }}"
+        owner: "{{ fact_tls_web_proxy_config_uid }}"
+        group: "{{ fact_tls_web_proxy_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+        force: true
+      vars:
+        auth_service_uri: "{{ service_external_gateway_config_auth_service_uri }}"
+        auth_gateway_url: "{{ service_external_gateway_config_auth_gateway_url }}"
+        internal_gateway_url: "{{ service_external_gateway_config_internal_gateway_url }}"
+        includes_path_reverse_proxy_conf: "{{ service_external_gateway_config_reverse_proxy_conf_container_path }}"
+
+    - name: Service (external gateway) - deploy service
+      ansible.builtin.include_role:
+        name: oci_container_service
+      vars:
+        oci_container_service_config: "{{ service_external_gateway_oci_service }}"
+        oci_container_service_workers: "{{ service_external_gateway_oci_service_workers }}"

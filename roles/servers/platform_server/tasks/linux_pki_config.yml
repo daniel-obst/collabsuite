@@ -1,0 +1,17 @@
+---
+- name: Platform server - upload root CA certificate
+  ansible.builtin.copy:
+    src: "{{ platform_server_ca_file }}"
+    dest: "{{ platform_server_machine_ca_file }}"
+    owner: "{{ platform_server_user_uid }}"
+    group: "{{ platform_server_user_gid }}"
+    mode: "{{ platform_server_machine_ca_file_mode }}"
+    force: true
+
+- name: Platform server - update CA certificates
+  ansible.builtin.command: /usr/sbin/update-ca-certificates -v
+  register: result
+
+- name: Platform server - CA certificates update status
+  ansible.builtin.debug:
+    msg: "/usr/sbin/update-ca-certificates -v: {{ result.stdout }}"

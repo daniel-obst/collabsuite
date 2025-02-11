@@ -1,0 +1,10 @@
+---
+pki_certificate_authority_info_dh_file: "{{ pki_certificate_authority_info_pki_dir }}/dh.pem"
+pki_certificate_authority_info_ca_file: "{{ pki_certificate_authority_info_pki_dir }}/ca.crt"
+pki_certificate_authority_info_ca_common_name:
+  "{{ lookup('ansible.builtin.file',
+  pki_certificate_authority_info_ca_common_name_file) }}"
+
+pki_certificate_authority_info_ca_filename:
+  "rootCA-{{ pki_certificate_authority_info_ca_common_name
+  | lower | replace(' ', '_') }}.crt"

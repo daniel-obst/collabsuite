@@ -1,0 +1,155 @@
+log_format requestLogFormat "[$time_iso8601 - nginx::openresty $nginx_version] $server_name ($server_addr) $realpath_root => $proxy_add_x_forwarded_for:$remote_port ($server_protocol - $request_method) to $scheme://$host:$server_port$request_uri";
+access_log /usr/local/openresty/nginx/logs/access.log requestLogFormat;
+
+{% if reverse_proxy_enable_web_socket %}
+map $http_upgrade $connection_upgrade {
+  default upgrade;
+  '' close;
+}
+{% endif %}
+
+lua_shared_dict discovery {{ openid_cache_shared_memory_zone_mb }}m;
+lua_ssl_verify_depth {{ openid_ssl_verify_depth }};
+lua_ssl_trusted_certificate {{ openid_ssl_trusted_certificate }};
+
+#{% if openid_enable_session_cache %}
+# See https://github.com/bungle/lua-resty-session?tab=readme-ov-file#configuration
+#init_by_lua_block {
+#  require "resty.session".init({
+#    remember = true,
+#    store_metadata = true,
+#    cookie_secure = true,
+#    cookie_domain = "{{ openid_cache_cookie_domain }}",
+#    cookie_same_site = "Strict",
+#    secret_fallbacks = {
+#    },
+#    storage = "cookie",
+#    idling_timeout = {{ openid_cache_idling_timeout_seconds }},
+#    rolling_timeout = {{ openid_cache_rolling_timeout_seconds }},
+#    secret = "{{ lookup('openid_session_password', openid_cache_session_secret_file_path) }}",
+#  })
+#}
+#{% endif %}
+
+server {
+  listen {{ server_firewall_port }} ssl;
+
+  server_name {{ fqdn_server }};
+
+  ssl_certificate        {{ server_cert_file_path }};
+  ssl_certificate_key    {{ server_key_file_path }};
+  ssl_dhparam            {{ server_dh_file_path }};
+  ssl_client_certificate {{ server_ca_cert_file_path }};
+
+  resolver {{ service_network_dns }} valid=5s;
+  resolver_timeout 5s;
+
+  #ssl_protocols             TLSv1.3;
+  ssl_prefer_server_ciphers on;
+  ssl_ciphers               EECDH+AESGCM:EDH+AESGCM;
+  ssl_ecdh_curve            secp384r1;
+  ssl_session_timeout       10m;
+  ssl_session_cache         shared:SSL:10m;
+  ssl_session_tickets       off;
+  ssl_stapling              off;
+  ssl_stapling_verify       on;
+  ssl_trusted_certificate   {{ ssl_ca_certificates_path }};
+  ssl_ocsp                  off;
+
+  # Disable strict transport security for now. You can uncomment the following
+  # line if you understand the implications.
+  #add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+
+  # X-Frame-Options (deprecated): https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options
+  # X-XSS-Protection (non-standard): https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+
+  # add_header 'Access-Control-Allow-Origin' 'https:// domain ';
+  add_header X-Content-Type-Options nosniff;
+
+  # Disable site caching
+  expires    0;
+  add_header Cache-Control private;
+
+  root /usr/local/openresty/nginx/html;
+
+  # openID configuration
+  access_by_lua_block {
+    local opts = {
+      redirect_uri = "{{ openid_redirect_uri }}",
+      discovery = "{{ openid_discovery_uri }}",
+      client_id = "{{ openid_client_id }}",
+      client_secret = "{{ lookup('openid_client_password', openid_client_secret_file_path) }}",
+      ssl_verify = "no",
+      redirect_uri_scheme = "https",
+{% if openid_client_service_uri is defined %}
+      logout_path = "/{{ openid_client_service_uri }}/logout",
+{% else %}
+      logout_path = "/logout",
+{% endif %}
+      redirect_after_logout_uri = "{{ openid_redirect_after_logout_uri }}",
+      redirect_after_logout_with_id_token_hint = false,
+      scope = "openid email profile",
+      renew_access_token_on_expiry = true,
+      access_token_expires_in = 3660,
+      accept_unsupported_alg = false,
+      accept_none_alg = false,
+      session_contents = { id_token = true }
+    }
+
+    -- call introspect for OAuth 2.0 Bearer Access Token validation
+{% if openid_client_enable_login %}
+    -- decision: redirect any unauthenticated requests to openid login
+    local res, err = require("resty.openidc").authenticate(opts)
+
+    if err then
+      ngx.status = ngx.HTTP_FORBIDDEN
+      ngx.log(ngx.ERR, err)
+      ngx.exit(ngx.HTTP_FORBIDDEN)
+    end
+
+    ngx.req.set_header("{{ openid_http_header_email }}", res.id_token.email)
+    ngx.req.set_header("{{ openid_http_header_authorization }}", res.id_token.sub)
+{% endif %}
+  }
+
+{% if deny_root_uri_location %}
+  location ~* ^/(?!style\.css)$ {
+    return 403;
+  }
+
+  location ~* ^/style\.css$ {
+    return 200;
+  }
+{% endif %}
+
+{% if openid_client_enable_login %}
+{% if openid_client_service_uri is defined %}
+  location /{{ openid_client_service_uri }}/logout {
+{% else %}
+  location /logout {
+{% endif %}
+    content_by_lua_block {
+      local opts = {
+        redirect_uri = "{{ openid_redirect_uri }}",
+        discovery = "{{ openid_discovery_uri }}",
+        client_id = "{{ openid_client_id }}",
+        client_secret = "{{ lookup('openid_client_password', openid_client_secret_file_path) }}",
+        ssl_verify = "no",
+        redirect_uri_scheme = "https",
+      }
+
+      local res, err = require("resty.openidc").openidc_logout(opts)
+
+      if err then
+        ngx.status = ngx.HTTP_FORBIDDEN
+        ngx.log(ngx.ERR, err)
+        ngx.exit(ngx.HTTP_FORBIDDEN)
+      end
+    }
+  }
+{% endif %}
+
+  include {{ includes_locations_config_path }};
+
+  include {{ includes_html_error_pages_conf_path }};
+}

@@ -1,0 +1,45 @@
+---
+- name: Platform (external gateways) - environment
+  hosts: platform_external_gateways
+  tags: [servers, platform_external_gateways_servers, services, services_external_gateway]
+  connection: local
+  become: false
+  roles:
+    - role: facts_platform_server
+      vars:
+        facts_platform_server_password_file: "external_gateways_management_user"
+        facts_platform_server_config: "{{ platform_external_gateway_server_config }}"
+    - role: platform_container_server_init
+      vars:
+        platform_container_server_init_server_configs: "{{ platform_external_gateway_server_config }}"
+
+- name: Platform (external gateways) - deploy servers
+  hosts: platform_external_gateways
+  tags: [servers, platform_external_gateways_servers]
+  become: true
+  vars:
+    ansible_user: "{{ platform_management_username }}"
+    ansible_ssh_private_key_file: "{{ facts_platform_server_management_user_private_key_file }}"
+  roles:
+    - role: platform_container_server
+      vars:
+        platform_container_server_config: "{{ platform_external_gateway_server_config }}"
+
+# Service: external gateway #
+- name: Platform (external gateways) - deploy gateway
+  hosts: platform_external_gateways
+  tags: [services, services_external_gateway]
+  connection: local
+  become: false
+  roles:
+    - role: service_external_gateway_init
+
+- name: Platform (external gateways) - deploy gateway (service)
+  hosts: platform_external_gateways
+  tags: [services, services_external_gateway]
+  become: false
+  vars:
+    ansible_user: "{{ fact_oci_container_service_init_username }}"
+    ansible_ssh_private_key_file: "{{ fact_oci_container_service_init_private_key_file }}"
+  roles:
+    - role: service_external_gateway

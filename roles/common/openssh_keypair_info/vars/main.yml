@@ -1,0 +1,5 @@
+---
+openssh_keypair_info_prefix: "id_{{ openssh_keypair_info_key_type }}_{{ openssh_keypair_info_username | ansible.builtin.mandatory }}"
+openssh_keypair_info_suffix: "{{ openssh_keypair_info_fqdn_client | ansible.builtin.mandatory }}"
+openssh_keypair_info_private_key: "{{ openssh_keypair_info_prefix }}-{{ openssh_keypair_info_suffix }}"
+openssh_keypair_info_private_key_file: "{{ openssh_keypair_info_openssh_dir }}/{{ openssh_keypair_info_private_key }}"

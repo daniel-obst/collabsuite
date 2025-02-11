@@ -1,0 +1,2 @@
+---
+openssh_keypair_key_comment: "{{ openssh_keypair_username | ansible.builtin.mandatory }}@{{ openssh_keypair_fqdn_client }}"

@@ -1,0 +1,9 @@
+---
+facts_machine_ubuntu_server_default_shell: "/bin/bash"
+facts_machine_ubuntu_server_ssl_cert_dir: "/etc/ssl/certs"
+facts_machine_ubuntu_server_ssl_ca_certificates_file: "/etc/ssl/certs/ca-certificates.crt"
+facts_machine_ubuntu_server_ca_certificates_dir: "/usr/local/share/ca-certificates"
+facts_machine_ubuntu_server_ca_cert_path:
+  "{{ '/usr/local/share/ca-certificates/'
+  + fact_pki_certificate_authority_info_machine_ca_filename }}"
+facts_machine_ubuntu_server_fqdn: "{{ ansible_facts['hostname'] }}.{{ ansible_host_domain }}"

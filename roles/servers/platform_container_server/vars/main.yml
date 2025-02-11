@@ -1,0 +1,6 @@
+---
+platform_container_server_env_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_container_server_config.production, platform_container_server_config.staging) }}"
+
+platform_container_server_services_user_accounts: "{{ platform_container_server_env_config.services_user_accounts }}"
+platform_container_server_services_forward_ports: "{{ platform_container_server_env_config.services_forward_ports }}"

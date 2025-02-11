@@ -1,0 +1,7 @@
+---
+service_openproject_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_openproject.production, platform_service_openproject.staging) }}"
+
+service_openproject_init_username: "{{ service_openproject_init_config.service_account.username }}"
+service_openproject_init_fqdn_service: "{{ service_openproject_init_config.fqdn_service }}"
+service_openproject_init_fqdn_server: "{{ service_openproject_init_config.fqdn_server }}"

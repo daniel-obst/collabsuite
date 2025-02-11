@@ -1,0 +1,3 @@
+---
+pki_certificate_authority_info_pki_dir: "{{ platform_pki_certificate_authority_easyrsa_pki_dir }}"
+pki_certificate_authority_info_ca_common_name_file: "{{ platform_pki_certificate_authority_common_name_file }}"

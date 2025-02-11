@@ -1,0 +1,28 @@
+---
+- name: Service (node-red pgsql)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (node-red pgsql) - conf.d directory
+      ansible.builtin.file:
+        path: "{{ service_node_red_pgsql_service_config_dir }}"
+        state: directory
+        owner: "{{ service_node_red_pgsql_user_uid }}"
+        group: "{{ service_node_red_pgsql_user_gid }}"
+        mode: "{{ service_node_red_pgsql_service_config_dir_mode }}"
+
+    - name: Service (node-red pgsql) - database configuration
+      ansible.builtin.include_role:
+        name: service_postgresql_init
+      vars:
+        service_postgresql_init_service_name: "{{ service_node_red_pgsql_service_name }}"
+        service_postgresql_init_service_config_dir: "{{ service_node_red_pgsql_service_config_dir }}"
+        service_postgresql_init_pgsql_db: "{{ service_node_red_pgsql_pgsql_db }}"
+        service_postgresql_init_pgsql_user: "{{ service_node_red_pgsql_pgsql_user }}"
+        service_postgresql_init_enable_pg_trgm_extension: "{{ service_node_red_pgsql_pgsql_enable_pg_trgm_extension }}"
+
+    - name: Service (node-red pgsql) - deploy service
+      ansible.builtin.include_role:
+        name: oci_container_service
+      vars:
+        oci_container_service_config: "{{ service_node_red_pgsql_oci_service }}"
+        oci_container_service_workers: "{{ service_node_red_pgsql_oci_service_workers }}"

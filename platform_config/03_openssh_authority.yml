@@ -1,0 +1,4 @@
+---
+platform_openssh_authority_key_type: "ed25519"
+platform_openssh_authority_key_size: 2048
+platform_openssh_authority_keypairs_directory: "{{ facts_platform_vault_path }}/platform/openssh"

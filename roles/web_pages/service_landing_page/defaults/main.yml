@@ -1,0 +1,6 @@
+---
+service_landing_page_user_uid: "{{ ansible_user_uid }}"
+service_landing_page_user_gid: "{{ ansible_user_gid }}"
+
+service_landing_page_html_dir: "{{ gv_service_conf_html_dir }}"
+service_landing_page_html_file_mode: "{{ gv_service_html_file_mode }}"

@@ -1,0 +1,51 @@
+---
+openid_tls_web_proxy_config_container_conf_dir_path: "/etc/nginx/conf.d"
+openid_tls_web_proxy_config_container_includes_dir_path: "/etc/nginx/includes"
+openid_tls_web_proxy_config_container_tls_dir_path: "/etc/nginx/tls"
+
+openid_tls_web_proxy_config_reverse_proxy_conf: "nginx_reverse_proxy.conf"
+openid_tls_web_proxy_config_html_error_pages_conf: "nginx_html_error_pages.conf"
+
+openid_tls_web_proxy_config_dest_default_conf_path: "{{ openid_tls_web_proxy_config_conf_dir }}/default.conf"
+openid_tls_web_proxy_config_dest_reverse_proxy_conf_path: "{{ openid_tls_web_proxy_config_includes_dir }}/reverse_proxy.conf"
+openid_tls_web_proxy_config_reverse_proxy_conf_container_path: "{{ openid_tls_web_proxy_config_container_includes_dir_path }}/reverse_proxy.conf"
+openid_tls_web_proxy_config_dest_nginx_conf_path: "{{ openid_tls_web_proxy_config_conf_dir }}/nginx.conf"
+
+openid_tls_web_proxy_config_dest_html_error_pages:
+  - path: "html_error_pages.conf"
+    dest: "{{ openid_tls_web_proxy_config_includes_dir }}/{{ openid_tls_web_proxy_config_html_error_pages_conf }}"
+  - path: "40x.html"
+    dest: "{{ openid_tls_web_proxy_config_html_dir }}/40x.html"
+  - path: "404.html"
+    dest: "{{ openid_tls_web_proxy_config_html_dir }}/404.html"
+  - path: "500.html"
+    dest: "{{ openid_tls_web_proxy_config_html_dir }}/500.html"
+  - path: "500.html"
+    dest: "{{ openid_tls_web_proxy_config_html_dir }}/50x.html"
+  - path: "styles.css"
+    dest: "{{ openid_tls_web_proxy_config_html_dir }}/styles.css"
+
+openid_tls_web_proxy_config_readonly_volumes:
+  - "./{{ openid_tls_web_proxy_config_dest_default_conf_path }}:{{ openid_tls_web_proxy_config_container_conf_dir_path }}/default.conf"
+  - "./{{ openid_tls_web_proxy_config_includes_dir }}/:{{ openid_tls_web_proxy_config_container_includes_dir_path }}"
+  - "./{{ openid_tls_web_proxy_config_html_dir }}:/usr/local/openresty/nginx/html"
+  - "./{{ openid_tls_web_proxy_config_dest_nginx_conf_path }}:/usr/local/openresty/nginx/conf/nginx.conf"
+
+openid_tls_web_proxy_config_server_cert_file_path: "{{ openid_tls_web_proxy_config_container_tls_dir_path }}/{{ openid_tls_web_proxy_config_cert_file_path | basename }}"
+openid_tls_web_proxy_config_server_key_file_path: "{{ openid_tls_web_proxy_config_container_tls_dir_path }}/{{ openid_tls_web_proxy_config_key_file_path | basename }}"
+openid_tls_web_proxy_config_server_dh_file_path: "{{ openid_tls_web_proxy_config_container_tls_dir_path }}/{{ openid_tls_web_proxy_config_dh_file_path | basename }}"
+openid_tls_web_proxy_config_server_ca_cert_file_path: "{{ openid_tls_web_proxy_config_container_tls_dir_path }}/{{ openid_tls_web_proxy_config_ca_cert_file_path | basename }}"
+openid_tls_web_proxy_config_includes_locations_config_path: "{{ openid_tls_web_proxy_config_container_includes_dir_path }}/locations.conf"
+openid_tls_web_proxy_config_includes_html_error_pages_conf_path: "{{ openid_tls_web_proxy_config_container_includes_dir_path }}/{{ openid_tls_web_proxy_config_html_error_pages_conf }}"
+
+# OpenID configuration
+openid_tls_web_proxy_config_openid_global_client_info: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_openid_global_client_info.production, platform_openid_global_client_info.staging) }}"
+openid_tls_web_proxy_config_openid_idp: "{{ openid_tls_web_proxy_config_openid_global_client_info.identity_provider_gateway }}"
+
+openid_tls_web_proxy_config_idp: "{{ openid_tls_web_proxy_config_openid_idp.server }}:{{ openid_tls_web_proxy_config_openid_idp.port }}"
+openid_tls_web_proxy_config_redirect_uri: "https://{{ openid_tls_web_proxy_config_idp }}/{{ openid_tls_web_proxy_config_base_redirect_uri | ansible.builtin.mandatory }}"
+openid_tls_web_proxy_config_discovery_uri: "https://{{ openid_tls_web_proxy_config_idp }}/{{ openid_tls_web_proxy_config_openid_global_client_info.discovery_uri }}"
+openid_tls_web_proxy_config_redirect_after_logout_uri: "https://{{ openid_tls_web_proxy_config_idp }}/{{ openid_tls_web_proxy_config_openid_global_client_info.redirect_after_logout_uri }}"
+openid_tls_web_proxy_config_http_header_email: "{{ gv_openid_http_header_email }}"
+openid_tls_web_proxy_config_header_authorization: "{{ gv_openid_http_header_authorization }}"

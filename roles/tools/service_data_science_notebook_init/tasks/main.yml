@@ -1,0 +1,11 @@
+---
+- name: Service (data science notebook) - init
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (data science notebook) - container service init
+      ansible.builtin.include_role:
+        name: oci_container_service_init
+      vars:
+        oci_container_service_init_username: "{{ service_data_science_notebook_init_username }}"
+        oci_container_service_init_fqdn_service: "{{ service_data_science_notebook_init_fqdn_service }}"
+        oci_container_service_init_fqdn_server: "{{ service_data_science_notebook_init_fqdn_server }}"

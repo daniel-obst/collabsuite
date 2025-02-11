@@ -1,0 +1,9 @@
+---
+service_keycloak_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_keycloak.production, platform_service_keycloak.staging) }}"
+
+service_keycloak_init_username: "{{ service_keycloak_init_config.service_account.username }}"
+service_keycloak_init_fqdn_server: "{{ service_keycloak_init_config.fqdn_server }}"
+
+service_keycloak_init_fqdn_service_external: "{{ service_keycloak_init_config.fqdn_service_external }}"
+service_keycloak_init_fqdn_server_external: "{{ service_keycloak_init_config.fqdn_server }}"

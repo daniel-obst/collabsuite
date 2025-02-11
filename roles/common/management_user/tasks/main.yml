@@ -1,0 +1,16 @@
+---
+- name: Management user - configuration
+  when: facts_machine_linux_distro
+  block:
+    - name: Management user - create account
+      ansible.builtin.include_role:
+        name: regular_user
+      vars:
+        regular_user_username: "{{ management_user_username }}"
+        regular_user_gecos: "{{ management_user_gecos }}"
+        regular_user_primary_group: "{{ management_user_primary_group }}"
+        regular_user_password_file: "{{ management_user_password_file | ansible.builtin.mandatory }}"
+        regular_user_fqdn_client: "{{ management_user_fqdn_client }}"
+        regular_user_secondary_groups: "{{ management_user_secondary_groups }}"
+        regular_user_long_running_services: "{{ management_user_long_running_services }}"
+        regular_user_public_key_file: "{{ management_user_public_key_file }}"

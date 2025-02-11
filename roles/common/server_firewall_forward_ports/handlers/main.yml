@@ -1,0 +1,5 @@
+---
+- name: Server firewall forward ports - reload firewall (handler)
+  community.general.ufw:
+    state: reloaded
+  listen: "server_firewall_forward_ports_reload_firewall_handler"

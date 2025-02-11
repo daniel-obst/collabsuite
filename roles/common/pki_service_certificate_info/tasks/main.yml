@@ -1,0 +1,6 @@
+---
+- name: PKI service certificate info - facts for service public/private key files
+  ansible.builtin.set_fact:
+    fact_pki_service_certificate_info_cert_file: "{{ pki_service_certificate_info_service_cert_file }}"
+    fact_pki_service_certificate_info_key_file: "{{ pki_service_certificate_info_service_key_file }}"
+    fact_pki_service_certificate_info_dh_file: "{{ pki_service_certificate_info_dh_file }}"

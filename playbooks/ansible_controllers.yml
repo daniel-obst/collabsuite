@@ -1,0 +1,13 @@
+---
+- name: Ansible controllers - environment
+  hosts: ansible_controllers
+  connection: local
+  become: false
+  roles:
+    - role: facts_platform_server
+      vars:
+        facts_platform_server_password_file: "ansible_controllers_management_user"
+    - role: facts_machine
+    - role: pki_certificate_authority
+    - role: openssh_authority
+    - role: openssh_management_user_keypair

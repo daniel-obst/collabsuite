@@ -1,0 +1,23 @@
+---
+- name: Service (keycloak)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (keycloak) - containers
+      ansible.builtin.import_tasks: linux_containers.yml
+      tags: [services_keycloak_deploy]
+
+    - name: Service (keycloak) - verify site running
+      community.general.keycloak_realm_info:
+        realm: "{{ service_keycloak_config_auth_realm }}"
+        auth_keycloak_url: "{{ service_keycloak_config_internal_uri }}"
+      register: service_keycloak_config_site_running_result
+      until: not service_keycloak_config_site_running_result.failed
+      retries: 10
+      delay: 10
+      delegate_to: localhost
+
+    - name: Service (keycloak) - master realm
+      ansible.builtin.import_tasks: linux_master_realm_config.yml
+
+    - name: Service (keycloak) - client realm
+      ansible.builtin.import_tasks: linux_client_realm_config.yml

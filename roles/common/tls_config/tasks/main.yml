@@ -1,0 +1,54 @@
+---
+- name: TLS (config)
+  when: facts_machine_linux_distro
+  block:
+    - name: TLS (config) - directory
+      ansible.builtin.file:
+        path: "{{ tls_config_machine_pki_dir }}"
+        state: directory
+        owner: "{{ tls_config_user_uid }}"
+        group: "{{ tls_config_user_gid }}"
+        mode: "0750"
+
+    - name: TLS (config) - certificate
+      ansible.builtin.copy:
+        src: "{{ tls_config_pki_cert_file_path | ansible.builtin.mandatory }}"
+        dest: "{{ tls_config_machine_pki_dir }}/{{ tls_config_pki_cert_file_path | basename }}"
+        owner: "{{ tls_config_user_uid }}"
+        group: "{{ tls_config_user_gid }}"
+        mode: "0644"
+        force: true
+
+    - name: TLS (config) - key
+      ansible.builtin.copy:
+        src: "{{ tls_config_pki_key_file_path }}"
+        dest: "{{ tls_config_machine_pki_dir }}/{{ tls_config_pki_key_file_path | basename }}"
+        owner: "{{ tls_config_user_uid }}"
+        group: "{{ tls_config_user_gid }}"
+        mode: "0600"
+        force: true
+
+    - name: TLS (config) - diffie-hellman
+      ansible.builtin.copy:
+        src: "{{ tls_config_pki_dh_file_path }}"
+        dest: "{{ tls_config_machine_pki_dir }}/{{ tls_config_pki_dh_file_path | basename }}"
+        owner: "{{ tls_config_user_uid }}"
+        group: "{{ tls_config_user_gid }}"
+        mode: "0600"
+        force: true
+      when: tls_config_pki_dh_file_path is defined
+
+    - name: TLS (config) - certificate authority
+      ansible.builtin.copy:
+        src: "{{ tls_config_pki_ca_cert_file_path }}"
+        dest: "{{ tls_config_machine_pki_dir }}/{{ tls_config_pki_ca_cert_file_path | basename }}"
+        owner: "{{ tls_config_user_uid }}"
+        group: "{{ tls_config_user_gid }}"
+        mode: "0644"
+        force: true
+
+    - name: TLS (config) - set facts
+      ansible.builtin.set_fact:
+        fact_tls_config_tls_dir: "{{ tls_config_machine_pki_dir }}"
+        fact_tls_config_readonly_volumes:
+          - "./{{ tls_config_machine_pki_dir }}:{{ tls_config_container_pki_dir | ansible.builtin.mandatory }}"

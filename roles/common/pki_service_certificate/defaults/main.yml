@@ -1,0 +1,14 @@
+---
+pki_service_certificate_user_uid: "{{ ansible_user_uid }}"
+pki_service_certificate_user_gid: "{{ ansible_user_gid }}"
+pki_service_certificate_include_service_ip: false
+
+pki_service_certificate_easyrsa_dir: "{{ platform_pki_certificate_authority_easyrsa_base_dir }}"
+pki_service_certificate_pki_dir: "{{ platform_pki_certificate_authority_easyrsa_pki_dir }}"
+pki_service_certificate_easyrsa_binary: "{{ platform_pki_certificate_authority_easyrsa_binary }}"
+
+pki_service_certificate_default_key_size: "{{ platform_pki_certificate_authority_default_key_size }}"
+pki_service_certificate_cert_expire_in_days: "{{ platform_pki_certificate_authority_service_cert_expire_in_days }}"
+
+pki_service_certificate_ca_password_file: "{{ platform_pki_certificate_authority_password_file }}"
+pki_service_certificate_service_ip: ""

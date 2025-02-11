@@ -1,0 +1,3 @@
+---
+# regular_user_password: "{{ (regular_user_password_file | length > 0)
+#   | ansible.builtin.ternary(lookup('user_account_password', regular_user_password_file), '') }}"

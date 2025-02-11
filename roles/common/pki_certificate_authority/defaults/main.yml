@@ -1,0 +1,13 @@
+---
+pki_certificate_authority_user_uid: "{{ ansible_user_uid }}"
+pki_certificate_authority_user_gid: "{{ ansible_user_gid }}"
+
+pki_certificate_authority_easyrsa_dir: "{{ platform_pki_certificate_authority_easyrsa_base_dir }}"
+pki_certificate_authority_pki_dir: "{{ platform_pki_certificate_authority_easyrsa_pki_dir }}"
+pki_certificate_authority_easyrsa_binary: "{{ platform_pki_certificate_authority_easyrsa_binary }}"
+
+pki_certificate_authority_default_key_size: "{{ platform_pki_certificate_authority_default_key_size }}"
+pki_certificate_authority_ca_expire_in_days: "{{ platform_pki_certificate_authority_ca_expire_in_days }}"
+
+pki_certificate_authority_ca_password_file: "{{ platform_pki_certificate_authority_password_file }}"
+pki_certificate_authority_ca_common_name_file: "{{ platform_pki_certificate_authority_common_name_file }}"

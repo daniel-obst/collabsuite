@@ -1,0 +1,34 @@
+BUILDLOGS_REDIS:
+  host: {{ redis_hostname }}
+  password: {{ lookup('user_account_password', redis_password_file) }}
+  port: 6379
+CREATE_NAMESPACE_ON_PUSH: true
+DATABASE_SECRET_KEY: {{ lookup('user_account_password', database_secret_key_file) }}
+DB_URI: {{ pgsql_prefix }}:{{ lookup('user_account_password', pgsql_password_file) }}@{{ pgsql_hostname_with_port }}
+DISTRIBUTED_STORAGE_CONFIG:
+  default:
+    - LocalStorage
+    - storage_path: /datastorage/registry
+DISTRIBUTED_STORAGE_DEFAULT_LOCATIONS: []
+DISTRIBUTED_STORAGE_PREFERENCE:
+  - default
+FEATURE_MAILING: false
+SECRET_KEY: {{ lookup('guid', secret_key_file) }}
+
+REGISTRY_TITLE: {{ registry_title_long }}
+REGISTRY_TITLE_SHORT: {{ registry_title_short }}
+
+SERVER_HOSTNAME: {{ hostname_with_port }}
+PREFERRED_URL_SCHEME: https
+EXTERNAL_TLS_TERMINATION: true
+SESSION_COOKIE_SECURE: true
+AUTHENTICATION_TYPE: Database
+
+SETUP_COMPLETE: true
+USER_EVENTS_REDIS:
+  host: {{ redis_hostname }}
+  password: {{ lookup('guid', redis_password_file) }}
+  port: 6379
+FEATURE_USER_INITIALIZE: true
+SUPER_USERS:
+  - {{ quay_admin_user }}

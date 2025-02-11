@@ -1,0 +1,52 @@
+---
+- name: Service (quay.io)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (quay.io) - containers
+      ansible.builtin.import_tasks: linux_containers.yml
+      tags: [services_quay_io_deploy]
+
+    - name: Service (quay.io) - verify site running
+      ansible.builtin.uri:
+        url: "{{ service_quay_io_registry_host }}"
+        follow_redirects: none
+        method: GET
+      register: service_quay_io_site_result
+      until: service_quay_io_site_result.status == 200
+      retries: 10
+      delay: 20
+      delegate_to: localhost
+
+    - name: Service (quay.io) - users
+      ansible.builtin.import_tasks: linux_config_users.yml
+
+    - name: Service (quay.io) platform container repositories
+      ansible.builtin.import_tasks: linux_config_repositories.yml
+
+    - name: Service (quay.io) - build/push platform container images
+      ansible.builtin.include_role:
+        name: oci_container_image_build
+      vars:
+        oci_container_image_build_registry_hostname: "{{ service_quay_io_fqdn_server }}"
+        oci_container_image_build_registry_port: "{{ service_quay_io_server_firewall_port }}"
+        oci_container_image_build_registry_repository_path: "{{ item.platform_registry_path }}"
+        oci_container_image_build_image_tag: "{{ item.image_tag }}"
+        oci_container_image_build_platform_arches: "{{ item.platform_registry_build_platform_arches }}"
+        oci_container_image_build_inline_container_file: "{{ item.inline_container_file }}"
+        oci_container_image_build_registry_username: "{{ service_quay_io_registry_platform_username  }}"
+        oci_container_image_build_registry_password_file_path: "{{ service_quay_io_registry_platform_password_file }}"
+      loop: "{{ service_quay_io_registry_builds }}"
+
+    - name: Service (quay.io) - external platform images upload
+      ansible.builtin.include_role:
+        name: oci_container_image_registry_upload
+      vars:
+        oci_container_image_registry_upload_registry_hostname: "{{ service_quay_io_fqdn_server }}"
+        oci_container_image_registry_upload_registry_port: "{{ service_quay_io_server_firewall_port }}"
+        oci_container_image_registry_upload_registry_repository_path: "{{ item.platform_registry_path }}"
+        oci_container_image_registry_upload_image_tag: "{{ item.image_tag }}"
+        oci_container_image_registry_upload_external_registry_path: "{{ item.external_registry_path }}"
+        oci_container_image_registry_upload_platform_arch: "{{ item.platform_registry_supported_platform_arch }}"
+        oci_container_image_registry_upload_registry_username: "{{ service_quay_io_registry_platform_username  }}"
+        oci_container_image_registry_upload_registry_password_file_path: "{{ service_quay_io_registry_platform_password_file }}"
+      loop: "{{ service_quay_io_registry_uploads }}"

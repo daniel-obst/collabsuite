@@ -1,0 +1,7 @@
+---
+service_collabora_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_collabora.production, platform_service_collabora.staging) }}"
+
+service_collabora_init_username: "{{ service_collabora_init_config.service_account.username }}"
+service_collabora_init_fqdn_service: "{{ service_collabora_init_config.fqdn_service }}"
+service_collabora_init_fqdn_server: "{{ service_collabora_init_config.fqdn_server }}"

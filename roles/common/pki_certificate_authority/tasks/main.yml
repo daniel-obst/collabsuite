@@ -1,0 +1,14 @@
+---
+- name: PKI certificate authority
+  when: facts_machine_linux_distro
+  block:
+    - name: PKI certificate authority - create root directory
+      ansible.builtin.file:
+        path: "{{ pki_certificate_authority_easyrsa_dir }}"
+        state: directory
+        owner: "{{ pki_certificate_authority_user_uid }}"
+        group: "{{ pki_certificate_authority_user_gid }}"
+        mode: "{{ pki_certificate_authority_easyrsa_dir_mode }}"
+
+    - name: PKI certificate authority - initialize
+      ansible.builtin.import_tasks: linux_init_ca.yml

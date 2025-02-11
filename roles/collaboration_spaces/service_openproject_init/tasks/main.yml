@@ -1,0 +1,11 @@
+---
+- name: Service (openproject) - init
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (openproject) - container service init
+      ansible.builtin.include_role:
+        name: oci_container_service_init
+      vars:
+        oci_container_service_init_username: "{{ service_openproject_init_username }}"
+        oci_container_service_init_fqdn_service: "{{ service_openproject_init_fqdn_service }}"
+        oci_container_service_init_fqdn_server: "{{ service_openproject_init_fqdn_server }}"

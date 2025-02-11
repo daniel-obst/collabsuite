@@ -1,0 +1,20 @@
+---
+- name: Platform (domain name providers) - environment
+  hosts: platform_domain_name_providers
+  tags: [servers, platform_domain_name_providers_servers]
+  connection: local
+  become: false
+  roles:
+    - role: facts_platform_server
+      vars:
+        facts_platform_server_password_file: "domain_name_providers_management_user"
+
+- name: Platform (domain name providers) - deploy servers
+  hosts: platform_domain_name_providers
+  tags: [servers, platform_domain_name_providers_servers]
+  become: true
+  vars:
+    ansible_user: "{{ platform_management_username }}"
+    ansible_ssh_private_key_file: "{{ facts_platform_server_management_user_private_key_file }}"
+  roles:
+    - role: platform_container_server

@@ -1,0 +1,15 @@
+---
+- name: Regular user - configuration
+  when: facts_machine_linux_distro
+  block:
+    - name: Regular user - retrieve openssh keypair for authorized user access
+      ansible.builtin.include_role:
+        name: openssh_keypair_info
+      vars:
+        openssh_keypair_info_username: "{{ regular_user_username }}"
+
+    - name: Regular user - create account
+      ansible.builtin.import_tasks: linux_create_account.yml
+
+    - name: Regular user - configure account
+      ansible.builtin.import_tasks: linux_config_account.yml

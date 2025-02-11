@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+	CREATE USER {{ pgsql_user }} WITH ENCRYPTED PASSWORD '{{ lookup('admin_account_password', pgsql_password_file_path) }}';
+	CREATE DATABASE {{ pgsql_db }};
+	GRANT ALL PRIVILEGES ON DATABASE {{ pgsql_db }} TO {{ pgsql_user }};
+	ALTER DATABASE {{ pgsql_db }} OWNER TO {{ pgsql_user }};
+	GRANT USAGE ON SCHEMA public TO {{ pgsql_user }};
+EOSQL

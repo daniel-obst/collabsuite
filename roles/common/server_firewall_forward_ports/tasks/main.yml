@@ -1,0 +1,22 @@
+---
+- name: Server firewall forward ports
+  when: facts_machine_linux_distro
+  block:
+    - name: Server firewall forward ports - configure firewall
+      ansible.builtin.import_tasks: linux_config.yml
+
+    - name: Server firewall forward ports - rules for external network traffic
+      ansible.builtin.include_tasks: linux_rules_external.yml
+      loop: "{{ server_firewall_forward_ports_list | ansible.builtin.mandatory }}"
+
+    - name: Server firewall forward ports - rules to allow any clients to access service port (internal rule)
+      community.general.ufw:
+        rule: allow
+        proto: "{{ item.protocol }}"
+        to_port: "{{ item.redirect_port }}"
+        to_ip: "127.0.0.1"
+        comment: "Service '{{ item.service_name }}' port forward (internal rule)"
+      loop: "{{ server_firewall_forward_ports_list | ansible.builtin.mandatory }}"
+
+    - name: Server firewall forward ports - configure pre-routing firewall rules
+      ansible.builtin.import_tasks: linux_rules_prerouting.yml

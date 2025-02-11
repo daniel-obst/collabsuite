@@ -1,0 +1,5 @@
+location /{{ service_uri }}/ {
+  set        $userPod {{ server_url }};
+  proxy_pass $userPod;
+  include    {{ includes_path_reverse_proxy_conf }};
+}

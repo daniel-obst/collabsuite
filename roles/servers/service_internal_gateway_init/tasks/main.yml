@@ -1,0 +1,10 @@
+---
+- name: Service (internal gateway) - init
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (internal gateway) - container service init
+      ansible.builtin.include_role:
+        name: oci_container_service_init
+      vars:
+        oci_container_service_init_username: "{{ service_internal_gateway_init_username }}"
+        oci_container_service_init_fqdn_server: "{{ service_internal_gateway_init_fqdn_server }}"

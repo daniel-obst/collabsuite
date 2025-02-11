@@ -1,0 +1,10 @@
+---
+- name: Platform container server init
+  when: facts_machine_linux_distro
+  block:
+    - name: Platform container server init - openssh keypairs for services
+      ansible.builtin.include_role:
+        name: openssh_keypair
+      vars:
+        openssh_keypair_username: "{{ item.username }}"
+      loop: "{{ platform_container_server_init_services_user_accounts }}"

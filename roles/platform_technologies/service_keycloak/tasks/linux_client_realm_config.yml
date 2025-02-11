@@ -1,0 +1,120 @@
+---
+- name: Service (keycloak) - security realm
+  community.general.keycloak_realm:
+    auth_keycloak_url: "{{ service_keycloak_config_internal_uri }}"
+    auth_client_id: admin-cli
+    auth_realm: "{{ service_keycloak_config_auth_realm }}"
+    auth_username: "{{ service_keycloak_config_admin_username }}"
+    auth_password: "{{ lookup('admin_account_password', service_keycloak_config_admin_password_file) }}"
+    realm: "{{ service_keycloak_config_client_security_realm }}"
+    id: "{{ service_keycloak_config_client_security_id }}"
+    display_name: "{{ service_keycloak_config_client_security_realm_display_name }}"
+    internationalization_enabled: true
+    login_with_email_allowed: true
+    registration_allowed: false
+    reset_password_allowed: true
+    ssl_required: all
+    validate_certs: true
+    brute_force_protected: true
+    enabled: true
+    state: present
+  delegate_to: localhost
+
+- name: Service (keycloak) - reset fact (clients init)
+  set_fact:
+    service_keycloak_clients_init: []
+
+- name: Service (keycloak) - set fact (clients init)
+  set_fact:
+    service_keycloak_clients_init: "{{ service_keycloak_clients_init
+      + [{
+      'client_id': item.client_id,
+      'client_secret_file': item.secret_file_path,
+      'base_url': service_keycloak_config_external_root_uri + item.base_uri,
+      'redirect_uris': [service_keycloak_config_external_root_uri + item.redirect_uri]
+      }]}}"
+  loop: "{{ service_keycloak_clients_config }}"
+
+- name: Service (keycloak) - clients (init)
+  community.general.keycloak_client:
+    auth_keycloak_url: "{{ service_keycloak_config_internal_uri }}"
+    auth_client_id: admin-cli
+    auth_realm: "{{ service_keycloak_config_auth_realm }}"
+    auth_username: "{{ service_keycloak_config_admin_username }}"
+    auth_password: "{{ lookup('admin_account_password', service_keycloak_config_admin_password_file) }}"
+    realm: "{{ service_keycloak_config_client_security_realm }}"
+    client_id: "{{ item.client_id }}"
+    enabled: true
+    public_client: false
+    frontchannel_logout: true
+    standard_flow_enabled: true
+    protocol: openid-connect
+    bearer_only: false
+    client_authenticator_type: client-secret
+    secret: "{{ lookup('openid_client_password', item.client_secret_file) }}"
+    root_url: "{{ service_keycloak_config_external_root_uri }}"
+    base_url: "{{ item.base_url }}"
+    redirect_uris: "{{ item.redirect_uris }}"
+    web_origins: "{{ service_keycloak_config_client_security_web_origins }}"
+    state: present
+  loop: "{{ service_keycloak_clients_init }}"
+  delegate_to: localhost
+
+- name: Service (keycloak) - users init check
+  ansible.builtin.stat:
+    path: "{{ service_keycloak_users_init_lock_file_path }}"
+  register: service_keycloak_stat_users_init_lock_file
+  delegate_to: localhost
+
+- name: Service (keycloak) - users
+  when: not service_keycloak_stat_users_init_lock_file.stat.exists
+  block:
+    - name: Service (keycloak) - seed users (load)
+      ansible.builtin.include_vars:
+        file: "{{ service_keycloak_users_seed_file_path }}"
+        name: service_keycloak_users_config
+
+    - name: Service (keycloak) - reset fact (users init)
+      set_fact:
+        service_keycloak_users_init: []
+
+    - name: Service (keycloak) - set fact (users init)
+      set_fact:
+        service_keycloak_users_init: "{{ service_keycloak_users_init
+          + [{
+          'username': ((item.last_name + item.first_name[0]) | lower),
+          'first_name': item.first_name,
+          'last_name': item.last_name,
+          'email': item.email,
+          'tmp_password_file_path': service_keycloak_password_path_prefix + ((item.first_name + '.' + item.last_name) | lower)
+          }]}}"
+      loop: "{{ service_keycloak_users_config.seed_users }}"
+
+    - name: Service (keycloak) - users (init)
+      community.general.keycloak_user:
+        auth_keycloak_url: "{{ service_keycloak_config_internal_uri }}"
+        auth_client_id: admin-cli
+        auth_realm: "{{ service_keycloak_config_auth_realm }}"
+        auth_username: "{{ service_keycloak_config_admin_username }}"
+        auth_password: "{{ lookup('admin_account_password', service_keycloak_config_admin_password_file) }}"
+        realm: "{{ service_keycloak_config_client_security_realm }}"
+        username: "{{ item.username }}"
+        email: "{{ item.email }}"
+        first_name: "{{ item.first_name }}"
+        last_name: "{{ item.last_name }}"
+        enabled: true
+        emailVerified: true
+        validate_certs: true
+        credentials:
+          - type: password
+            value: "{{ lookup('user_account_password', item.tmp_password_file_path) }}"
+            temporary: true
+        state: present
+      loop: "{{ service_keycloak_users_init }}"
+      delegate_to: localhost
+
+    - name: Service (keycloak) - users (store init completed)
+      ansible.builtin.copy:
+        content: "{{ service_keycloak_config_admin_username }}"
+        dest: "{{ service_keycloak_users_init_lock_file_path }}"
+      delegate_to: localhost

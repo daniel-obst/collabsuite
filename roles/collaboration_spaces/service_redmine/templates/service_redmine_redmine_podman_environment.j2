@@ -1,0 +1,6 @@
+RAILS_RELATIVE_URL_ROOT=/{{ service_uri }}
+
+REDMINE_DB_POSTGRES={{ pgsql_host }}
+REDMINE_DB_DATABASE={{ pgsql_db }}
+REDMINE_DB_USERNAME={{ pgsql_user }}
+REDMINE_DB_PASSWORD={{ lookup('user_account_password', pgsql_password_file_path) }}

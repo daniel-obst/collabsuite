@@ -1,0 +1,2 @@
+---
+tls_config_container_pki_dir: "/etc/nginx/tls"

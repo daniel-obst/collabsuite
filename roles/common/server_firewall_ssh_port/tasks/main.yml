@@ -1,0 +1,13 @@
+---
+- name: Server firewall ssh port
+  when: facts_machine_linux_distro
+  block:
+    - name: Server firewall ssh port - allow access to secure shell server from RFC1918 networks only
+      community.general.ufw:
+        rule: allow
+        direction: in
+        src: "{{ item }}"
+        proto: tcp
+        comment: "SSH network restriction RFC1918 networks only"
+        to_port: "22"
+      loop: "{{ server_firewall_ssh_port_rfc1918 }}"

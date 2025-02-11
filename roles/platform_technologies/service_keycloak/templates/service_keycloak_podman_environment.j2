@@ -1,0 +1,20 @@
+KC_BOOTSTRAP_ADMIN_USERNAME={{ bootstrap_admin_username }}
+KC_BOOTSTRAP_ADMIN_PASSWORD={{ lookup('admin_account_password', bootstrap_admin_password_file_path) }}
+
+KC_HTTP_ENABLED=true
+KC_HTTP_PORT={{ http_port }}
+KC_HTTPS_PORT={{ https_port }}
+KC_HTTP_MAX_QUEUED_REQUESTS={{ max_queued_requests }}
+
+KC_DB=postgres
+KC_DB_USERNAME={{ db_username }}
+KC_DB_PASSWORD={{ lookup('admin_account_password', db_password_file_path) }}
+KC_DB_URL_DATABASE={{ db_name }}
+KC_DB_URL_HOST={{ db_hostname }}
+KC_DB_URL_PORT={{ db_port }}
+
+# External hostname (no admin console access)
+KC_HOSTNAME={{ external_base_uri }}
+
+# Internal hostname (admin console access)
+KC_HOSTNAME_ADMIN={{ internal_base_uri }}

@@ -1,0 +1,61 @@
+---
+- name: OCI container service init
+  when: facts_machine_linux_distro
+  block:
+    - name: OCI container service init - service keypair information
+      ansible.builtin.include_role:
+        name: openssh_keypair_info
+      vars:
+        openssh_keypair_info_username: "{{ oci_container_service_init_username }}"
+
+    - name: OCI container service init - service
+      when: oci_container_service_init_fqdn_service | length > 0
+      block:
+        - name: OCI container service init - service certificate
+          ansible.builtin.include_role:
+            name: pki_service_certificate
+          vars:
+            pki_service_certificate_fqdn_service: "{{ oci_container_service_init_fqdn_service }}"
+            pki_service_certificate_fqdn_server: "{{ oci_container_service_init_fqdn_server }}"
+
+        - name: OCI container service init - service certificate information
+          ansible.builtin.include_role:
+            name: pki_service_certificate_info
+          vars:
+            pki_service_certificate_info_fqdn_service: "{{ oci_container_service_init_fqdn_service }}"
+
+        - name: OCI container service init - facts for service
+          ansible.builtin.set_fact:
+            fact_oci_container_service_init_username: "{{ oci_container_service_init_username }}"
+            fact_oci_container_service_init_private_key_file: "{{ fact_openssh_keypair_info_private_key_file }}"
+            fact_oci_container_service_init_cert_file: "{{ fact_pki_service_certificate_info_cert_file }}"
+            fact_oci_container_service_init_key_file: "{{ fact_pki_service_certificate_info_key_file }}"
+            fact_oci_container_service_init_dh_file: "{{ fact_pki_service_certificate_info_dh_file }}"
+            fact_oci_container_service_init_ca_cert_file: "{{ fact_pki_certificate_authority_info_ca_file }}"
+            fact_oci_container_service_init_fqdn_server: "{{ oci_container_service_init_fqdn_server }}"
+
+    - name: OCI container service init - server
+      when: oci_container_service_init_fqdn_service | length < 1
+      block:
+        - name: OCI container service init - server certificate
+          ansible.builtin.include_role:
+            name: pki_server_certificate
+          vars:
+            pki_server_certificate_fqdn_server: "{{ oci_container_service_init_fqdn_server }}"
+            pki_server_certificate_server_ip: "{{ oci_container_service_init_server_ip }}"
+
+        - name: OCI container server init - server certificate information
+          ansible.builtin.include_role:
+            name: pki_server_certificate_info
+          vars:
+            pki_server_certificate_info_fqdn_server: "{{ oci_container_service_init_fqdn_server }}"
+
+        - name: OCI container service init - facts for server
+          ansible.builtin.set_fact:
+            fact_oci_container_service_init_username: "{{ oci_container_service_init_username }}"
+            fact_oci_container_service_init_private_key_file: "{{ fact_openssh_keypair_info_private_key_file }}"
+            fact_oci_container_service_init_cert_file: "{{ fact_pki_server_certificate_info_cert_file }}"
+            fact_oci_container_service_init_key_file: "{{ fact_pki_server_certificate_info_key_file }}"
+            fact_oci_container_service_init_dh_file: "{{ fact_pki_server_certificate_info_dh_file }}"
+            fact_oci_container_service_init_ca_cert_file: "{{ fact_pki_certificate_authority_info_ca_file }}"
+            fact_oci_container_service_init_fqdn_server: "{{ oci_container_service_init_fqdn_server }}"

@@ -1,0 +1,7 @@
+---
+service_data_science_notebook_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_data_science_notebook.production, platform_service_data_science_notebook.staging) }}"
+
+service_data_science_notebook_init_username: "{{ service_data_science_notebook_init_config.service_account.username }}"
+service_data_science_notebook_init_fqdn_service: "{{ service_data_science_notebook_init_config.fqdn_service }}"
+service_data_science_notebook_init_fqdn_server: "{{ service_data_science_notebook_init_config.fqdn_server }}"

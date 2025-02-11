@@ -1,0 +1,15 @@
+NEXTCLOUD_ADMIN_USER={{ admin_username }}
+NEXTCLOUD_ADMIN_PASSWORD={{ lookup('admin_account_password', password_file_path) }}
+
+POSTGRES_DB={{ db_name }}
+POSTGRES_USER={{ db_username }}
+POSTGRES_PASSWORD={{ lookup('user_account_password', db_password_file_path) }}
+POSTGRES_HOST={{ db_hostname_with_port }}
+
+NEXTCLOUD_TRUSTED_DOMAINS={{ trusted_domains }}
+TRUSTED_PROXIES={{ trusted_proxies }}
+
+OVERWRITEHOST={{ service_nextcloud_overwrite_host }}
+OVERWRITEPROTOCOL=https
+OVERWRITECLIURL={{ overwrite_cli_url }}
+OVERWRITEWEBROOT={{ overwrite_webroot }}

@@ -1,0 +1,7 @@
+---
+service_gitlab_ce_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_gitlab_ce.production, platform_service_gitlab_ce.staging) }}"
+
+service_gitlab_ce_init_username: "{{ service_gitlab_ce_init_config.service_account.username }}"
+service_gitlab_ce_init_fqdn_service: "{{ service_gitlab_ce_init_config.fqdn_service }}"
+service_gitlab_ce_init_fqdn_server: "{{ service_gitlab_ce_init_config.fqdn_server }}"

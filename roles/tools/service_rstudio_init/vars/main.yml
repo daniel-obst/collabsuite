@@ -1,0 +1,7 @@
+---
+service_rstudio_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_rstudio.production, platform_service_rstudio.staging) }}"
+
+service_rstudio_init_username: "{{ service_rstudio_init_config.service_account.username }}"
+service_rstudio_init_fqdn_service: "{{ service_rstudio_init_config.fqdn_service }}"
+service_rstudio_init_fqdn_server: "{{ service_rstudio_init_config.fqdn_server }}"

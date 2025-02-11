@@ -1,0 +1,17 @@
+---
+- name: Create required registry projects
+  infra.quay_configuration.quay_repository:
+    name: "{{ item }}"
+    visibility: public
+    perms:
+      - name: "{{ service_quay_io_registry_platform_username }}"
+        type: user
+        role: admin
+    state: present
+    repo_state: NORMAL
+    quay_host: "{{ service_quay_io_registry_host }}"
+    quay_username: "{{ service_quay_io_registry_platform_username }}"
+    quay_password: "{{ lookup('user_account_password', service_quay_io_registry_platform_password_file) }}"
+    validate_certs: true
+  loop: "{{ service_quay_io_registry_repositories }}"
+  delegate_to: localhost

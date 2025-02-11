@@ -1,0 +1,5 @@
+---
+- name: Openssh keypair info - facts for public/private keypair files
+  ansible.builtin.set_fact:
+    fact_openssh_keypair_info_private_key_file: "{{ openssh_keypair_info_private_key_file }}"
+    fact_openssh_keypair_info_public_key_file: "{{ openssh_keypair_info_private_key_file }}.pub"

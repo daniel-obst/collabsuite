@@ -1,0 +1,16 @@
+---
+platform_pki_certificate_authority_ssl_verify_depth: 2
+platform_pki_certificate_authority_password_file: "{{ facts_platform_vault_path }}/platform/passwords/pki_ca"
+platform_pki_certificate_authority_common_name_file: "{{ facts_platform_data_path }}/platform/ca_common_name"
+
+platform_pki_certificate_authority_default_key_size: 2048
+platform_pki_certificate_authority_ca_expire_in_days: 375
+platform_pki_certificate_authority_server_cert_expire_in_days: 365
+platform_pki_certificate_authority_service_cert_expire_in_days: 365
+platform_pki_certificate_authority_client_cert_expire_in_days: 120
+
+platform_pki_certificate_authority_easyrsa_base_dir: "{{ facts_platform_vault_path }}/platform/easyrsa"
+platform_pki_certificate_authority_easyrsa_pki_dir: "{{ facts_platform_vault_path }}/platform/easyrsa/pki"
+platform_pki_certificate_authority_easyrsa_pki_issued_certificates_dir: "{{ facts_platform_vault_path }}/platform/easyrsa/pki/issued"
+platform_pki_certificate_authority_easyrsa_pki_private_key_dir: "{{ facts_platform_vault_path }}/platform/easyrsa/pki/private"
+platform_pki_certificate_authority_easyrsa_binary: "/usr/share/easy-rsa/easyrsa"

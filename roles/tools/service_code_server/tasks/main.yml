@@ -1,0 +1,68 @@
+---
+- name: Service (code-server)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (code-server) - TLS web proxy configuration
+      ansible.builtin.include_role:
+        name: tls_web_proxy_service_config
+      vars:
+        tls_web_proxy_service_config_server_firewall_port: "{{ service_code_server_server_firewall_port }}"
+        tls_web_proxy_service_config_fqdn_server: "{{ service_code_server_fqdn_server }}"
+        tls_web_proxy_service_config_cert_file_path: "{{ service_code_server_config_cert_file_path }}"
+        tls_web_proxy_service_config_key_file_path: "{{ service_code_server_config_key_file_path }}"
+        tls_web_proxy_service_config_dh_file_path: "{{ service_code_server_config_dh_file_path }}"
+        tls_web_proxy_service_config_ca_cert_file_path: "{{ service_code_server_config_ca_cert_file_path }}"
+        tls_web_proxy_service_config_network_dns: "{{ service_code_server_service_network_dns }}"
+        tls_web_proxy_service_config_set_x_forwarded_host: false
+        tls_web_proxy_service_config_set_x_forwarded_port: false
+        tls_web_proxy_service_config_reverse_proxy_additional_headers: "{{ service_code_server_config_reverse_proxy_additional_headers }}"
+        tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_code_server_config_reverse_proxy_enable_web_socket }}"
+        tls_web_proxy_service_config_http_gateway: "{{ service_code_server_config_http_gateway }}"
+
+    - name: Service (code-server) - locations.conf
+      ansible.builtin.template:
+        src: "service_code_server_locations.conf.j2"
+        dest: "{{ service_code_server_locations_conf_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+      vars:
+        service_uri: "{{ service_code_server_service_uri }}"
+        server_url: "{{ service_code_server_url }}"
+        includes_path_reverse_proxy_conf: "{{ service_code_server_config_reverse_proxy_conf_container_path }}"
+
+    - name: Service (code-server) - podman_environment
+      ansible.builtin.copy:
+        src: "service_code_server_podman_environment"
+        dest: "{{ service_code_server_podman_environment_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+
+    - name: Service (code-server) - seed users (load)
+      ansible.builtin.include_vars:
+        file: "{{ service_code_server_users_seed_file_path }}"
+        name: service_code_server_users_config
+
+    - name: Service (code-server) - reset fact (users init)
+      set_fact:
+        service_code_server_users_init: []
+
+    - name: Service (code-server) - set facts
+      ansible.builtin.set_fact:
+        service_code_server_service_worker_containers:
+          "{{ service_code_server_service_worker_containers | default([])
+          + [{'container_name': item.id, 'volumes': [item.id + '_config:/config'], 'readonly_volumes': []}]
+          }}"
+      loop: "{{ service_code_server_users_config.seed_users }}"
+
+    - name: Service (code-server) - deploy service
+      ansible.builtin.include_role:
+        name: oci_container_service
+      vars:
+        oci_container_service_config: "{{ service_code_server_oci_service }}"
+        oci_container_service_workers:
+          "[{{ service_code_server_oci_service_workers[0]
+          | ansible.builtin.combine({'containers': service_code_server_service_worker_containers}) }}]"

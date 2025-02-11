@@ -1,0 +1,17 @@
+GF_SERVER_DOMAIN={{ server_domain }}
+GF_SERVER_PROTOCOL=https
+#GF_SERVER_ENFORCE_DOMAIN=true
+GF_SERVER_ROOT_URL={{ https_root_url }}
+GF_SERVER_SERVE_FROM_SUB_PATH=true
+
+GF_DATABASE_TYPE=postgres
+GF_DATABASE_HOST={{ host_with_port }}
+GF_DATABASE_NAME={{ pgsql_db }}
+GF_DATABASE_USER={{ pgsql_user }}
+GF_DATABASE_PASSWORD={{ lookup('user_account_password', pgsql_password_file_path) }}
+GF_DATABASE_URL=postgres://{{ pgsql_user }}:{{ lookup('admin_account_password', pgsql_password_file_path) }}@{{ host_with_port }}/{{ pgsql_db }}
+
+GF_SECURITY_ADMIN_USER={{ admin_user }}
+GF_SECURITY_ADMIN_PASSWORD={{ lookup('admin_account_password', admin_user_password_file_path) }}
+GF_SECURITY_ADMIN_EMAIL={{ admin_email }}
+GF_SECURITY_COOKIE_SECURE=true

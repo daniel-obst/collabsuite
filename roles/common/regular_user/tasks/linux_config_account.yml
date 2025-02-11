@@ -1,0 +1,21 @@
+---
+- name: Regular user - adjust user directory permissions
+  ansible.builtin.file:
+    path: "{{ fact_regular_user_account.home }}"
+    state: directory
+    mode: "{{ regular_user_home_dir_mode }}"
+
+- name: Regular user - set authorized key to access the user account
+  ansible.posix.authorized_key:
+    user: "{{ regular_user_username }}"
+    state: present
+    key: "{{ lookup('ansible.builtin.file', regular_user_public_key_file) }}"
+  when: regular_user_upload_public_key
+
+- name: Regular user - disable user long-running services after logout
+  when: not regular_user_long_running_services
+  ansible.builtin.command: loginctl disable-linger "{{ regular_user_username }}"
+
+- name: Regular user - enable user long-running services after logout
+  when: regular_user_long_running_services
+  ansible.builtin.command: loginctl enable-linger "{{ regular_user_username }}"

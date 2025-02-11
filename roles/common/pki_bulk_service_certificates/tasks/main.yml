@@ -1,0 +1,10 @@
+---
+- name: PKI bulk service certificates
+  when: facts_machine_linux_distro
+  block:
+    - name: PKI bulk service certificates - generate certificates
+      ansible.builtin.include_role:
+        name: pki_service_certificate
+      vars:
+        pki_service_certificate_fqdn_service: "{{ item }}"
+      loop: "{{ pki_bulk_service_certificates }}"

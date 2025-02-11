@@ -1,0 +1,19 @@
+---
+- name: Server firewall forward ports - allow any clients to access service port (external rule)
+  community.general.ufw:
+    rule: allow
+    interface_in: "{{ server_firewall_forward_ports_network_interface }}"
+    proto: "{{ item.protocol }}"
+    to_port: "{{ item.destination_port }}"
+    comment: "Service '{{ item.service_name }}' port forward (external rule - any clients)"
+  when: item.restricted_to_ipv4_with_cidr | length < 1
+
+- name: Server firewall ports - allow restricted access to service port (external rule)
+  community.general.ufw:
+    rule: allow
+    interface_in: "{{ server_firewall_forward_ports_network_interface }}"
+    proto: "{{ item.protocol }}"
+    src: "{{ item.restricted_to_ipv4_with_cidr }}"
+    to_port: "{{ item.destination_port }}"
+    comment: "Service '{{ item.service_name }}' port forward (external rule - restricted)"
+  when: item.restricted_to_ipv4_with_cidr | length > 0

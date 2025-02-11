@@ -1,0 +1,26 @@
+---
+oci_container_image_registry_upload_registry_host: "{{ oci_container_image_registry_upload_registry_hostname | ansible.builtin.mandatory }}:{{ oci_container_image_registry_upload_registry_port | ansible.builtin.mandatory }}"
+oci_container_image_registry_upload_image_name: "{{ oci_container_image_registry_upload_registry_host | ansible.builtin.mandatory }}/{{ oci_container_image_registry_upload_registry_repository_path | ansible.builtin.mandatory }}:{{ oci_container_image_registry_upload_image_tag | ansible.builtin.mandatory }}"
+oci_container_image_registry_upload_external_image_name: "{{ oci_container_image_registry_upload_external_registry_path }}:{{ oci_container_image_registry_upload_image_tag }}"
+
+oci_container_image_registry_upload_image_path_exists_cmd:
+  "((podman search --list-tags {{ oci_container_image_registry_upload_registry_host }}/{{ oci_container_image_registry_upload_registry_repository_path }} 
+  | grep {{ oci_container_image_registry_upload_image_tag }} &> /dev/null) && echo 'y') || echo 'n'"
+
+oci_container_image_registry_upload_image_download_cmd:
+  "podman pull --platform={{ oci_container_image_registry_upload_platform_arch }} 
+  --tls-verify=true {{ oci_container_image_registry_upload_external_image_name }}"
+
+oci_container_image_registry_upload_retag_image_cmd:
+  "podman tag {{ oci_container_image_registry_upload_external_image_name }} {{ oci_container_image_registry_upload_image_name }}"
+
+oci_container_image_registry_upload_cmd:
+  "podman push --tls-verify=true
+  --creds {{ oci_container_image_registry_upload_registry_username }}:{{ lookup('user_account_password', oci_container_image_registry_upload_registry_password_file_path) }}
+  {{ oci_container_image_registry_upload_image_name }}"
+
+oci_container_image_registry_upload_cleanup_external_cmd:
+  "podman image rm -f {{ oci_container_image_registry_upload_external_image_name }}"
+
+oci_container_image_registry_upload_cleanup_retag_cmd:
+  "podman image rm -f {{ oci_container_image_registry_upload_image_name }}"

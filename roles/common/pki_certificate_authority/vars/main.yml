@@ -1,0 +1,9 @@
+---
+pki_certificate_authority_easyrsa_dir_mode: "0700"
+pki_certificate_authority_ca_cmd:
+  "export EASYRSA_KEY_SIZE={{ pki_certificate_authority_default_key_size }};
+  export EASYRSA_CERT_EXPIRE={{ pki_certificate_authority_ca_expire_in_days }};
+  {{ pki_certificate_authority_easyrsa_binary }}
+  build-ca < <(cat {{ pki_certificate_authority_ca_password_file }}
+  {{ pki_certificate_authority_ca_password_file}}
+  {{ pki_certificate_authority_ca_common_name_file }})"

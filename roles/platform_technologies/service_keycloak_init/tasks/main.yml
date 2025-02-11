@@ -1,0 +1,30 @@
+---
+- name: Service (keycloak) - init
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (keycloak) - container service init
+      ansible.builtin.include_role:
+        name: oci_container_service_init
+      vars:
+        oci_container_service_init_username: "{{ service_keycloak_init_username }}"
+        oci_container_service_init_fqdn_server: "{{ service_keycloak_init_fqdn_server }}"
+
+    - name: Service (keycloak) - service certificate (external)
+      ansible.builtin.include_role:
+        name: pki_service_certificate
+      vars:
+        pki_service_certificate_fqdn_service: "{{ service_keycloak_init_fqdn_service_external }}"
+        pki_service_certificate_fqdn_server: "{{ service_keycloak_init_fqdn_server_external }}"
+
+    - name: Service (keycloak) - service certificate information (external)
+      ansible.builtin.include_role:
+        name: pki_service_certificate_info
+      vars:
+        pki_service_certificate_info_fqdn_service: "{{ service_keycloak_init_fqdn_service_external }}"
+
+    - name: Service (keycloak) - facts for service (external)
+      ansible.builtin.set_fact:
+        fact_service_keycloak_init_external_cert_file: "{{ fact_pki_service_certificate_info_cert_file }}"
+        fact_service_keycloak_init_external_key_file: "{{ fact_pki_service_certificate_info_key_file }}"
+        fact_service_keycloak_init_external_dh_file: "{{ fact_pki_service_certificate_info_dh_file }}"
+        fact_service_keycloak_init_external_ca_cert_file: "{{ fact_pki_certificate_authority_info_ca_file }}"

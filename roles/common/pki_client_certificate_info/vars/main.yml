@@ -1,0 +1,5 @@
+---
+pki_client_certificate_info_client_cert_file:
+  "{{ pki_client_certificate_info_issued_certificates_dir }}/{{ pki_client_certificate_info_fqdn_client }}.crt"
+pki_client_certificate_info_client_key_file:
+  "{{ pki_client_certificate_info_private_key_dir }}/{{ pki_client_certificate_info_fqdn_client }}.key"

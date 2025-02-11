@@ -1,0 +1,52 @@
+---
+ansible_controllers:
+  hosts:
+    controller.collabsuite.lan:
+
+platform_external_gateways:
+  hosts:
+    ext-gw.collabsuite.lan:
+
+platform_internal_gateways:
+  hosts:
+    int-gw.collabsuite.lan:
+
+platform_identity_providers:
+  hosts:
+    identity.collabsuite.lan:
+
+platform_domain_name_providers:
+  hosts:
+    dns.collabsuite.lan:
+
+platform_server_1:
+  hosts:
+    server-1.collabsuite.lan:
+
+platform_server_2:
+  hosts:
+    server-2.collabsuite.lan:
+
+platform_server_3:
+  hosts:
+    server-3.collabsuite.lan:
+
+platform_servers:
+  children:
+    platform_server_1:
+    platform_server_2:
+    platform_server_3:
+
+all:
+  vars:
+    become_method: "sudo"
+    ansible_harden_ssh: true
+    ansible_network_card_filter: "^(eth0|eno0|enp0|enp1|enp2)"
+    ansible_host_domain: "collabsuite.lan"
+    ansible_service_domain: "service.collabsuite.lan"
+    ansible_deploy_production: false
+    ansible_platform_config: "platform_config"
+    ansible_platform_data: "platform_data"
+    ansible_platform_vault: "platform_vault"
+    ansible_platform_servers_config: "platform_servers"
+    ansible_platform_services_config: "platform_services"

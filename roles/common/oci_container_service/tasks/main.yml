@@ -1,0 +1,31 @@
+---
+- name: OCI container service
+  when: facts_machine_linux_distro
+  block:
+    - name: OCI container service - network
+      containers.podman.podman_network:
+        name: "{{ oci_container_service_network_name }}"
+        subnet: "{{ oci_container_service_network_subnet }}"
+        gateway: "{{ oci_container_service_network_gateway }}"
+
+    - name: OCI container service - pull OCI container image (service)
+      containers.podman.podman_image:
+        name: "{{ oci_container_service_config.image_name }}"
+        tag: "{{ oci_container_service_config.image_tag }}"
+
+    - name: OCI container service - pull OCI container image (worker)
+      containers.podman.podman_image:
+        name: "{{ item.image_name }}"
+        tag: "{{ item.image_tag }}"
+      loop: "{{ oci_container_service_workers }}"
+
+    - name: OCI container service - deploy OCI service
+      include_tasks: linux_oci_deploy_service.yml
+
+    - name: OCI container service - deploy OCI workers
+      include_tasks: linux_oci_process_workers.yml
+      vars:
+        oci_container_service_worker: "{{ oci_container_service_deploy_workers_item }}"
+      loop: "{{ oci_container_service_workers }}"
+      loop_control:
+        loop_var: oci_container_service_deploy_workers_item

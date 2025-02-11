@@ -1,0 +1,47 @@
+---
+- name: Facts (machine) - reset
+  ansible.builtin.set_fact:
+    facts_machine_linux_distro: ""
+    facts_machine_linux_use_sudo: false
+    facts_machine_linux_use_apt: false
+    facts_machine_linux_use_apk: false
+    facts_machine_linux_default_shell: ""
+    facts_machine_linux_machine_ssl_cert_dir: ""
+    facts_machine_linux_machine_ssl_ca_certificates_file: ""
+    facts_machine_linux_machine_ca_certificates_dir: ""
+    facts_machine_linux_machine_ca_cert_path: ""
+    facts_machine_linux_server_fqdn: ""
+
+- name: Facts (machine) - Ubuntu server
+  when: ansible_distribution == 'Ubuntu'
+  ansible.builtin.set_fact:
+    facts_machine_linux_distro: true
+    facts_machine_linux_use_sudo: true
+    facts_machine_linux_use_apt: true
+    facts_machine_linux_default_shell: "{{ facts_machine_ubuntu_server_default_shell }}"
+    facts_machine_linux_machine_ssl_cert_dir: "{{ facts_machine_ubuntu_server_ssl_cert_dir }}"
+    facts_machine_linux_machine_ssl_ca_certificates_file: "{{ facts_machine_ubuntu_server_ssl_ca_certificates_file }}"
+    facts_machine_linux_machine_ca_certificates_dir: "{{ facts_machine_ubuntu_server_ca_certificates_dir }}"
+    facts_machine_linux_machine_ca_cert_path: "{{ facts_machine_ubuntu_server_ca_cert_path }}"
+    facts_machine_linux_server_fqdn: "{{ facts_machine_ubuntu_server_fqdn }}"
+# - name: Setting facts for Alpine Linux server
+#   ansible.builtin.set_fact:
+#     facts_linux_distro: true
+#     facts_linux_use_apk: true
+#     facts_linux_default_shell: "/bin/ash"
+#   when:
+#     - ansible_distribution == 'Alpine'
+
+# - name: Displaying machine specific facts
+#   ansible.builtin.debug:
+#     msg: "{{ item }}"
+#   loop:
+#     - "{{ 'FQDN : ' + facts_fqdn_server }}"
+#     - "{{ 'SSL certificates directory : ' + facts_linux_machine_ssl_cert_dir }}"
+#     - "{{ 'SSL certificates (CA certificates) : ' + facts_linux_machine_ssl_ca_certificates_path }}"
+#     - "{{ 'CA certificates directory : ' + facts_linux_machine_ca_certificates_dir }}"
+#     - "{{ 'Root CA cert (machine): ' + facts_linux_machine_ca_cert_path }}"
+
+# - name: "Unsupported operating system found, exiting."
+#   ansible.builtin.meta: end_host
+#   when: facts_linux_distro is false

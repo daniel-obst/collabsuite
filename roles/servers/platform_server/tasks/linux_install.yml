@@ -1,0 +1,15 @@
+---
+- name: Platform server - install common packages
+  when: facts_machine_linux_use_apk
+  community.general.apk:
+    name: "openssh-server, ufw, ca-certificates"
+    state: present
+
+- name: Platform server - install common packages
+  when: facts_machine_linux_use_apt
+  ansible.builtin.apt:
+    pkg:
+      - openssh-server
+      - ufw
+      - ca-certificates
+    state: present

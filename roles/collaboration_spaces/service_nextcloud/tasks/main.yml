@@ -1,0 +1,81 @@
+---
+- name: Service (nextcloud)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (nextcloud) - TLS web proxy configuration
+      ansible.builtin.include_role:
+        name: tls_web_proxy_service_config
+      vars:
+        tls_web_proxy_service_config_server_firewall_port: "{{ service_nextcloud_server_firewall_port }}"
+        tls_web_proxy_service_config_fqdn_server: "{{ service_nextcloud_fqdn_server }}"
+        tls_web_proxy_service_config_cert_file_path: "{{ service_nextcloud_config_cert_file_path }}"
+        tls_web_proxy_service_config_key_file_path: "{{ service_nextcloud_config_key_file_path }}"
+        tls_web_proxy_service_config_dh_file_path: "{{ service_nextcloud_config_dh_file_path }}"
+        tls_web_proxy_service_config_ca_cert_file_path: "{{ service_nextcloud_config_ca_cert_file_path }}"
+        tls_web_proxy_service_config_network_dns: "{{ service_nextcloud_service_network_dns }}"
+        tls_web_proxy_service_config_reverse_proxy_additional_headers: "{{ service_nextcloud_config_reverse_proxy_additional_headers }}"
+        tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_nextcloud_config_reverse_proxy_enable_web_socket }}"
+        tls_web_proxy_service_config_http_gateway: "{{ service_nextcloud_config_http_gateway }}"
+
+    - name: Service (nextcloud) - database configuration
+      ansible.builtin.include_role:
+        name: service_postgresql_init
+      vars:
+        service_postgresql_init_service_name: "{{ service_nextcloud_service_name }}"
+        service_postgresql_init_service_config_dir: "{{ service_nextcloud_service_config_dir }}"
+        service_postgresql_init_pgsql_db: "{{ service_nextcloud_pgsql_db }}"
+        service_postgresql_init_pgsql_user: "{{ service_nextcloud_pgsql_user }}"
+        service_postgresql_init_enable_pg_trgm_extension: "{{ service_nextcloud_pgsql_enable_pg_trgm_extension }}"
+
+    - name: Service (nextcloud) - locations.conf
+      ansible.builtin.template:
+        src: "service_nextcloud_locations.conf.j2"
+        dest: "{{ service_nextcloud_config_locations_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+      vars:
+        service_uri: "{{ service_nextcloud_service_uri }}"
+        server_url: "{{ service_nextcloud_server_url }}"
+        includes_path_reverse_proxy_conf: "{{ service_nextcloud_config_reverse_proxy_conf_container_path }}"
+        max_body_size_in_megabytes: "{{ serivce_nextcloud_config_max_body_size_in_megabytes }}"
+
+    - name: Service (nextcloud) - podman_environment
+      ansible.builtin.template:
+        src: "service_nextcloud_podman_environment.j2"
+        dest: "{{ service_nextcloud_podman_environment_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+      vars:
+        admin_username: "{{ service_nextcloud_admin_username }}"
+        password_file_path: "{{ service_nextcloud_password_file_path }}"
+        db_name: "{{ service_nextcloud_pgsql_db }}"
+        db_username: "{{ service_nextcloud_pgsql_user }}"
+        db_password_file_path: "{{ service_nextcloud_pgsql_user_password_file_path }}"
+        db_hostname_with_port: "{{ service_nextcloud_db_host_with_port }}"
+        trusted_domains: "{{ service_nextcloud_trusted_domains }}"
+        trusted_proxies: "{{ service_nextcloud_trusted_proxies }}"
+        overwrite_host: "{{ service_nextcloud_overwrite_host }}"
+        overwrite_cli_url: "{{ service_nextcloud_overwrite_cli_url }}"
+        overwrite_webroot: "{{ service_nextcloud_overwrite_webroot }}"
+
+    - name: Service (nextcloud) - post_installation.sh
+      ansible.builtin.template:
+        src: "service_nextcloud_post_installation.sh.j2"
+        dest: "{{ service_nextcloud_post_installation_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "0755"
+        force: true
+      vars:
+        root_ca_path: "{{ service_nextcloud_container_root_ca_path }}"
+
+    - name: Service (nextcloud) - deploy service
+      ansible.builtin.include_role:
+        name: oci_container_service
+      vars:
+        oci_container_service_config: "{{ service_nextcloud_oci_service }}"
+        oci_container_service_workers: "{{ service_nextcloud_oci_service_workers }}"

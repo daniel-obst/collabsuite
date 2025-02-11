@@ -1,0 +1,54 @@
+---
+- name: Service (quay.io) - admin user init check
+  ansible.builtin.stat:
+    path: "{{ service_quay_io_registry_admin_init_lock_file }}"
+  register: service_quay_io_stat_registry_admin_init_lock_file
+  delegate_to: localhost
+
+- name: Service (quay.io) - admin user
+  when: not service_quay_io_stat_registry_admin_init_lock_file.stat.exists
+  block:
+    - name: Service (quay.io) - admin user (init)
+      infra.quay_configuration.quay_first_user:
+        username: "{{ service_quay_io_registry_admin_username }}"
+        email: "{{ service_quay_io_registry_admin_user_email }}"
+        password: "{{ lookup('user_account_password', service_quay_io_registry_admin_password_file) }}"
+        create_token: true
+        quay_host: "{{ service_quay_io_registry_host }}"
+        validate_certs: true
+      register: service_quay_io_admin_result
+      delegate_to: localhost
+
+    - name: Service (quay.io) - admin user (store init completed)
+      ansible.builtin.copy:
+        content: "{{ service_quay_io_admin_result | ansible.builtin.to_nice_json }}"
+        dest: "{{ service_quay_io_registry_admin_init_lock_file }}"
+        force: false
+      delegate_to: localhost
+
+    - name: Store admin information returned from setup
+      ansible.builtin.set_fact:
+        service_quay_io_admin_token: "{{ lookup('ansible.builtin.file', service_quay_io_registry_admin_init_lock_file) }}"
+
+    - name: Configure platform user
+      block:
+        - name: Create platform user
+          infra.quay_configuration.quay_user:
+            username: "{{ service_quay_io_registry_platform_username }}"
+            email: "{{ service_quay_io_registry_platform_user_email }}"
+            password: "{{ lookup('user_account_password', service_quay_io_registry_platform_password_file) }}"
+            state: present
+            enabled: true
+            superuser: false
+            quay_host: "{{ service_quay_io_registry_host }}"
+            quay_token: "{{ service_quay_io_admin_token.access_token }}"
+            validate_certs: true
+          register: service_quay_io_platform_user_result
+          delegate_to: localhost
+
+    - name: Write platform user credentials to controller
+      ansible.builtin.copy:
+        content: "{{ service_quay_io_platform_user_result | ansible.builtin.to_nice_json }}"
+        dest: "{{ service_quay_io_registry_platform_init_lock_file }}"
+        force: false
+      delegate_to: localhost

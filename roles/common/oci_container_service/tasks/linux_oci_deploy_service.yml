@@ -1,0 +1,21 @@
+---
+- name: OCI container service - deploy OCI service pod
+  include_tasks: linux_oci_pod.yml
+  vars:
+    oci_container_service_pod_name: "{{ oci_container_service_config.service_name }}"
+    oci_container_service_server_dest_port: "{{ oci_container_service_config.server_dest_port }}"
+    oci_container_service_pod_dest_port: "{{ oci_container_service_config.container_dest_port }}"
+
+- name: OCI container service - deploy OCI service pod (container image)
+  include_tasks: linux_oci_container.yml
+  vars:
+    oci_container_service_pod_name: "{{ oci_container_service_config.service_name }}"
+    oci_container_service_container_name: "{{ oci_container_service_config.service_name }}"
+    oci_container_service_image_name: "{{ oci_container_service_config.image_name }}"
+    oci_container_service_image_tag: "{{ oci_container_service_config.image_tag }}"
+    oci_container_service_volumes: "{{ oci_container_service_config.volumes }}"
+    oci_container_service_readonly_volumes: "{{ oci_container_service_config.readonly_volumes }}"
+    oci_container_service_entrypoint: "{{ oci_container_service_config.entrypoint }}"
+    oci_container_service_command: "{{ oci_container_service_config.command }}"
+    oci_container_service_container_env_file: "{{ oci_container_service_config.env_file }}"
+    oci_container_service_container_cap_add: "{{ oci_container_service_config.added_capabilities }}"

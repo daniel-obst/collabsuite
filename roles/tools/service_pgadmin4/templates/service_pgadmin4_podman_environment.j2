@@ -1,0 +1,2 @@
+PGADMIN_DEFAULT_EMAIL={{ pgadmin_default_email | ansible.builtin.mandatory }}
+PGADMIN_DEFAULT_PASSWORD={{ lookup('admin_account_password', pgadmin_default_password_file_path ) }}

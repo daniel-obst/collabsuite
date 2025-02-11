@@ -1,0 +1,4 @@
+---
+openid_tls_web_proxy_service_config_set_x_forwarded_host: true
+openid_tls_web_proxy_service_config_set_x_forwarded_port: true
+openid_tls_web_proxy_service_config_set_deny_root_uri_location: true

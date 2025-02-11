@@ -1,0 +1,15 @@
+---
+- name: OCI container service - podman-restart.service (handler) - enable
+  ansible.builtin.systemd_service:
+    name: "podman-restart.service"
+    state: started
+    enabled: true
+    scope: user
+  listen: "oci_container_service_enable_service_handler"
+
+- name: OCI container service - podman-restart.service (handler) - restart
+  ansible.builtin.systemd_service:
+    name: "podman-restart.service"
+    daemon_reload: true
+    scope: user
+  listen: "oci_container_service_restart_service_handler"

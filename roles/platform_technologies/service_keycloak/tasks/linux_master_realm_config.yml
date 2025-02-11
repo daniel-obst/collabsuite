@@ -1,0 +1,61 @@
+---
+- name: Service (keycloak) - admin user init check
+  ansible.builtin.stat:
+    path: "{{ service_keycloak_admin_init_lock_file_path }}"
+  register: service_keycloak_stat_admin_init_lock_file
+  delegate_to: localhost
+
+- name: Service (keycloak) - admin user
+  when: not service_keycloak_stat_admin_init_lock_file.stat.exists
+  block:
+    - name: Service (keycloak) - admin user (init)
+      community.general.keycloak_user:
+        auth_keycloak_url: "{{ service_keycloak_config_internal_uri }}"
+        auth_client_id: admin-cli
+        auth_realm: "{{ service_keycloak_config_auth_realm }}"
+        auth_username: "{{ service_keycloak_config_bootstrap_admin_username }}"
+        auth_password: "{{ lookup('admin_account_password', service_keycloak_config_bootstrap_admin_password_file_path) }}"
+        realm: "{{ service_keycloak_config_user_realm }}"
+        username: "{{ service_keycloak_config_admin_username }}"
+        email: "{{ service_keycloak_config_admin_email }}"
+        enabled: true
+        emailVerified: true
+        validate_certs: true
+        credentials:
+          - type: password
+            value: "{{ lookup('admin_account_password', service_keycloak_config_admin_password_file) }}"
+            temporary: false
+        state: present
+      delegate_to: localhost
+
+    - name: Service (keycloak) - admin user (role)
+      community.general.keycloak_user_rolemapping:
+        auth_keycloak_url: "{{ service_keycloak_config_internal_uri }}"
+        auth_client_id: admin-cli
+        auth_realm: "{{ service_keycloak_config_auth_realm }}"
+        auth_username: "{{ service_keycloak_config_bootstrap_admin_username }}"
+        auth_password: "{{ lookup('admin_account_password', service_keycloak_config_bootstrap_admin_password_file_path) }}"
+        realm: "{{ service_keycloak_config_user_realm }}"
+        state: present
+        target_username: "{{ service_keycloak_config_admin_username }}"
+        roles:
+          - name: admin
+      delegate_to: localhost
+
+    - name: Service (keycloak) - remove admin user (initial install)
+      community.general.keycloak_user:
+        auth_keycloak_url: "{{ service_keycloak_config_internal_uri }}"
+        auth_client_id: admin-cli
+        auth_realm: "{{ service_keycloak_config_auth_realm }}"
+        auth_username: "{{ service_keycloak_config_admin_username }}"
+        auth_password: "{{ lookup('admin_account_password', service_keycloak_config_admin_password_file) }}"
+        realm: "{{ service_keycloak_config_user_realm }}"
+        username: "{{ service_keycloak_config_bootstrap_admin_username }}"
+        state: absent
+      delegate_to: localhost
+
+    - name: Service (keycloak) - admin user (store init completed)
+      ansible.builtin.copy:
+        content: "{{ service_keycloak_config_admin_username }}"
+        dest: "{{ service_keycloak_admin_init_lock_file_path }}"
+      delegate_to: localhost

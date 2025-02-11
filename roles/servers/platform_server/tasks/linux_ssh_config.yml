@@ -1,0 +1,66 @@
+---
+- name: Platform server - ssh server daemon
+  block:
+    - name: Platform server - disable root login
+      ansible.builtin.lineinfile:
+        path: "{{ platform_server_sshd_path }}"
+        state: present
+        regexp: "^.*PermitRootLogin.*"
+        line: "PermitRootLogin no"
+        firstmatch: true
+
+    - name: Platform server - enable strict mode
+      ansible.builtin.lineinfile:
+        path: "{{ platform_server_sshd_path }}"
+        state: present
+        regexp: "^.*StrictModes.*"
+        line: "StrictModes yes"
+        firstmatch: true
+
+    - name: Platform server - enable UsePAM
+      ansible.builtin.lineinfile:
+        path: "{{ platform_server_sshd_path }}"
+        state: present
+        regexp: "^.*UsePAM.*"
+        line: "UsePAM yes"
+        firstmatch: true
+
+- name: Platform server - ssh server daemon (hardening)
+  when: ansible_harden_ssh
+  block:
+    - name: Platform server - enable public key authentication (hardened)
+      ansible.builtin.lineinfile:
+        path: "{{ platform_server_sshd_path }}"
+        state: present
+        regexp: "^.*PubkeyAuthentication.*"
+        line: "PubkeyAuthentication yes"
+        firstmatch: true
+
+    - name: Platform server - disable password authentication (hardened)
+      ansible.builtin.lineinfile:
+        path: "{{ platform_server_sshd_path }}"
+        state: present
+        regexp: "^.*PasswordAuthentication.*"
+        line: "PasswordAuthentication no"
+        firstmatch: true
+
+    - name: Platform server - disable empty passwords (hardened)
+      ansible.builtin.lineinfile:
+        path: "{{ platform_server_sshd_path }}"
+        state: present
+        regexp: "^.*PermitEmptyPasswords.*"
+        line: "PermitEmptyPasswords no"
+        firstmatch: true
+
+    - name: Platform server - disable X11 forwarding (hardened)
+      ansible.builtin.lineinfile:
+        path: "{{ platform_server_sshd_path }}"
+        state: present
+        regexp: "^.*X11Forwarding.*"
+        line: "X11Forwarding no"
+        firstmatch: true
+
+    - name: Platform server - remove cloud password access configuration files (hardened)
+      ansible.builtin.file:
+        path: "{{ platform_server_sshd_cloud_auth_config_path }}"
+        state: absent

@@ -1,0 +1,8 @@
+---
+openssh_keypair_user_uid: "{{ ansible_user_uid }}"
+openssh_keypair_user_gid: "{{ ansible_user_gid }}"
+
+openssh_keypair_key_type: "{{ platform_openssh_authority_key_type }}"
+openssh_keypair_key_size: "{{ platform_openssh_authority_key_size }}"
+
+openssh_keypair_fqdn_client: "{{ ansible_service_domain }}"

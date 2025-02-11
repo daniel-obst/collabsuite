@@ -1,0 +1,18 @@
+location / {
+  try_files $uri $uri/index.html =403;
+}
+
+{% for service in upstream_services %}
+location /{{ service.location_uri }}/ {
+  set        $upstream {{ service.upstream_url }};
+{% if service.url_rewrite %}
+  rewrite ^/{{ service.location_uri }}(/.*)$ $1 break;
+{% else %}
+  proxy_pass $upstream;
+  include    {{ reverse_proxy_conf_path }};
+  proxy_set_header {{ http_header_authorization }} ${{ http_header_authorization_value }};
+  proxy_set_header {{ http_header_email }} ${{ http_header_email_value }};
+}
+{% endif %}
+
+{% endfor %}

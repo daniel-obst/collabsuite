@@ -1,0 +1,113 @@
+---
+service_quay_io_platform_registry_globals: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_registry_globals.production, platform_registry_globals.staging) }}"
+
+service_quay_io_platform_registry_repositories: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_container_registry_repositories.production, platform_container_registry_repositories.staging) }}"
+
+service_quay_io_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_quayio.production, platform_service_quayio.staging) }}"
+
+service_quay_io_registry_builds: "{{ platform_container_images 
+  | community.general.json_query(ansible_deploy_production | ansible.builtin.ternary('*.production', '*.staging')) 
+  | selectattr('inline_container_file', 'defined') }}"
+
+service_quay_io_registry_uploads: "{{ platform_container_images 
+  | community.general.json_query(ansible_deploy_production | ansible.builtin.ternary('*.production', '*.staging')) 
+  | selectattr('external_registry_path', 'defined') }}"
+
+service_quay_io_service_name: "quay_io"
+service_grafana_password_path_prefix: "{{ platform_management_passwords_path }}/{{ service_quay_io_service_name }}_"
+
+# web proxy config
+service_quay_io_server_firewall_port: "{{ service_quay_io_config.firewall_port }}"
+service_quay_io_fqdn_server: "{{ service_quay_io_config.fqdn_server }}"
+service_quay_io_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+service_quay_io_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
+service_quay_io_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
+service_quay_io_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
+service_quay_io_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca_cert_file }}"
+
+# service_postgresql_init
+service_quay_io_pgsql_worker: "pgsql_worker"
+service_quay_io_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
+service_quay_io_pgsql_user: "{{ service_quay_io_registry_admin_username }}"
+service_quay_io_pgsql_db: "quayio"
+service_quay_io_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
+service_quay_io_database_secret_key: "{{ service_grafana_password_path_prefix }}database_secret_key"
+service_quay_io_pgsql_enable_pg_trgm_extension: true
+
+# locations.conf
+service_quay_io_server_url: "http://{{ service_quay_io_quay_worker }}:8080"
+service_quay_io_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
+service_quay_io_max_body_size_in_megabytes: "{{ service_quay_io_config.max_body_size_in_megabytes }}"
+service_quay_io_config_locations_server_path: "{{ fact_tls_web_proxy_config_includes_dir }}/locations.conf"
+
+# quay_io_config.yaml
+service_quay_io_quay_worker: "quayio_worker"
+service_quay_io_server_hostname: "{{ service_quay_io_fqdn_server }}"
+service_quay_io_firewall_port: "{{ service_quay_io_config.firewall_port }}"
+service_quay_io_secret_key: "{{ service_grafana_password_path_prefix }}secret_key"
+service_quay_io_branding_long_title: "{{ service_quay_io_config.branding_long_title }}"
+service_quay_io_branding_short_title: "{{ service_quay_io_config.branding_short_title }}"
+service_quay_io_pgsql_prefix: "postgresql://{{ service_quay_io_pgsql_user }}"
+service_quay_io_pgsql_hostname_with_port: "{{ service_quay_io_pgsql_worker }}:5432/{{ service_quay_io_pgsql_db }}"
+service_quay_io_hostname_with_port: "{{ service_quay_io_server_hostname }}:{{ service_quay_io_firewall_port }}"
+service_quay_io_config_server_path: "{{ fact_tls_web_proxy_config_dir }}/quay_io_config.yaml"
+
+# redis_podman_environment"
+service_quay_io_redis_worker: "redis_worker"
+service_quay_io_redis_password_file: "{{ service_grafana_password_path_prefix }}redis"
+service_quay_io_redis_podman_environment_server_path: "{{ fact_tls_web_proxy_config_dir }}/redis_podman_environment"
+
+# service (config)
+service_quay_io_registry_host: "https://{{ service_quay_io_fqdn_server }}:{{ service_quay_io_config.firewall_port }}"
+service_quay_io_registry_admin_username: "{{ service_quay_io_config.admin_username }}"
+service_quay_io_registry_admin_user_email: "{{ service_quay_io_config.admin_email }}"
+service_quay_io_registry_admin_password_file: "{{ service_grafana_password_path_prefix }}{{ service_quay_io_config.admin_username }}"
+service_quay_io_registry_admin_init_lock_file: "{{ platform_management_init_lock_path }}/{{ service_quay_io_service_name }}_{{ service_quay_io_config.admin_username }}"
+service_quay_io_registry_platform_username: "{{ service_quay_io_config.platform_username }}"
+service_quay_io_registry_platform_user_email: "{{ service_quay_io_config.platform_user_email }}"
+service_quay_io_registry_platform_password_file: "{{ service_grafana_password_path_prefix }}{{ service_quay_io_config.platform_username }}"
+service_quay_io_registry_platform_init_lock_file: "{{ platform_management_init_lock_path }}/{{ service_quay_io_service_name }}_{{ service_quay_io_config.platform_username }}"
+service_quay_io_registry_repositories: "{{ service_quay_io_platform_registry_repositories }}"
+
+# service
+service_quay_io_oci_service:
+  image_name: "{{ service_quay_io_config.service_image_name }}"
+  image_tag: "{{ service_quay_io_config.service_image_tag }}"
+  service_name: "{{ service_quay_io_config.service_account.username }}"
+  server_dest_port: "{{ service_quay_io_config.server_port }}"
+  container_dest_port: "{{ service_quay_io_config.firewall_port }}"
+  volumes: []
+  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  env_file: ""
+  added_capabilities: []
+
+service_quay_io_oci_service_workers:
+  - image_name: "{{ service_quay_io_config.worker_quay_image_name }}"
+    image_tag: "{{ service_quay_io_config.worker_quay_image_tag }}"
+    env_file: ""
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_quay_io_quay_worker }}"
+        volumes:
+          - "storage:/datastorage"
+          - "./{{ fact_tls_web_proxy_config_dir }}/quay_io_config.yaml:/conf/stack/config.yaml"
+        readonly_volumes: []
+  - image_name: "{{ service_quay_io_config.worker_pgsql_image_name }}"
+    image_tag: "{{ service_quay_io_config.worker_pgsql_image_tag }}"
+    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_quay_io_pgsql_worker }}"
+        volumes: "{{ fact_service_postgresql_init_volumes }}"
+        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
+  - image_name: "{{ service_quay_io_config.worker_redis_image_name }}"
+    image_tag: "{{ service_quay_io_config.worker_redis_image_tag }}"
+    env_file: "{{ service_quay_io_redis_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_quay_io_redis_worker }}"
+        volumes: []
+        readonly_volumes: []

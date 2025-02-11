@@ -1,0 +1,7 @@
+---
+service_grafana_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_grafana.production, platform_service_grafana.staging) }}"
+
+service_grafana_init_username: "{{ service_grafana_init_config.service_account.username }}"
+service_grafana_init_fqdn_service: "{{ service_grafana_init_config.fqdn_service }}"
+service_grafana_init_fqdn_server: "{{ service_grafana_init_config.fqdn_server }}"

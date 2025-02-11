@@ -1,0 +1,8 @@
+
+location / {
+  set $workerPod {{ server_url }};
+  proxy_pass   $workerPod;
+  include      {{ includes_path_reverse_proxy_conf }};
+
+  client_max_body_size {{ max_body_size_in_megabytes }}m;
+}

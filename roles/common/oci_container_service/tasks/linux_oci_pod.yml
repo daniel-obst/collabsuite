@@ -1,0 +1,51 @@
+---
+- name: OCI container service - pod (port bind to localhost)
+  when: oci_container_service_server_dest_port is defined
+  block:
+    - name: OCI container service - create pod
+      containers.podman.podman_pod:
+        name: "{{ oci_container_service_pod_name }}"
+        network: "{{ oci_container_service_network_name }}"
+        network_alias: "{{ oci_container_service_pod_name }}"
+        state: quadlet
+        restart_policy: "always"
+      notify:
+        - "oci_container_service_enable_service_handler"
+        - "oci_container_service_restart_service_handler"
+
+    - name: OCI container service - start pod (port bind to localhost)
+      containers.podman.podman_pod:
+        name: "{{ oci_container_service_pod_name }}"
+        network: "{{ oci_container_service_network_name }}"
+        network_alias: "{{ oci_container_service_pod_name }}"
+        state: started
+        restart_policy: "always"
+        publish: "127.0.0.1:{{ oci_container_service_server_dest_port }}:{{ oci_container_service_pod_dest_port }}"
+      notify:
+        - "oci_container_service_enable_service_handler"
+        - "oci_container_service_restart_service_handler"
+
+- name: OCI container service - pod (no port bind)
+  when: oci_container_service_server_dest_port is undefined
+  block:
+    - name: OCI container service - create pod
+      containers.podman.podman_pod:
+        name: "{{ oci_container_service_pod_name }}"
+        network: "{{ oci_container_service_network_name }}"
+        network_alias: "{{ oci_container_service_pod_name }}"
+        state: quadlet
+        restart_policy: "always"
+      notify:
+        - "oci_container_service_enable_service_handler"
+        - "oci_container_service_restart_service_handler"
+
+    - name: OCI container service - start pod (no port bind)
+      containers.podman.podman_pod:
+        name: "{{ oci_container_service_pod_name }}"
+        network: "{{ oci_container_service_network_name }}"
+        network_alias: "{{ oci_container_service_pod_name }}"
+        state: started
+        restart_policy: "always"
+      notify:
+        - "oci_container_service_enable_service_handler"
+        - "oci_container_service_restart_service_handler"

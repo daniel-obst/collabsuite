@@ -1,0 +1,5 @@
+---
+openssh_authority_user_uid: "{{ ansible_user_uid }}"
+openssh_authority_user_gid: "{{ ansible_user_gid }}"
+
+openssh_authority_openssh_dir: "{{ platform_openssh_authority_keypairs_directory }}"

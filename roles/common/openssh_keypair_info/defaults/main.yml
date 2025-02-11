@@ -1,0 +1,4 @@
+---
+openssh_keypair_info_fqdn_client: "{{ ansible_service_domain }}"
+openssh_keypair_info_key_type: "{{ platform_openssh_authority_key_type }}"
+openssh_keypair_info_openssh_dir: "{{ platform_openssh_authority_keypairs_directory }}"

@@ -1,0 +1,11 @@
+---
+- name: Service (pgadmin4) - init
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (pgadmin4) - container service init
+      ansible.builtin.include_role:
+        name: oci_container_service_init
+      vars:
+        oci_container_service_init_username: "{{ service_pgadmin4_init_username }}"
+        oci_container_service_init_fqdn_service: "{{ service_pgadmin4_init_fqdn_service }}"
+        oci_container_service_init_fqdn_server: "{{ service_pgadmin4_init_fqdn_server }}"

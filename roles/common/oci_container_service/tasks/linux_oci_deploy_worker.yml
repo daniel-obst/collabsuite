@@ -1,0 +1,21 @@
+---
+- name: OCI container service - deploy OCI worker pod
+  include_tasks: linux_oci_pod.yml
+  vars:
+    oci_container_service_pod_name: "{{ oci_container_service_worker_config.container_name }}"
+    oci_container_service_server_dest_port: "{{ default(None) }}"
+    oci_container_service_pod_dest_port: "{{ default(None) }}"
+
+- name: OCI container service - deploy OCI worker (container image)
+  include_tasks: linux_oci_container.yml
+  vars:
+    oci_container_service_pod_name: "{{ oci_container_service_worker_config.container_name }}"
+    oci_container_service_container_name: "{{ oci_container_service_worker_config.container_name }}"
+    oci_container_service_image_name: "{{ oci_container_service_worker_config_image_name }}"
+    oci_container_service_image_tag: "{{ oci_container_service_worker_config_image_tag }}"
+    oci_container_service_volumes: "{{ oci_container_service_worker_config.volumes }}"
+    oci_container_service_readonly_volumes: "{{ oci_container_service_worker_config.readonly_volumes }}"
+    oci_container_service_entrypoint: "{{ oci_container_service_worker_config_entrypoint }}"
+    oci_container_service_command: "{{ oci_container_service_worker_config_command }}"
+    oci_container_service_container_env_file: "{{ oci_container_service_worker_config_env_file }}"
+    oci_container_service_container_cap_add: "{{ oci_container_service_worker_config_added_capabilities }}"

@@ -1,0 +1,2 @@
+---
+service_node_red_container_file_mode: "{{ gv_service_conf_container_file_mode }}"

@@ -1,0 +1,6 @@
+---
+service_internal_gateway_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_internal_gateway.production, platform_service_internal_gateway.staging) }}"
+
+service_internal_gateway_init_username: "{{ service_internal_gateway_init_config.service_account.username }}"
+service_internal_gateway_init_fqdn_server: "{{ service_internal_gateway_init_config.fqdn_server }}"

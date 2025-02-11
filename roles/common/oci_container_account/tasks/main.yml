@@ -1,0 +1,13 @@
+---
+- name: OCI container account
+  when: facts_machine_linux_distro
+  block:
+    - name: OCI container account - add non-privileged account to run a container
+      ansible.builtin.include_role:
+        name: regular_user
+      vars:
+        regular_user_username: "{{ oci_container_account_username | ansible.builtin.mandatory }}"
+        regular_user_gecos: "{{ oci_container_account_gecos | ansible.builtin.mandatory }}"
+        regular_user_primary_group: "{{ oci_container_account_username | ansible.builtin.mandatory }}"
+        regular_user_long_running_services: true
+        regular_user_public_key_file: "{{ oci_container_account_public_key_file | ansible.builtin.mandatory }}"

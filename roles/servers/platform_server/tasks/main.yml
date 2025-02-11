@@ -1,0 +1,30 @@
+---
+- name: Platform server
+  when: facts_machine_linux_distro
+  notify:
+    - "platform_server_enable_firewall_handler"
+    - "platform_server_reload_sshd_handler"
+  block:
+    - name: Platform server - update operating system packages
+      ansible.builtin.import_tasks: linux_update_packages.yml
+      tags: [update_packages]
+
+    - name: Platform server - management account
+      ansible.builtin.include_role:
+        name: management_user
+      vars:
+        management_user_password_file: "{{ platform_server_management_user_password_file }}"
+        management_user_public_key_file: "{{ platform_server_management_user_public_key_file }}"
+
+    - name: Platform server - install packages
+      ansible.builtin.import_tasks: linux_install.yml
+
+    - name: Platform server - configure public key infrastructure
+      ansible.builtin.import_tasks: linux_pki_config.yml
+
+    - name: Platform server - secure shell daemon
+      ansible.builtin.import_tasks: linux_ssh_config.yml
+
+    - name: Platform server - ssh firewall port
+      ansible.builtin.include_role:
+        name: server_firewall_ssh_port

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html>
+<title>{{ platform_title }}</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .content {
+        max-width: 960px;
+        margin: auto;
+    }
+
+    .navbar {
+        width: 100%;
+        background-color: #555;
+        overflow: auto;
+    }
+
+    .navbar a {
+        float: left;
+        padding: 12px;
+        color: white;
+        text-decoration: none;
+        font-size: 17px;
+    }
+
+    .navbar a:hover {
+        background-color: #000;
+    }
+
+    .active {
+        background-color: #04AA6D;
+    }
+
+    @media screen and (max-width: 500px) {
+        .navbar a {
+            float: none;
+            display: block;
+        }
+
+        .column {
+            width: 100%;
+            display: block;
+            margin-bottom: 20px;
+        }
+    }
+
+    .content h1 {
+        color: black;
+        background-color: white;
+        border-style: solid;
+        border-width: 2px;
+        border-color: black;
+        text-align: center;
+        padding-bottom: 0px;
+        margin-bottom: 0px;
+    }
+
+    /* Float four columns side by side */
+    .column {
+        float: left;
+        width: 25%;
+        padding: 0 10px;
+    }
+
+    /* Remove extra left and right margins, due to padding */
+    .row {
+        margin: 0 -5px;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        max-width: 300px;
+        margin: auto;
+        text-align: center;
+        font-family: arial;
+    }
+
+    .card h1 {
+        color: white;
+        background-color: #000;
+    }
+
+    .card h2 {
+        color: white;
+        background-color: #000;
+        padding: 10px;
+    }
+
+    .card button {
+        border: none;
+        outline: 0;
+        padding: 10px;
+        color: white;
+        background-color: rgb(52, 27, 217);
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        font-size: 18px;
+    }
+
+    .card button:hover {
+        /* opacity: 0.6; */
+        color: white;
+        background-color: green;
+    }
+
+    .readonly {
+        border: none;
+        outline: 0;
+        padding: 10px;
+        color: black;
+        background-color: rgb(187, 186, 186);
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .card img {
+        width: 150px;
+        height: 150px;
+        /* width:100%; */
+    }
+
+    .tooltip {
+        position: relative;
+        display: inline-block;
+        border-bottom: 1px dotted black;
+    }
+
+    .tooltip .tooltiptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #555;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px 0;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        margin-left: -60px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .tooltip .tooltiptext::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #555 transparent transparent transparent;
+    }
+
+    .tooltip:hover .tooltiptext {
+        visibility: visible;
+        opacity: 1;
+    }
+</style>
+
+<body>
+    <nav>
+        <div class="content">
+            <div class="navbar">
+                <a class="active" href="#"><i class="fa fa-fw fa-home"></i> Home</a>
+                <a href="#"><i class="fa fa-fw fa-pencil"></i> Collaboration Spaces</a>
+                <a href="#"><i class="fa fa-fw fa-cubes"></i> Tools</a>
+                <a href="{{ logout_url }}" style="float:right"><i class="fa fa-fw fa-user"></i> Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content">
+        <h1>Collaboration Spaces</h1>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h2>Nextcloud</h2>
+                    <p><img src="images/nextcloud-icon.png" alt="Nextcloud icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Suite of software for creating and using file hosting services.</span>
+                    </div>
+                    <p><a href="{{ services_urls.nextcloud_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="nextcloud"><button>Launch</button></a></p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>Collabora</h2>
+                    <p><img src="images/collabora-icon.png" alt="Collabora icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Open source online office suite based on LibreOffice, enabling
+                            web-based collaborative real-time editing of word processing documents, spreadsheets,
+                            presentations, and vector graphics.</span>
+                    </div>
+                    <p class="readonly">Nextcloud Integration</p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>Gitlab (CE)</h2>
+                    <p><img src="images/gitlab-icon.png" alt="Gitlab-CE icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Automate software delivery, boost productivity, and secure your
+                            end-to-end software supply chain.</span>
+                    </div>
+                    <p><a href="{{ services_urls.gitlab_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="gitlab"><button>Launch</button></a></p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h2>Grafana</h2>
+                    <p><img src="images/grafana-icon.png" alt="Grafana icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Automate software delivery, boost productivity, and secure your
+                            end-to-end software supply chain.</span>
+                    </div>
+                    <p><a href="{{ services_urls.grafana_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="grafana"><button>Launch</button></a></p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>Redmine</h2>
+                    <p><img src="images/redmine-icon.png" alt="Redmine icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Open source web-based project management and issue tracking tool
+                            enabling users to manage multiple projects and associated subprojects.</span>
+                    </div>
+                    <p><a href="{{ services_urls.redmine_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="redmine"><button>Launch</button></a></p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>CKAN</h2>
+                    <p><img src="images/ckan-icon.png" alt="CKAN icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">World leading open-source data portal platform provides a powerful
+                            platform for cataloging, storing and accessing datasets with a rich front-end, full API (for
+                            both data and catalog), visualization tools and more</span>
+                    </div>
+                    <p class="readonly">Coming Soon</p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h2>OpenProject</h2>
+                    <p><img src="images/openproject-icon.png" alt="OpenProject icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Open-source project management software to manage your projects, tasks
+                            and goals, and collaborate via work packages.</span>
+                    </div>
+                    <p><a href="{{ services_urls.openproject_url }}" target=”_blank” rel="noreferrer noopener"
+                        id="openproject"><button>Launch</button></a></p>
+                </div>
+            </div>
+        </div>
+        <h1>Tools</h1>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h2>Node-Red</h2>
+                    <p><img src="images/node-red-icon.png" alt="Node-red icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Programming tool that makes it easy to wire together flows using a
+                            wide range of nodes and
+                            deployed in a single-click.</span>
+                    </div>
+                    <p><a href="{{ services_urls.nodered_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="nodered"><button>Launch</button></a></p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>Drawio</h2>
+                    <p><img src="images/drawio-icon.png" alt="Drawio icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Configurable diagramming and whiteboarding visualization
+                            application.</span>
+                    </div>
+                    <p><a href="{{ services_urls.drawio_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="drawio"><button>Launch</button></a></p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>RStudio</h2>
+                    <p><img src="images/rstudio-icon.png" alt="RStudio icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Integrated development environment for R, a programming language for
+                            statistical computing and graphics.</span>
+                    </div>
+                    <p><a href="{{ services_urls.rstudio_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="rstudio"><button>Launch</button></a></p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h2>jupyter notebooks</h2>
+                    <p><img src="images/jupyter-notebooks-icon.png" alt="jupyter notebooks icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Interactive development environment to configure and arrange workflows
+                            in data science, scientific computing, computational journalism, and machine
+                            learning.</span>
+                    </div>
+                    <p><a href="{{ services_urls.datasciencenotebook_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="datasciencenotebooks"><button>Launch</button></a></p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>pgAdmin4</h2>
+                    <p><img src="images/pgadmin4-icon.png" alt="pgAdmin4 icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Feature rich Open Source administration and development platform for
+                            PostgreSQL.</span>
+                    </div>
+                    <p><a href="{{ services_urls.pgadmin4_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="pgadmin4"><button>Launch</button></a></p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>Code-Server</h2>
+                    <p><img src="images/code-server-icon.png" alt="Code-Server icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Code on any device with a consistent development environment.</span>
+                    </div>
+                    <p><a href="{{ services_urls.codeserver_url }}" target=”_blank” rel="noreferrer noopener"
+                            id="codeserver"><button>Launch</button></a></p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h2>IT Tools</h2>
+                    <p><img src="images/it-tools-icon.png" alt="IT Tools icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Collection of handy online tools for developers.</span>
+                    </div>
+                    <p class="readonly">Coming Soon</p>
+                </div>
+            </div>
+        </div>
+        <h1>Data Sources</h1>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h2>Postgresql</h2>
+                    <p><img src="images/postgresql-icon.png" alt="Postgresql icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Open source object-relational database system with over 35 years of
+                            active development that has earned it a strong reputation for reliability, feature
+                            robustness, and performance.</span>
+                    </div>
+                    <p class="readonly">Access via pgAdmin4</p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>MariaDB</h2>
+                    <p><img src="images/mariadb-icon.png" alt="MariaDB icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Community-developed, commercially supported fork of the MySQL
+                            relational database management system (RDBMS), open-source
+                            software under the GNU General Public License.</span>
+                    </div>
+                    <p class="readonly">Coming Soon</p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>MongoDB</h2>
+                    <p><img src="images/mongodb-icon.png" alt="MongoDB icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Open-source document database designed for ease of application
+                            development and scaling.</span>
+                    </div>
+                    <p class="readonly">Coming Soon</p>
+                </div>
+            </div>
+        </div>
+        <h1>Platform Technologies</h1>
+        <div class="row">
+            <div class="column">
+                <div class="card">
+                    <h2>Keycloak</h2>
+                    <p><img src="images/keycloak-icon.png" alt="Keycloak icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Open source identity and access management solution.</span>
+                    </div>
+                    <p class="readonly">Admin Access Only</p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>Project quay.io</h2>
+                    <p><img src="images/quayio-icon.png" alt="Project quay.io icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Container image registry that enables you to build, organize,
+                            distribute, and deploy containers.</span>
+                    </div>
+                    <p class="readonly">Admin Access Only</p>
+                </div>
+            </div>
+            <div class="column">
+                <div class="card">
+                    <h2>Ansible</h2>
+                    <p><img src="images/ansible-icon.png" alt="Ansible icon"></p>
+                    <div class="tooltip">Description
+                        <span class="tooltiptext">Open source IT automation engine that automates provisioning,
+                            configuration management, application deployment, orchestration, and many other IT
+                            processes.</span>
+                    </div>
+                    <p class="readonly">Deployment Automation</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

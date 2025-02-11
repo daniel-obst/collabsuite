@@ -1,0 +1,12 @@
+---
+- name: Openssh management user keypair info - keypair info
+  ansible.builtin.include_role:
+    name: openssh_keypair_info
+  vars:
+    openssh_keypair_info_username: "{{ platform_management_username }}"
+    openssh_keypair_info_fqdn_client: "{{ platform_management_fqdn_client }}"
+
+- name: Openssh management user keypair info - facts for public/private keypair files
+  ansible.builtin.set_fact:
+    fact_openssh_management_user_keypair_info_private_key_file: "{{ fact_openssh_keypair_info_private_key_file }}"
+    fact_openssh_management_user_keypair_info_public_key_file: "{{ fact_openssh_keypair_info_public_key_file }}"

@@ -1,0 +1,6 @@
+---
+dependencies:
+  - role: platform_server
+    vars:
+      platform_server_management_user_password_file: "{{ facts_platform_server_management_user_password_file }}"
+      platform_server_management_user_public_key_file: "{{ facts_platform_server_management_user_public_key_file }}"

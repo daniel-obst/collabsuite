@@ -1,0 +1,4 @@
+---
+platform_keycloak_authority_secrets_directory: "{{ facts_platform_vault_path }}/platform/keycloak"
+platform_keycloak_authority_client_secrets_path: "{{ platform_keycloak_authority_secrets_directory }}/openid_client_secret_"
+platform_keycloak_authority_redirect_uri_suffix: "redirect_uri"

@@ -1,0 +1,7 @@
+---
+- name: Facts (platform server) - facts for machine level root/administrator password
+  ansible.builtin.set_fact:
+    ansible_become_password: "{{ lookup('ansible.builtin.file', facts_platform_server_password_file_path) }}"
+    facts_platform_server_management_user_password_file: "{{ facts_platform_server_password_file_path }}"
+    facts_platform_server_management_user_private_key_file: "{{ fact_openssh_management_user_keypair_info_private_key_file }}"
+    facts_platform_server_management_user_public_key_file: "{{ fact_openssh_management_user_keypair_info_public_key_file }}"

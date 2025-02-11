@@ -1,0 +1,20 @@
+OPENPROJECT_HOST__NAME={{ openproject_hostname_with_port }}
+OPENPROJECT_RAILS__RELATIVE__URL__ROOT=/{{ service_uri }}
+OPENPROJECT_HTTPS=true
+OPENPROJECT_SEED_ADMIN_USER_NAME={{ admin_user }}
+OPENPROJECT_SEED_ADMIN_USER_PASSWORD={{ lookup('admin_account_password', admin_password_file_path) }}
+OPENPROJECT_SEED_ADMIN_USER_MAIL="{{ admin_user_email }}"
+OPENPROJECT_SEED__ADMIN__USER__PASSWORD__RESET=false
+OPENPROJECT_SEED_ADMIN_USER_PASSWORD_RESET=true
+OPENPROJECT_DROP__OLD__SESSIONS__ON__LOGIN=true
+OPENPROJECT_DROP__OLD__SESSIONS__ON__LOGOUT=true
+OPENPROJECT_SECRET_KEY_BASE={{ lookup('guid', openproject_secret_key_file_path) }}
+OPENPROJECT_DEFAULT__LANGUAGE=en
+DATABASE_URL=postgres://{{ db_user }}:{{ lookup('admin_account_password', db_user_password_file_path) }}@{{ db_hostname_with_port }}/{{ db_name }}?pool=20&encoding=unicode&reconnect=true
+SERVER_PROTOCOL_FORCE_HTTPS=true
+SSL_CERT_FILE={{ root_ca_file_path }}
+RAILS_CACHE_STORE=memcache
+OPENPROJECT_CACHE__MEMCACHE__SERVER={{ memcached_host_with_port }}
+RAILS_MIN_THREADS=4
+RAILS_MAX_THREADS=16
+IMAP_ENABLED=false

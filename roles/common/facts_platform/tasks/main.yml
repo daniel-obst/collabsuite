@@ -1,0 +1,63 @@
+---
+- name: Facts (platform) - base platform path (filesystem)
+  ansible.builtin.set_fact:
+    facts_platform_base_path: "{{ ansible_facts['env']['PWD'] | ansible.builtin.regex_replace('/playbooks', '') }}"
+
+- name: Facts (platform) - platform config directory
+  ansible.builtin.set_fact:
+    facts_platform_config_path: "{{ facts_platform_base_path }}/{{ ansible_platform_config }}"
+
+- name: Facts (platform) - data directory
+  ansible.builtin.set_fact:
+    facts_platform_data_path: "{{ facts_platform_base_path }}/{{ ansible_platform_data }}"
+
+- name: Facts (platform) - vault directory
+  ansible.builtin.set_fact:
+    facts_platform_vault_path: "{{ facts_platform_base_path }}/{{ ansible_platform_vault }}"
+
+- name: Facts (platform) - platform_environment.yml (data directory)
+  ansible.builtin.set_fact:
+    facts_platform_environment_file_path: "{{ facts_platform_data_path }}/platform/platform_environment.yml"
+
+- name: Facts (platform)
+  ansible.builtin.debug:
+    msg: "{{ item }}"
+  loop:
+    - "Base platform path: {{ facts_platform_base_path }}"
+    - "Platform configuration: {{ facts_platform_config_path }}"
+    - "Platform data: {{ facts_platform_data_path }}"
+    - "Platform vault: {{ facts_platform_vault_path }}"
+
+- name: Facts (platform) - load configuration files
+  when: facts_external_load_configurations is undefined or not facts_external_load_configurations
+  block:
+    - name: Service (keycloak) - seed users (load)
+      ansible.builtin.include_vars:
+        file: "{{ facts_platform_environment_file_path }}"
+        name: facts_platform_environment
+
+    - name: Facts (platform) - load configurations
+      ansible.builtin.include_vars:
+        dir: "{{ item }}"
+        depth: 1
+        ignore_files:
+          - ".gitignore"
+        ignore_unknown_extensions: true
+        extensions:
+          - "yml"
+      loop:
+        - "{{ facts_platform_config_path }}"
+        - "{{ facts_platform_data_path }}"
+        - "{{ facts_platform_vault_path }}"
+
+    - name: Facts (platform) - all configuration files loaded
+      ansible.builtin.set_fact:
+        facts_external_load_configurations: true
+
+- name: Facts (platform) - certificate authority information
+  ansible.builtin.include_role:
+    name: pki_certificate_authority_info
+
+- name: Facts (platform) - management user keypair information
+  ansible.builtin.include_role:
+    name: openssh_management_user_keypair_info

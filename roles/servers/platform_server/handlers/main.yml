@@ -1,0 +1,13 @@
+---
+- name: Platform server - reload ssh (handler)
+  ansible.builtin.systemd_service:
+    name: "ssh.service"
+    daemon_reload: true
+    state: reloaded
+    enabled: true
+  listen: "platform_server_reload_sshd_handler"
+
+- name: Platform server - enable firewall (handler)
+  community.general.ufw:
+    state: enabled
+  listen: "platform_server_enable_firewall_handler"

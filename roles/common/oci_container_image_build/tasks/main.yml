@@ -1,0 +1,56 @@
+---
+- name: OCI container image build
+  when: facts_machine_linux_distro
+  block:
+    - name: OCI container image build - manifest exists
+      ansible.builtin.shell:
+        cmd: "{{ oci_container_image_build_manifest_exists_cmd }}"
+      args:
+        executable: "{{ facts_machine_linux_default_shell }}"
+      register: oci_container_image_build_manifest_exists
+      delegate_to: localhost
+
+    - name: OCI container image build - build/push container image
+      when: oci_container_image_build_manifest_exists.stdout == 'n'
+      block:
+        - name: OCI container image build - create manifest
+          ansible.builtin.shell:
+            cmd: "{{ oci_container_image_build_manifest_cmd }}"
+          args:
+            executable: "{{ facts_machine_linux_default_shell }}"
+          delegate_to: localhost
+
+        - name: OCI container image build - build image
+          ansible.builtin.shell:
+            cmd: "{{ oci_container_image_build_cmd }}"
+          args:
+            executable: "{{ facts_machine_linux_default_shell }}"
+          delegate_to: localhost
+
+        - name: OCI container image build - registry login
+          ansible.builtin.shell:
+            cmd: "{{ oci_container_image_build_registry_login_cmd }}"
+          args:
+            executable: "{{ facts_machine_linux_default_shell }}"
+          delegate_to: localhost
+
+        - name: OCI container image build - push manifest
+          ansible.builtin.shell:
+            cmd: "podman manifest push {{ oci_container_image_build_manifest_name }}"
+          args:
+            executable: "{{ facts_machine_linux_default_shell }}"
+          delegate_to: localhost
+
+        - name: OCI container image build - registry logout
+          ansible.builtin.shell:
+            cmd: "podman logout {{ oci_container_image_build_registry_host }}"
+          args:
+            executable: "{{ facts_machine_linux_default_shell }}"
+          delegate_to: localhost
+
+        - name: OCI container image build - manifest/build cleanup
+          ansible.builtin.shell:
+            cmd: "podman manifest rm {{ oci_container_image_build_manifest_name }}"
+          args:
+            executable: "{{ facts_machine_linux_default_shell }}"
+          delegate_to: localhost

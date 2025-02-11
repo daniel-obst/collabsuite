@@ -1,0 +1,78 @@
+---
+- name: Service (node-red)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (node-red) - TLS web proxy configuration
+      ansible.builtin.include_role:
+        name: openid_tls_web_proxy_service_config
+      vars:
+        openid_tls_web_proxy_service_config_server_firewall_port: "{{ service_node_red_server_firewall_port }}"
+        openid_tls_web_proxy_service_config_fqdn_server: "{{ service_node_red_fqdn_server }}"
+        openid_tls_web_proxy_service_config_cert_file_path: "{{ service_node_red_config_cert_file_path }}"
+        openid_tls_web_proxy_service_config_key_file_path: "{{ service_node_red_config_key_file_path }}"
+        openid_tls_web_proxy_service_config_dh_file_path: "{{ service_node_red_config_dh_file_path }}"
+        openid_tls_web_proxy_service_config_ca_cert_file_path: "{{ service_node_red_config_ca_cert_file_path }}"
+        openid_tls_web_proxy_service_config_network_dns: "{{ service_node_red_config_network_dns }}"
+        openid_tls_web_proxy_service_config_reverse_proxy_additional_headers: "{{ service_node_red_config_reverse_proxy_additional_headers }}"
+        openid_tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_node_red_config_reverse_proxy_enable_web_socket }}"
+        openid_tls_web_proxy_service_config_set_deny_root_uri_location: "{{ service_node_red_config_set_deny_root_uri_location }}"
+        openid_tls_web_proxy_service_config_enable_session_cache: "{{ service_node_red_config_enable_session_cache }}"
+        openid_tls_web_proxy_service_config_session_cache_domain: "{{ service_node_red_config_session_cache_domain }}"
+        openid_tls_web_proxy_service_config_cache_session_secret_file_path: "{{ service_node_red_config_cache_session_secret_file_path }}"
+        openid_tls_web_proxy_service_config_client_id: "{{ service_node_red_config_client_id }}"
+        openid_tls_web_proxy_service_config_client_secret_file_path: "{{ service_node_red_config_client_secret_file_path }}"
+        openid_tls_web_proxy_service_config_base_redirect_uri: "{{ service_node_red_config_redirect_uri }}"
+        openid_tls_web_proxy_service_config_client_enable_login: "{{ service_node_red_config_client_enable_login }}"
+        openid_tls_web_proxy_service_config_cache_shared_memory_zone_mb: "{{ service_node_red_config_cache_shared_memory_zone_mb }}"
+        openid_tls_web_proxy_service_config_cache_idling_timeout_seconds: "{{ service_node_red_config_cache_idling_timeout_seconds }}"
+        openid_tls_web_proxy_service_config_cache_rolling_timeout_seconds: "{{ service_node_red_config_cache_rolling_timeout_seconds }}"
+
+    - name: Service (node-red) - locations.conf
+      ansible.builtin.template:
+        src: "service_node_red_locations.conf.j2"
+        dest: "{{ service_node_red_config_locations_server_path }}"
+        owner: "{{ fact_openid_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_openid_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_openid_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+      vars:
+        service_uri: "{{ service_node_red_service_uri }}"
+        server_url: "{{ service_node_red_server_url }}"
+        includes_path_reverse_proxy_conf: "{{ service_node_red_config_reverse_proxy_conf_container_path }}"
+
+    - name: Service (node-red) - settings.js
+      ansible.builtin.template:
+        src: "service_node_red_settings.js.j2"
+        dest: "{{ service_node_red_config_settings_js_server_path }}"
+        owner: "{{ fact_openid_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_openid_tls_web_proxy_service_config_gid }}"
+        mode: "{{ service_node_red_container_file_mode }}"
+        force: true
+      vars:
+        service_uri: "{{ service_node_red_service_uri }}"
+
+    - name: Service (node-red) - seed users (load)
+      ansible.builtin.include_vars:
+        file: "{{ service_node_red_users_seed_file_path }}"
+        name: service_node_red_users_config
+
+    - name: Service (node-red) - reset fact (users init)
+      set_fact:
+        service_node_red_users_init: []
+
+    - name: Service (node-red) - set facts
+      ansible.builtin.set_fact:
+        service_node_red_service_worker_containers:
+          "{{ service_node_red_service_worker_containers | default([])
+          + [{'container_name': item.id, 'volumes': [item.id + ':/data', service_node_red_user_settings_volume], 'readonly_volumes': []}]
+          }}"
+      loop: "{{ service_node_red_users_config.seed_users }}"
+
+    - name: Service (node-red) - deploy service
+      ansible.builtin.include_role:
+        name: oci_container_service
+      vars:
+        oci_container_service_config: "{{ service_node_red_oci_service }}"
+        oci_container_service_workers:
+          "[{{ service_node_red_oci_service_workers[0]
+          | ansible.builtin.combine({'containers': service_node_red_service_worker_containers}) }}]"

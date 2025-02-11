@@ -1,0 +1,59 @@
+---
+service_pgadmin4_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_pgadmin4.production, platform_service_pgadmin4.staging) }}"
+
+service_pgadmin4_config_http_gateway: "{{ service_pgadmin4_config.http_gateway }}"
+
+service_pgadmin4_env_prefix: "pgadmin4_"
+
+# web proxy config
+service_pgadmin4_server_firewall_port: "{{ service_pgadmin4_config.firewall_port }}"
+service_pgadmin4_fqdn_server: "{{ service_pgadmin4_config.fqdn_server }}"
+service_pgadmin4_config_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+service_pgadmin4_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
+service_pgadmin4_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
+service_pgadmin4_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
+service_pgadmin4_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca_cert_file }}"
+service_pgadmin4_config_reverse_proxy_additional_headers:
+  - http_header: "X-Script-Name"
+    value: "/{{ service_pgadmin4_config.service_uri }}"
+  - http_header: "X-Scheme"
+    value: "$scheme"
+service_pgadmin4_config_reverse_proxy_enable_web_socket: true
+service_pgadmin4_config_set_x_forwarded_host: false
+
+# locations.conf
+service_pgadmin4_service_uri: "{{ service_pgadmin4_config.service_uri }}"
+service_pgadmin4_worker: "pgadmin4_worker"
+service_pgadmin4_server_url: "http://{{ service_pgadmin4_worker }}:80"
+service_pgadmin4_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
+service_pgadmin4_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+
+# podman_environment
+service_pgadmin4_default_email: "{{ service_pgadmin4_config.admin_email }}"
+service_pgadmin4_default_password_file_path: "{{ platform_management_passwords_path }}/{{ service_pgadmin4_env_prefix }}{{ service_pgadmin4_config.admin_username }}"
+service_pgadmin4_config_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/podman_environment"
+
+# service
+service_pgadmin4_oci_service:
+  image_name: "{{ service_pgadmin4_config.service_image_name }}"
+  image_tag: "{{ service_pgadmin4_config.service_image_tag }}"
+  service_name: "{{ service_pgadmin4_config.service_account.username }}"
+  server_dest_port: "{{ service_pgadmin4_config.server_port }}"
+  container_dest_port: "{{ service_pgadmin4_config.firewall_port }}"
+  volumes: []
+  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  env_file: ""
+  added_capabilities: []
+
+service_pgadmin4_oci_service_workers:
+  - image_name: "{{ service_pgadmin4_config.worker_image_name }}"
+    image_tag: "{{ service_pgadmin4_config.worker_image_tag }}"
+    env_file: "{{ service_pgadmin4_config_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_pgadmin4_worker }}"
+        volumes:
+          - "pg_data:/var/lib/pgadmin"
+          - "pgadmin4_data:/pgadmin4"
+        readonly_volumes: []

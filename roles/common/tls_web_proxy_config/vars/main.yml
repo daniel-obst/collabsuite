@@ -1,0 +1,49 @@
+---
+tls_web_proxy_config_container_conf_dir_path: "/etc/nginx/conf.d"
+tls_web_proxy_config_container_includes_dir_path: "/etc/nginx/includes"
+tls_web_proxy_config_container_tls_dir_path: "/etc/nginx/tls"
+
+tls_web_proxy_config_reverse_proxy_conf: "nginx_reverse_proxy.conf"
+tls_web_proxy_config_html_error_pages_conf: "nginx_html_error_pages.conf"
+
+tls_web_proxy_config_dest_default_conf_path: "{{ tls_web_proxy_config_conf_dir }}/default.conf"
+tls_web_proxy_config_dest_reverse_proxy_conf_path: "{{ tls_web_proxy_config_includes_dir }}/reverse_proxy.conf"
+tls_web_proxy_config_reverse_proxy_conf_container_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/reverse_proxy.conf"
+
+tls_web_proxy_config_dest_html_error_pages:
+  - path: "html_error_pages.conf"
+    dest: "{{ tls_web_proxy_config_includes_dir }}/{{ tls_web_proxy_config_html_error_pages_conf }}"
+  - path: "40x.html"
+    dest: "{{ tls_web_proxy_config_html_dir }}/40x.html"
+  - path: "404.html"
+    dest: "{{ tls_web_proxy_config_html_dir }}/404.html"
+  - path: "500.html"
+    dest: "{{ tls_web_proxy_config_html_dir }}/500.html"
+  - path: "500.html"
+    dest: "{{ tls_web_proxy_config_html_dir }}/50x.html"
+  - path: "styles.css"
+    dest: "{{ tls_web_proxy_config_html_dir }}/styles.css"
+
+tls_web_proxy_config_readonly_volumes:
+  - "./{{ tls_web_proxy_config_dest_default_conf_path }}:{{ tls_web_proxy_config_container_conf_dir_path }}/default.conf"
+  - "./{{ tls_web_proxy_config_includes_dir }}/:{{ tls_web_proxy_config_container_includes_dir_path }}"
+  - "./{{ tls_web_proxy_config_html_dir }}:/usr/share/nginx/html"
+
+tls_web_proxy_config_server_cert_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_cert_file_path | basename }}"
+tls_web_proxy_config_server_key_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_key_file_path | basename }}"
+tls_web_proxy_config_server_dh_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_dh_file_path | basename }}"
+tls_web_proxy_config_server_ca_cert_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_ca_cert_file_path | basename }}"
+tls_web_proxy_config_includes_locations_config_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/locations.conf"
+tls_web_proxy_config_includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/{{ tls_web_proxy_config_html_error_pages_conf }}"
+
+# Secondary site configuration
+tls_web_proxy_config_dest_secondary_default_conf_path: "{{ tls_web_proxy_config_conf_dir }}/default_secondary.conf"
+tls_web_proxy_config_dest_secondary_reverse_proxy_conf_path: "{{ tls_web_proxy_config_includes_dir }}/reverse_proxy_secondary.conf"
+tls_web_proxy_config_secondary_reverse_proxy_conf_container_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/reverse_proxy_secondary.conf"
+tls_web_proxy_config_secondary_includes_locations_config_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/locations_secondary.conf"
+tls_web_proxy_config_secondary_includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/{{ tls_web_proxy_config_html_error_pages_conf }}"
+
+tls_web_proxy_config_secondary_server_cert_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_secondary_cert_file_path | basename }}"
+tls_web_proxy_config_secondary_server_key_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_secondary_key_file_path | basename }}"
+tls_web_proxy_config_secondary_server_dh_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_secondary_dh_file_path | basename }}"
+tls_web_proxy_config_secondary_server_ca_cert_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_secondary_ca_cert_file_path | basename }}"

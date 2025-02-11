@@ -1,0 +1,38 @@
+---
+- name: Service (landing page)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (landing page) - reset facts
+      set_fact:
+        service_landing_page_urls: {}
+
+    - name: Service (landing page) - set facts
+      set_fact:
+        service_landing_page_urls: "{{ service_landing_page_urls | combine({item.location_uri + '_url': service_landing_page_url_prefix + item.location_uri + service_landing_page_url_suffix}) }}"
+      loop: "{{ service_landing_page_upstream_services }}"
+
+    - debug:
+        msg: "{{ service_landing_page_urls }}"
+
+    - name: Service (landing page) - index.html
+      ansible.builtin.template:
+        src: "service_landing_page_index.html.j2"
+        dest: "{{ service_landing_page_html_dir }}"
+        owner: "{{ service_landing_page_user_uid }}"
+        group: "{{ service_landing_page_user_gid }}"
+        mode: "{{ service_landing_page_html_file_mode }}"
+        force: true
+      vars:
+        platform_title: "{{ service_landing_page_platform_title }}"
+        logout_url: "{{ service_landing_page_logout_url }}"
+        services_urls: "{{ service_landing_page_urls }}"
+
+    - name: Service (landing page)
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "{{ service_landing_page_html_dir }}"
+        owner: "{{ service_landing_page_user_uid }}"
+        group: "{{ service_landing_page_user_gid }}"
+        mode: "{{ service_landing_page_html_file_mode }}"
+        force: true
+      loop: "{{ service_landing_page_images }}"

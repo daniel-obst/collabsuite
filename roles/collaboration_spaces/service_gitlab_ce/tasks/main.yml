@@ -1,0 +1,71 @@
+---
+- name: Service (gitlab-ce)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (gitlab-ce) - TLS web proxy configuration
+      ansible.builtin.include_role:
+        name: tls_web_proxy_service_config
+      vars:
+        tls_web_proxy_service_config_server_firewall_port: "{{ service_gitlab_ce_server_firewall_port }}"
+        tls_web_proxy_service_config_fqdn_server: "{{ service_gitlab_ce_fqdn_server }}"
+        tls_web_proxy_service_config_cert_file_path: "{{ service_gitlab_ce_config_cert_file_path }}"
+        tls_web_proxy_service_config_key_file_path: "{{ service_gitlab_ce_config_key_file_path }}"
+        tls_web_proxy_service_config_dh_file_path: "{{ service_gitlab_ce_config_dh_file_path }}"
+        tls_web_proxy_service_config_ca_cert_file_path: "{{ service_gitlab_ce_config_ca_cert_file_path }}"
+        tls_web_proxy_service_config_network_dns: "{{ service_gitlab_ce_service_network_dns }}"
+        tls_web_proxy_service_config_reverse_proxy_additional_headers: "{{ service_gitlab_ce_config_reverse_proxy_additional_headers }}"
+        tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_gitlab_ce_config_reverse_proxy_enable_web_socket }}"
+        tls_web_proxy_service_config_http_gateway: "{{ service_gitlab_ce_config_http_gateway }}"
+
+    - name: Service (gitlab-ce) - locations.conf
+      ansible.builtin.template:
+        src: "service_gitlab_ce_locations.conf.j2"
+        dest: "{{ service_gitlab_ce_locations_conf_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+      vars:
+        service_uri: "{{ service_gitlab_ce_service_uri }}"
+        server_url: "{{ service_gitlab_ce_server_url }}"
+        includes_path_reverse_proxy_conf: "{{ service_gitlab_ce_config_reverse_proxy_conf_container_path }}"
+
+    - name: Service (gitlab-ce) - gitlab (conf) directory
+      ansible.builtin.file:
+        path: "{{ service_gitlab_ce_gitlab_config_dir }}"
+        state: directory
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_conf_dir_mode }}"
+
+    - name: Service (gitlab-ce) - gitlab.rb
+      ansible.builtin.template:
+        src: "service_gitlab_ce_gitlab.rb.j2"
+        dest: "{{ service_gitlab_ce_gitlab_rb_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+      vars:
+        gitlab_external_url: "{{ service_gitlab_ce_config_gitlab_external_url }}"
+        container_server_crt_file_path: "{{ service_gitlab_ce_config_container_server_crt_file_path }}"
+        container_server_key_file_path: "{{ service_gitlab_ce_config_container_server_key_file_path }}"
+        container_dh_pem_file_path: "{{ service_gitlab_ce_config_container_dh_pem_file_path }}"
+
+    - name: Service (quay.io) - pgsql_podman_environment
+      ansible.builtin.template:
+        src: "service_gitlab_ce_podman_environment.j2"
+        dest: "{{ service_gitlab_ce_podman_environment_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+      vars:
+        gitlab_ce_password_file_path: "{{ service_gitlab_ce_password_file_path }}"
+
+    - name: Service (gitlab-ce) - deploy service
+      ansible.builtin.include_role:
+        name: oci_container_service
+      vars:
+        oci_container_service_config: "{{ service_gitlab_ce_oci_service }}"
+        oci_container_service_workers: "{{ service_gitlab_ce_oci_service_workers }}"

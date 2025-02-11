@@ -1,0 +1,46 @@
+---
+- name: OpenID - TLS (web proxy service config)
+  when: facts_machine_linux_distro
+  block:
+    - name: OpenID - TLS (web proxy service config) - TLS web proxy configuration
+      ansible.builtin.include_role:
+        name: openid_tls_web_proxy_config
+      vars:
+        openid_tls_web_proxy_config_server_firewall_port: "{{ openid_tls_web_proxy_service_config_server_firewall_port }}"
+        openid_tls_web_proxy_config_fqdn_server: "{{ openid_tls_web_proxy_service_config_fqdn_server }}"
+        openid_tls_web_proxy_config_cert_file_path: "{{ openid_tls_web_proxy_service_config_cert_file_path }}"
+        openid_tls_web_proxy_config_key_file_path: "{{ openid_tls_web_proxy_service_config_key_file_path }}"
+        openid_tls_web_proxy_config_dh_file_path: "{{ openid_tls_web_proxy_service_config_dh_file_path }}"
+        openid_tls_web_proxy_config_ca_cert_file_path: "{{ openid_tls_web_proxy_service_config_ca_cert_file_path }}"
+        openid_tls_web_proxy_config_service_network_dns: "{{ openid_tls_web_proxy_service_config_network_dns }}"
+        openid_tls_web_proxy_config_set_x_forwarded_host: "{{ openid_tls_web_proxy_service_config_set_x_forwarded_host }}"
+        openid_tls_web_proxy_config_x_host_with_port: "{{ openid_tls_web_proxy_service_config_x_host_with_port }}"
+        openid_tls_web_proxy_config_x_forwarded_port: "{{ openid_tls_web_proxy_service_config_x_forwarded_port }}"
+        openid_tls_web_proxy_config_reverse_proxy_additional_headers: "{{ openid_tls_web_proxy_service_config_reverse_proxy_additional_headers }}"
+        openid_tls_web_proxy_config_reverse_proxy_enable_web_socket: "{{ openid_tls_web_proxy_service_config_reverse_proxy_enable_web_socket }}"
+        openid_tls_web_proxy_config_set_deny_root_uri_location: "{{ openid_tls_web_proxy_service_config_set_deny_root_uri_location }}"
+        openid_tls_web_proxy_config_enable_session_cache: "{{ openid_tls_web_proxy_service_config_enable_session_cache }}"
+        openid_tls_web_proxy_config_session_cache_domain: "{{ openid_tls_web_proxy_service_config_session_cache_domain }}"
+        openid_tls_web_proxy_config_cache_session_secret_file_path: "{{ openid_tls_web_proxy_service_config_cache_session_secret_file_path }}"
+        openid_tls_web_proxy_config_client_id: "{{ openid_tls_web_proxy_service_config_client_id }}"
+        openid_tls_web_proxy_config_client_secret_file_path: "{{ openid_tls_web_proxy_service_config_client_secret_file_path }}"
+        openid_tls_web_proxy_config_base_redirect_uri: "{{ openid_tls_web_proxy_service_config_base_redirect_uri }}"
+        openid_tls_web_proxy_config_client_enable_login: "{{ openid_tls_web_proxy_service_config_client_enable_login }}"
+        openid_tls_web_proxy_config_cache_shared_memory_zone_mb: "{{ openid_tls_web_proxy_service_config_cache_shared_memory_zone_mb }}"
+        openid_tls_web_proxy_config_cache_idling_timeout_seconds: "{{ openid_tls_web_proxy_service_config_cache_idling_timeout_seconds }}"
+        openid_tls_web_proxy_config_cache_rolling_timeout_seconds: "{{ openid_tls_web_proxy_service_config_cache_rolling_timeout_seconds }}"
+
+    - name: OpenID - TLS (web proxy service config) - set facts
+      ansible.builtin.set_fact:
+        fact_openid_tls_web_proxy_service_config_dir: "{{ fact_openid_tls_web_proxy_config_dir }}"
+        fact_openid_tls_web_proxy_service_config_includes_dir: "{{ fact_openid_tls_web_proxy_config_includes_dir }}"
+        fact_openid_tls_web_proxy_service_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
+        fact_openid_tls_web_proxy_service_config_tls_dir: "{{ fact_openid_tls_web_proxy_config_tls_dir }}"
+        fact_openid_tls_web_proxy_service_config_uid: "{{ fact_openid_tls_web_proxy_config_uid }}"
+        fact_openid_tls_web_proxy_service_config_gid: "{{ fact_openid_tls_web_proxy_config_gid }}"
+        fact_openid_tls_web_proxy_service_config_conf_file_mode: "{{ fact_openid_tls_web_proxy_config_conf_file_mode }}"
+        fact_openid_tls_web_proxy_service_conf_dir_mode: "{{ fact_openid_tls_web_proxy_config_conf_dir_mode }}"
+        fact_openid_tls_web_proxy_service_config_html_dir: "{{ fact_openid_tls_web_proxy_config_html_dir }}"
+        fact_openid_tls_web_proxy_service_config_html_dir_mode: "{{ fact_openid_tls_web_proxy_config_html_dir_mode }}"
+        fact_openid_tls_web_proxy_service_config_html_file_mode: "{{ fact_openid_tls_web_proxy_config_html_file_mode }}"
+        fact_openid_tls_web_proxy_service_config_readonly_volumes: "{{ fact_openid_tls_web_proxy_config_readonly_volumes }}"

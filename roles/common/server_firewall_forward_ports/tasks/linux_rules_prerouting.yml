@@ -1,0 +1,18 @@
+---
+- name: Server firewall forward ports - PREROUTING rules
+  ansible.builtin.blockinfile:
+    path: /etc/ufw/before.rules
+    block: |
+      # NAT table rules
+      *nat
+      :PREROUTING ACCEPT [0:0]
+      :POSTROUTING ACCEPT [0:0]
+      {% for rule in server_firewall_forward_ports_list %}
+
+      # Service - {{ rule.username }}
+      -A PREROUTING -i {{ server_firewall_forward_ports_network_interface }} -p {{ rule.protocol }} --dport {{ rule.destination_port }} -j DNAT --to-destination 127.0.0.1:{{ rule.redirect_port }}
+      {% endfor %}
+
+      COMMIT
+    insertbefore: BOF
+    marker: "#-- {mark} ANSIBLE MANAGED BLOCK --#"

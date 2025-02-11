@@ -1,0 +1,7 @@
+---
+service_drawio_init_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_drawio.production, platform_service_drawio.staging) }}"
+
+service_drawio_init_username: "{{ service_drawio_init_config.service_account.username }}"
+service_drawio_init_fqdn_service: "{{ service_drawio_init_config.fqdn_service }}"
+service_drawio_init_fqdn_server: "{{ service_drawio_init_config.fqdn_server }}"

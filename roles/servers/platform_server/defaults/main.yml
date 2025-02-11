@@ -1,0 +1,10 @@
+---
+platform_server_user_uid: "{{ ansible_user_uid }}"
+platform_server_user_gid: "{{ ansible_user_gid }}"
+
+platform_server_sshd_path: "/etc/ssh/sshd_config"
+platform_server_sshd_cloud_auth_config_path: "/etc/ssh/sshd_config.d/50-cloud-init.conf"
+
+platform_server_ca_file: "{{ fact_pki_certificate_authority_info_ca_file }}"
+platform_server_machine_ca_file: "{{ facts_machine_linux_machine_ca_certificates_dir }}/{{ fact_pki_certificate_authority_info_machine_ca_filename }}"
+platform_server_machine_ca_file_mode: "0644"

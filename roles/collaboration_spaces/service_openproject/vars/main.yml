@@ -1,0 +1,131 @@
+---
+service_openproject_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_openproject.production, platform_service_openproject.staging) }}"
+
+service_openproject_config_http_gateway: "{{ service_openproject_config.http_gateway }}"
+
+service_openproject_service_name: "openproject"
+service_openproject_passwords_path: "{{ platform_management_passwords_path }}/{{ service_openproject_service_name }}_"
+
+service_openproject_config_admin_username: "{{ service_openproject_config.admin_username }}"
+
+# web proxy config
+service_openproject_server_firewall_port: "{{ service_openproject_config.firewall_port }}"
+service_openproject_fqdn_server: "{{ service_openproject_config.fqdn_server }}"
+service_openproject_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+service_openproject_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
+service_openproject_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
+service_openproject_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
+service_openproject_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca_cert_file }}"
+
+service_openproject_config_set_x_forwarded_host: false
+service_openproject_config_x_host_with_port: "$http_host"
+service_openproject_config_reverse_proxy_additional_headers: []
+service_openproject_config_reverse_proxy_enable_web_socket: true
+
+# locations.conf
+service_openproject_service_uri: "{{ service_openproject_config.service_uri }}"
+service_openproject_server_url: "http://{{ service_openproject_web_worker }}:8080"
+service_openproject_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
+service_openproject_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+
+# service_postgresql_init
+service_openproject_pgsql_worker: "pgsqlworker"
+service_openproject_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
+service_openproject_pgsql_db: "openproject"
+service_openproject_pgsql_user: "{{ service_openproject_config_admin_username }}"
+service_openproject_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
+service_openproject_pgsql_enable_pg_trgm_extension: true
+service_openproject_pgsql_db_hostname_with_port: "{{ service_openproject_pgsql_worker }}:{{ fact_service_postgresql_init_port }}"
+
+# podman_environment
+# - https://www.openproject.org/docs/installation-and-operations/configuration/environment/
+# - https://www.openproject.org/docs/installation-and-operations/configuration/database/
+service_openproject_web_worker: "web_worker"
+service_openproject_worker: "worker"
+service_openproject_hostname_with_port: "{{ service_openproject_config_http_gateway.server }}"
+service_openproject_admin_user: "{{ service_openproject_config_admin_username }}"
+service_openproject_admin_user_password_file_path: "{{ service_openproject_passwords_path }}{{ service_openproject_config_admin_username }}"
+service_openproject_admin_user_email: "{{ service_openproject_config.admin_email }}"
+service_openproject_secret_key_file_path: "{{ service_openproject_passwords_path }}secret_key"
+service_openproject_root_ca_file_path: "{{ fact_oci_container_service_init_ca_cert_file }}"
+service_openproject_default_language: "en"
+service_openproject_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/podman_environment"
+
+# memcached
+service_openproject_memcached_worker: "memcached_worker"
+service_openproject_memcached_host_with_port: "{{ service_openproject_memcached_worker }}:11211"
+
+# single sign-on
+# see https://www.openproject.org/docs/system-admin-guide/authentication/openid-providers/
+
+# service
+service_openproject_oci_service:
+  image_name: "{{ service_openproject_config.service_image_name }}"
+  image_tag: "{{ service_openproject_config.service_image_tag }}"
+  service_name: "{{ service_openproject_config.service_account.username }}"
+  server_dest_port: "{{ service_openproject_config.server_port }}"
+  container_dest_port: "{{ service_openproject_config.firewall_port }}"
+  volumes: []
+  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  env_file: ""
+  added_capabilities: []
+
+# See https://github.com/opf/openproject/tree/dev/docker/prod for each script
+service_openproject_oci_service_workers:
+  - image_name: "{{ service_openproject_config.worker_pgsql_image_name }}"
+    image_tag: "{{ service_openproject_config.worker_pgsql_image_tag }}"
+    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_openproject_pgsql_worker }}"
+        volumes: "{{ fact_service_postgresql_init_volumes }}"
+        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
+  - image_name: "{{ service_openproject_config.worker_memcached_image_name }}"
+    image_tag: "{{ service_openproject_config.worker_memcached_image_tag }}"
+    env_file: ""
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_openproject_memcached_worker }}"
+        volumes: []
+        readonly_volumes: []
+  - image_name: "{{ service_openproject_config.worker_openproject_image_name }}"
+    image_tag: "{{ service_openproject_config.worker_openproject_image_tag }}"
+    command: "./docker/prod/web"
+    env_file: "{{ service_openproject_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_openproject_web_worker }}"
+        volumes:
+          - "openproject_assets:/var/openproject/assets"
+        readonly_volumes: []
+  - image_name: "{{ service_openproject_config.worker_openproject_image_name }}"
+    image_tag: "{{ service_openproject_config.worker_openproject_image_tag }}"
+    command: "./docker/prod/worker"
+    env_file: "{{ service_openproject_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_openproject_worker }}"
+        volumes:
+          - "openproject_assets:/var/openproject/assets"
+        readonly_volumes: []
+  - image_name: "{{ service_openproject_config.worker_openproject_image_name }}"
+    image_tag: "{{ service_openproject_config.worker_openproject_image_tag }}"
+    command: "./docker/prod/cron"
+    env_file: "{{ service_openproject_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "cron_worker"
+        volumes:
+          - "openproject_assets:/var/openproject/assets"
+        readonly_volumes: []
+  - image_name: "{{ service_openproject_config.worker_openproject_image_name }}"
+    image_tag: "{{ service_openproject_config.worker_openproject_image_tag }}"
+    command: "./docker/prod/seeder"
+    env_file: "{{ service_openproject_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "seeder_worker"
+        volumes:
+          - "openproject_assets:/var/openproject/assets"
+        readonly_volumes: []

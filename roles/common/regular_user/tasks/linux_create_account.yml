@@ -1,0 +1,48 @@
+---
+- name: Regular user - add user group
+  ansible.builtin.group:
+    name: "{{ regular_user_username }}"
+    state: present
+
+- name: Regular user - create account (password)
+  when: regular_user_password_file is defined and regular_user_password_file | length > 0
+  block:
+    - name: Regular user - retrieve user password
+      set_fact:
+        regular_user_password: "{{ lookup('user_account_password', regular_user_password_file) }}"
+
+    - name: Regular user - account (password)
+      ansible.builtin.user:
+        name: "{{ regular_user_username }}"
+        comment: "{{ regular_user_gecos }}"
+        shell: "{{ regular_user_shell }}"
+        group: "{{ regular_user_primary_group }}"
+        groups: "{{ regular_user_secondary_groups }}"
+        password: "{{ regular_user_password | password_hash(regular_user_password_hash) }}"
+        state: present
+      register: regular_user_account_with_password
+
+    - name: Regular user - set user account fact
+      ansible.builtin.set_fact:
+        fact_regular_user_account: "{{ regular_user_account_with_password }}"
+
+    - name: Regular user - clear retrieved user password
+      set_fact:
+        regular_user_password: ""
+
+- name: Regular user - create account (no password)
+  when: regular_user_password_file is undefined or regular_user_password | length < 1
+  block:
+    - name: Regular user - account (no password)
+      ansible.builtin.user:
+        name: "{{ regular_user_username }}"
+        comment: "{{ regular_user_gecos }}"
+        shell: "{{ regular_user_shell }}"
+        group: "{{ regular_user_primary_group }}"
+        groups: "{{ regular_user_secondary_groups }}"
+        state: present
+      register: regular_user_account_no_password
+
+    - name: Regular user - set user account fact
+      ansible.builtin.set_fact:
+        fact_regular_user_account: "{{ regular_user_account_no_password }}"

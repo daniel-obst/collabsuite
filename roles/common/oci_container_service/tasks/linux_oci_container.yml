@@ -1,0 +1,23 @@
+---
+- name: OCI container service - reset readonly volume fact
+  set_fact:
+    oci_container_service_ro_vols: []
+
+- name: OCI container service - set readonly volume fact
+  set_fact:
+    oci_container_service_ro_vols: "{{ (oci_container_service_ro_vols | default([]))
+      + (oci_container_service_readonly_volumes | product([oci_container_service_ro_vol_flags]) | map('join') | list)
+      + oci_container_service_volumes
+      + oci_container_service_pki_readonly_volumes }}"
+
+- name: OCI container service - add container to pod
+  containers.podman.podman_container:
+    name: "{{ oci_container_service_container_name }}"
+    image: "{{ oci_container_service_image_name }}:{{ oci_container_service_image_tag }}"
+    pod: "{{ oci_container_service_pod_name }}"
+    entrypoint: "{{ oci_container_service_entrypoint | default(omit) }}"
+    command: "{{ oci_container_service_command | default(omit) }}"
+    env_file: "{{ oci_container_service_container_env_file | default(omit) }}"
+    cap_add: "{{ oci_container_service_container_cap_add | default(omit) }}"
+    state: started
+    volumes: "{{ oci_container_service_ro_vols | default(omit) }}"

@@ -1,0 +1,17 @@
+---
+oci_container_service_ro_vol_flags: ":z,ro"
+
+oci_container_service_ssl_cert_dir_with_mount_flags:
+  "{{ facts_machine_linux_machine_ssl_cert_dir }}{{ oci_container_service_ro_vol_flags }}"
+oci_container_service_ssl_ca_certs_file_with_mount_flags:
+  "{{ facts_machine_linux_machine_ssl_ca_certificates_file }}{{ oci_container_service_ro_vol_flags }}"
+oci_container_service_ca_certs_dir_with_mount_flags:
+  "{{ facts_machine_linux_machine_ca_certificates_dir }}{{ oci_container_service_ro_vol_flags }}"
+oci_container_service_ca_cert_path_with_mount_flags:
+  "{{ facts_machine_linux_machine_ca_cert_path }}{{ oci_container_service_ro_vol_flags }}"
+
+oci_container_service_pki_readonly_volumes:
+  - "{{ facts_machine_linux_machine_ssl_cert_dir }}:{{ oci_container_service_ssl_cert_dir_with_mount_flags }}"
+  - "{{ facts_machine_linux_machine_ssl_ca_certificates_file }}:{{ oci_container_service_ssl_ca_certs_file_with_mount_flags }}"
+  - "{{ facts_machine_linux_machine_ca_certificates_dir }}:{{ oci_container_service_ca_certs_dir_with_mount_flags }}"
+  - "{{ facts_machine_linux_machine_ca_cert_path }}:{{ oci_container_service_ca_cert_path_with_mount_flags }}"

@@ -1,0 +1,36 @@
+---
+- name: TLS web proxy service config
+  when: facts_machine_linux_distro
+  block:
+    - name: TLS (web proxy service config) - TLS web proxy configuration
+      ansible.builtin.include_role:
+        name: tls_web_proxy_config
+      vars:
+        tls_web_proxy_config_server_firewall_port: "{{ tls_web_proxy_service_config_server_firewall_port }}"
+        tls_web_proxy_config_fqdn_server: "{{ tls_web_proxy_service_config_fqdn_server }}"
+        tls_web_proxy_config_cert_file_path: "{{ tls_web_proxy_service_config_cert_file_path }}"
+        tls_web_proxy_config_key_file_path: "{{ tls_web_proxy_service_config_key_file_path }}"
+        tls_web_proxy_config_dh_file_path: "{{ tls_web_proxy_service_config_dh_file_path }}"
+        tls_web_proxy_config_ca_cert_file_path: "{{ tls_web_proxy_service_config_ca_cert_file_path }}"
+        tls_web_proxy_config_service_network_dns: "{{ tls_web_proxy_service_config_network_dns }}"
+        tls_web_proxy_config_set_x_forwarded_host: "{{ tls_web_proxy_service_config_set_x_forwarded_host }}"
+        tls_web_proxy_config_x_host_with_port: "{{ tls_web_proxy_service_config_x_host_with_port }}"
+        tls_web_proxy_config_x_forwarded_port: "{{ tls_web_proxy_service_config_x_forwarded_port }}"
+        tls_web_proxy_config_reverse_proxy_additional_headers: "{{ tls_web_proxy_service_config_reverse_proxy_additional_headers }}"
+        tls_web_proxy_config_reverse_proxy_enable_web_socket: "{{ tls_web_proxy_service_config_reverse_proxy_enable_web_socket }}"
+        tls_web_proxy_config_set_deny_root_uri_location: "{{ tls_web_proxy_service_config_set_deny_root_uri_location }}"
+
+    - name: TLS (web proxy service config) - set facts
+      ansible.builtin.set_fact:
+        fact_tls_web_proxy_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
+        fact_tls_web_proxy_service_config_includes_dir: "{{ fact_tls_web_proxy_config_includes_dir }}"
+        fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
+        fact_tls_web_proxy_service_config_tls_dir: "{{ fact_tls_web_proxy_config_tls_dir }}"
+        fact_tls_web_proxy_service_config_uid: "{{ fact_tls_web_proxy_config_uid }}"
+        fact_tls_web_proxy_service_config_gid: "{{ fact_tls_web_proxy_config_gid }}"
+        fact_tls_web_proxy_service_config_conf_file_mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+        fact_tls_web_proxy_service_conf_dir_mode: "{{ fact_tls_web_proxy_config_conf_dir_mode }}"
+        fact_tls_web_proxy_service_config_html_dir: "{{ fact_tls_web_proxy_config_html_dir }}"
+        fact_tls_web_proxy_service_config_html_dir_mode: "{{ fact_tls_web_proxy_config_html_dir_mode }}"
+        fact_tls_web_proxy_service_config_html_file_mode: "{{ fact_tls_web_proxy_config_html_file_mode }}"
+        fact_tls_web_proxy_service_config_readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"

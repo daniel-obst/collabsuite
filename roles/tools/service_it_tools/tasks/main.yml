@@ -1,0 +1,49 @@
+---
+- name: Service (IT tools)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (IT tools) - TLS web proxy configuration
+      ansible.builtin.include_role:
+        name: tls_web_proxy_service_config
+      vars:
+        tls_web_proxy_service_config_server_firewall_port: "{{ service_it_tools_server_firewall_port }}"
+        tls_web_proxy_service_config_fqdn_server: "{{ service_it_tools_fqdn_server }}"
+        tls_web_proxy_service_config_cert_file_path: "{{ service_it_tools_config_cert_file_path }}"
+        tls_web_proxy_service_config_key_file_path: "{{ service_it_tools_config_key_file_path }}"
+        tls_web_proxy_service_config_dh_file_path: "{{ service_it_tools_config_dh_file_path }}"
+        tls_web_proxy_service_config_ca_cert_file_path: "{{ service_it_tools_config_ca_cert_file_path }}"
+        tls_web_proxy_service_config_network_dns: "{{ service_it_tools_config_network_dns }}"
+        tls_web_proxy_service_config_reverse_proxy_additional_headers: "{{ service_it_tools_config_reverse_proxy_additional_headers }}"
+        tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_it_tools_config_reverse_proxy_enable_web_socket }}"
+        tls_web_proxy_service_config_http_gateway: "{{ service_it_tools_config_http_gateway }}"
+
+    - name: Service (IT tools) - locations.conf
+      ansible.builtin.template:
+        src: "service_it_tools_locations.conf.j2"
+        dest: "{{ service_it_tools_locations_conf_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+      vars:
+        service_uri: "{{ service_it_tools_service_uri }}"
+        server_url: "{{ service_it_tools_server_url }}"
+        includes_path_reverse_proxy_conf: "{{ service_it_tools_config_reverse_proxy_conf_container_path }}"
+
+    - name: Service (IT tools) - podman_environment
+      ansible.builtin.template:
+        src: "service_it_tools_podman_environment.j2"
+        dest: "{{ service_it_tools_config_podman_environment_server_path }}"
+        owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+        group: "{{ fact_tls_web_proxy_service_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+        force: true
+      vars:
+        base_uri: "{{ service_it_tools_base_uri }}"
+
+    - name: Service (IT tools) - deploy service
+      ansible.builtin.include_role:
+        name: oci_container_service
+      vars:
+        oci_container_service_config: "{{ service_it_tools_oci_service }}"
+        oci_container_service_workers: "{{ service_it_tools_oci_service_workers }}"

@@ -1,0 +1,11 @@
+---
+- name: Service (code-server) - init
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (code-server) - container service init
+      ansible.builtin.include_role:
+        name: oci_container_service_init
+      vars:
+        oci_container_service_init_username: "{{ service_code_server_init_username }}"
+        oci_container_service_init_fqdn_service: "{{ service_code_server_init_fqdn_service }}"
+        oci_container_service_init_fqdn_server: "{{ service_code_server_init_fqdn_server }}"

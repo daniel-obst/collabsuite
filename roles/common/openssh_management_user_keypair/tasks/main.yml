@@ -1,0 +1,10 @@
+---
+- name: Openssh management user keypair
+  when: facts_machine_linux_distro
+  block:
+    - name: Openssh management user keypair - generate keypair
+      ansible.builtin.include_role:
+        name: openssh_keypair
+      vars:
+        openssh_keypair_username: "{{ platform_management_username }}"
+        openssh_keypair_fqdn_client: "{{ platform_management_fqdn_client }}"

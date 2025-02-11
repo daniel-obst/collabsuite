@@ -1,0 +1,21 @@
+---
+- name: Server firewall forward ports - running firewall configuration tasks
+  notify: "server_firewall_forward_ports_reload_firewall_handler"
+  block:
+    - name: Server firewall forward ports - default forward policy is DROP
+      ansible.builtin.lineinfile:
+        path: /etc/default/ufw
+        regexp: "^.*DEFAULT_FORWARD_POLICY="
+        line: 'DEFAULT_FORWARD_POLICY="DROP"'
+
+    - name: Server firewall forward ports - IPv4 forwarding is enabled
+      ansible.builtin.lineinfile:
+        path: /etc/ufw/sysctl.conf
+        regexp: "^.*net/ipv4/ip_forward="
+        line: "net/ipv4/ip_forward=1"
+
+    - name: Server firewall forward ports - IPv4 forwarding (localhost) is enabled
+      ansible.builtin.lineinfile:
+        path: /etc/ufw/sysctl.conf
+        insertafter: "^.*net/ipv4/ip_forward="
+        line: "net/ipv4/conf/all/route_localnet=1"

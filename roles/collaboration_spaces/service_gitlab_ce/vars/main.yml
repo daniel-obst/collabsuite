@@ -1,0 +1,67 @@
+---
+service_gitlab_ce_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_gitlab_ce.production, platform_service_gitlab_ce.staging) }}"
+
+service_gitlab_ce_config_http_gateway: "{{ service_gitlab_ce_config.http_gateway }}"
+
+service_gitlab_ce_env_prefix: "gitlab_ce_"
+
+# web proxy config
+service_gitlab_ce_server_firewall_port: "{{ service_gitlab_ce_config.firewall_port }}"
+service_gitlab_ce_fqdn_server: "{{ service_gitlab_ce_config.fqdn_server }}"
+service_gitlab_ce_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+service_gitlab_ce_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
+service_gitlab_ce_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
+service_gitlab_ce_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
+service_gitlab_ce_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca_cert_file }}"
+
+service_gitlab_ce_config_reverse_proxy_additional_headers: []
+service_gitlab_ce_config_reverse_proxy_enable_web_socket: true
+
+# gitlab conf.d
+service_gitlab_ce_gitlab_config_dir: "gitlab_conf.d"
+service_gitlab_ce_config_gitlab_external_url:
+  "https://{{ service_gitlab_ce_config_http_gateway.server }}:{{ service_gitlab_ce_config_http_gateway.port }}/{{ service_gitlab_ce_config.service_uri }}"
+service_gitlab_ce_config_container_ssl_dir_path: "/etc/gitlab/ssl"
+service_gitlab_ce_config_container_server_crt_file_path: "{{ service_gitlab_ce_config_container_ssl_dir_path }}/{{ fact_oci_container_service_init_cert_file | basename }}"
+service_gitlab_ce_config_container_server_key_file_path: "{{ service_gitlab_ce_config_container_ssl_dir_path }}/{{ fact_oci_container_service_init_key_file | basename }}"
+service_gitlab_ce_config_container_dh_pem_file_path: "{{ service_gitlab_ce_config_container_ssl_dir_path }}/{{ fact_oci_container_service_init_dh_file | basename }}"
+service_gitlab_ce_gitlab_rb_server_path: "{{ service_gitlab_ce_gitlab_config_dir }}/gitlab.rb"
+
+# locations.conf
+service_gitlab_ce_service_uri: "{{ service_gitlab_ce_config.service_uri }}"
+service_gitlab_ce_worker: "gitlabce_worker"
+service_gitlab_ce_server_url: "https://{{ service_gitlab_ce_worker }}:{{ service_gitlab_ce_config_http_gateway.port }}"
+service_gitlab_ce_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
+service_gitlab_ce_locations_conf_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+
+# podman_environment
+service_gitlab_ce_conf_dir: "{{ fact_tls_web_proxy_service_config_dir }}"
+service_gitlab_ce_podman_environment_server_path: "{{ service_gitlab_ce_conf_dir }}/podman_environment"
+service_gitlab_ce_password_file_path: "{{ platform_management_passwords_path }}/{{ service_gitlab_ce_env_prefix }}{{ service_gitlab_ce_config.username }}"
+
+# service
+service_gitlab_ce_oci_service:
+  image_name: "{{ service_gitlab_ce_config.service_image_name }}"
+  image_tag: "{{ service_gitlab_ce_config.service_image_tag }}"
+  service_name: "{{ service_gitlab_ce_config.service_account.username }}"
+  server_dest_port: "{{ service_gitlab_ce_config.server_port }}"
+  container_dest_port: "{{ service_gitlab_ce_config.firewall_port }}"
+  volumes: []
+  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  env_file: ""
+  added_capabilities: []
+
+service_gitlab_ce_oci_service_workers:
+  - image_name: "{{ service_gitlab_ce_config.worker_image_name }}"
+    image_tag: "{{ service_gitlab_ce_config.worker_image_tag }}"
+    env_file: "{{ service_gitlab_ce_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_gitlab_ce_worker }}"
+        volumes:
+          - "{{ service_gitlab_ce_config.service_account.username }}_ce_data:/var/opt/gitlab"
+          - "{{ service_gitlab_ce_config.service_account.username }}_logs:/var/log/gitlab"
+          - "./{{ service_gitlab_ce_gitlab_config_dir }}:/etc/gitlab"
+        readonly_volumes:
+          - "./{{ fact_tls_web_proxy_service_config_tls_dir }}:{{ service_gitlab_ce_config_container_ssl_dir_path }}"

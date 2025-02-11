@@ -1,0 +1,5 @@
+---
+oci_container_service_network_name: "{{ platform_oci_container_service_globals.network_name }}"
+oci_container_service_network_subnet: "{{ platform_oci_container_service_globals.network_subnet }}"
+oci_container_service_network_gateway: "{{ platform_oci_container_service_globals.network_gateway }}"
+oci_container_service_workers: []

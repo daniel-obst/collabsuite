@@ -1,0 +1,11 @@
+location ~* ^/{{ service_uri }}/(realms|resources)/.*$ {
+  set        $workerPod {{ server_url }};
+  proxy_pass $workerPod;
+  include    {{ reverse_proxy_conf_path }};
+}
+
+location = /{{ service_uri }}/robots.txt {
+  set        $workerPod {{ server_url }};
+  proxy_pass $workerPod;
+  include    {{ reverse_proxy_conf_path }};
+}

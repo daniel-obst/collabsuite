@@ -1,0 +1,50 @@
+---
+- name: OCI container image registry upload
+  when: facts_machine_linux_distro
+  block:
+    - name: OCI container image registry upload - image exists
+      ansible.builtin.shell:
+        cmd: "{{ oci_container_image_registry_upload_image_path_exists_cmd }}"
+      args:
+        executable: "{{ facts_machine_linux_default_shell }}"
+      register: oci_container_image_registry_upload_image_path_exists
+      ignore_errors: true
+      delegate_to: localhost
+
+    - name: OCI container image registry upload - image registry push
+      when: oci_container_image_registry_upload_image_path_exists.stdout == 'n'
+      block:
+        - name: OCI container image registry upload - image download (external registry)
+          ansible.builtin.shell:
+            cmd: "{{ oci_container_image_registry_upload_image_download_cmd }}"
+          args:
+            executable: "{{ facts_machine_linux_default_shell }}"
+          delegate_to: localhost
+
+        - name: OCI container image registry upload - re-tag image
+          ansible.builtin.shell:
+            cmd: "{{ oci_container_image_registry_upload_retag_image_cmd }}"
+          args:
+            executable: "{{ facts_machine_linux_default_shell }}"
+          delegate_to: localhost
+
+        - name: OCI container image registry upload - platform registry
+          ansible.builtin.shell:
+            cmd: "{{ oci_container_image_registry_upload_cmd }}"
+          args:
+            executable: "{{ facts_machine_linux_default_shell }}"
+          delegate_to: localhost
+
+    - name: OCI container image registry upload - delete image (local registry - uploaded)
+      ansible.builtin.shell:
+        cmd: "{{ oci_container_image_registry_upload_cleanup_retag_cmd }}"
+      args:
+        executable: "{{ facts_machine_linux_default_shell }}"
+      delegate_to: localhost
+
+    - name: OCI container image registry upload - delete image (local registry - external)
+      ansible.builtin.shell:
+        cmd: "{{ oci_container_image_registry_upload_cleanup_external_cmd }}"
+      args:
+        executable: "{{ facts_machine_linux_default_shell }}"
+      delegate_to: localhost

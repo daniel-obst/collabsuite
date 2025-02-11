@@ -1,0 +1,4 @@
+---
+tls_web_proxy_service_config_set_x_forwarded_host: true
+tls_web_proxy_service_config_set_x_forwarded_port: true
+tls_web_proxy_service_config_set_deny_root_uri_location: true

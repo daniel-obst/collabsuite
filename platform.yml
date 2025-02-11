@@ -1,0 +1,25 @@
+---
+- name: Platform - ansible controllers (playbook)
+  ansible.builtin.import_playbook: playbooks/ansible_controllers.yml
+  tags: [never, ansible_controllers]
+
+- name: Platform - external gateways (playbook)
+  ansible.builtin.import_playbook: playbooks/platform_external_gateways.yml
+
+- name: Platform - trusted gateways (playbook)
+  ansible.builtin.import_playbook: playbooks/platform_internal_gateways.yml
+
+- name: Platform - domain name providers (playbook)
+  ansible.builtin.import_playbook: playbooks/platform_domain_name_providers.yml
+
+- name: Platform - identity providers (playbook)
+  ansible.builtin.import_playbook: playbooks/platform_identity_providers.yml
+
+- name: Platform - server 1 (playbook)
+  ansible.builtin.import_playbook: playbooks/platform_server_1.yml
+
+- name: Platform - server 2 (playbook)
+  ansible.builtin.import_playbook: playbooks/platform_server_2.yml
+
+- name: Platform - server 3 (playbook)
+  ansible.builtin.import_playbook: playbooks/platform_server_3.yml

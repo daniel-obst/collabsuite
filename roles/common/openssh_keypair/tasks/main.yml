@@ -1,0 +1,20 @@
+---
+- name: Openssh keypair
+  when: facts_machine_linux_distro
+  block:
+    - name: Openssh keypair - retrieve keypair info
+      ansible.builtin.include_role:
+        name: openssh_keypair_info
+      vars:
+        openssh_keypair_info_username: "{{ openssh_keypair_username }}"
+        openssh_keypair_info_fqdn_client: "{{ openssh_keypair_fqdn_client }}"
+
+    - name: Openssh keypair - generate keypair
+      community.crypto.openssh_keypair:
+        path: "{{ fact_openssh_keypair_info_private_key_file }}"
+        type: "{{ openssh_keypair_key_type }}"
+        size: "{{ openssh_keypair_key_size }}"
+        comment: "{{ openssh_keypair_key_comment }}"
+        owner: "{{ openssh_keypair_user_uid }}"
+        group: "{{ openssh_keypair_user_gid }}"
+        state: present

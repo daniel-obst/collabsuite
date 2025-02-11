@@ -1,0 +1,34 @@
+---
+- name: PKI certificate authority - initialize public key infrastructure
+  ansible.builtin.command:
+    cmd: "{{ pki_certificate_authority_easyrsa_binary }} init-pki"
+    creates: "{{ pki_certificate_authority_pki_dir }}"
+    chdir: "{{ pki_certificate_authority_easyrsa_dir }}"
+
+##########################################################################
+# Auto-generate password for CA certificate (if not exists)              #
+- name: PKI certificate authority - generate certificate authority password (start)
+  ansible.builtin.set_fact:
+    fact_pki_certificate_authority_password: "{{ lookup('admin_account_password', pki_certificate_authority_ca_password_file) }}"
+
+- name: PKI certificate authority - generate certificate authority password (end)
+  ansible.builtin.set_fact:
+    fact_pki_certificate_authority_password: None
+#                                                                        #
+##########################################################################
+
+- name: PKI certificate authority - generate CA certificate
+  ansible.builtin.shell:
+    cmd: "{{ pki_certificate_authority_ca_cmd }}"
+    creates: "{{ pki_certificate_authority_pki_dir }}/private/ca.key"
+    chdir: "{{ pki_certificate_authority_easyrsa_dir }}"
+  args:
+    executable: "{{ facts_machine_linux_default_shell }}"
+
+- name: PKI certificate authority - generate Diffie-Hellman params
+  ansible.builtin.shell:
+    cmd: "{{ pki_certificate_authority_easyrsa_binary }} gen-dh"
+    creates: "{{ pki_certificate_authority_pki_dir }}/dh.pem"
+    chdir: "{{ pki_certificate_authority_easyrsa_dir }}"
+  args:
+    executable: "{{ facts_machine_linux_default_shell }}"

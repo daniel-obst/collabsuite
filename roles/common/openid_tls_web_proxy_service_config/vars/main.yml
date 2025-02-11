@@ -1,0 +1,9 @@
+---
+openid_tls_web_proxy_service_config_gateway: "{{ openid_tls_web_proxy_service_config_http_gateway | ansible.builtin.mandatory }}"
+
+openid_tls_web_proxy_service_config_x_host: "{{ openid_tls_web_proxy_service_config_gateway.server }}"
+openid_tls_web_proxy_service_config_x_host_with_port:
+  "{{ openid_tls_web_proxy_service_config_gateway.server }}:{{ openid_tls_web_proxy_service_config_gateway.port }}"
+openid_tls_web_proxy_service_config_x_forwarded_port:
+  "{{ openid_tls_web_proxy_service_config_set_x_forwarded_port 
+  | ansible.builtin.ternary(openid_tls_web_proxy_service_config_gateway.port, default(None)) }}"

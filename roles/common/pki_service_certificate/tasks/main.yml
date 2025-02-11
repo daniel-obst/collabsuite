@@ -1,0 +1,11 @@
+---
+- name: PKI service certificate
+  when: facts_machine_linux_distro
+  block:
+    - name: PKI service certificate - generate server certificate and sign by CA
+      ansible.builtin.shell:
+        cmd: "{{ pki_service_certificate_cmd }}"
+        creates: "{{ pki_service_certificate_pki_dir }}/private/{{ pki_service_certificate_fqdn_service }}.key"
+        chdir: "{{ pki_service_certificate_easyrsa_dir }}"
+      args:
+        executable: "{{ facts_machine_linux_default_shell }}"

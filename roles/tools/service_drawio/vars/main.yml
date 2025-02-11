@@ -1,0 +1,45 @@
+---
+service_drawio_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_drawio.production, platform_service_drawio.staging) }}"
+
+service_drawio_config_http_gateway: "{{ service_drawio_config.http_gateway }}"
+
+# web proxy config
+service_drawio_server_firewall_port: "{{ service_drawio_config.firewall_port }}"
+service_drawio_fqdn_server: "{{ service_drawio_config.fqdn_server }}"
+service_drawio_config_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+service_drawio_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
+service_drawio_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
+service_drawio_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
+service_drawio_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca_cert_file }}"
+service_drawio_config_reverse_proxy_additional_headers: []
+service_drawio_config_reverse_proxy_enable_web_socket: true
+
+# locations.conf
+service_drawio_service_uri: "{{ service_drawio_config.service_uri }}"
+service_drawio_worker: "drawio_worker"
+service_drawio_server_url: "http://{{ service_drawio_worker }}:8080"
+service_drawio_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
+service_drawio_locations_conf_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+
+# service
+service_drawio_oci_service:
+  image_name: "{{ service_drawio_config.service_image_name }}"
+  image_tag: "{{ service_drawio_config.service_image_tag }}"
+  service_name: "{{ service_drawio_config.service_account.username }}"
+  server_dest_port: "{{ service_drawio_config.server_port }}"
+  container_dest_port: "{{ service_drawio_config.firewall_port }}"
+  volumes: []
+  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  env_file: ""
+  added_capabilities: []
+
+service_drawio_oci_service_workers:
+  - image_name: "{{ service_drawio_config.worker_image_name }}"
+    image_tag: "{{ service_drawio_config.worker_image_tag }}"
+    env_file: ""
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_drawio_worker }}"
+        volumes: []
+        readonly_volumes: []

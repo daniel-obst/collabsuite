@@ -1,0 +1,14 @@
+---
+- name: OCI container service - process OCI worker
+  include_tasks: linux_oci_deploy_worker.yml
+  vars:
+    oci_container_service_worker_config: "{{ oci_container_service_deploy_oci_worker_item }}"
+    oci_container_service_worker_config_image_name: "{{ oci_container_service_worker.image_name }}"
+    oci_container_service_worker_config_image_tag: "{{ oci_container_service_worker.image_tag }}"
+    oci_container_service_worker_config_env_file: "{{ oci_container_service_worker.env_file }}"
+    oci_container_service_worker_config_added_capabilities: "{{ oci_container_service_worker.added_capabilities }}"
+    oci_container_service_worker_config_entrypoint: "{{ oci_container_service_worker.entrypoint }}"
+    oci_container_service_worker_config_command: "{{ oci_container_service_worker.command }}"
+  loop: "{{ oci_container_service_worker.containers }}"
+  loop_control:
+    loop_var: oci_container_service_deploy_oci_worker_item

@@ -1,0 +1,17 @@
+location  ~* ^/(?!{{ auth_service_uri }}).*$ {
+  set        $upstream {{ internal_gateway_url }};
+  proxy_pass $upstream;
+  include    {{ includes_path_reverse_proxy_conf }};
+}
+
+location ~* ^/{{ auth_service_uri }}/(realms|resources)/.*$ {
+  set        $upstream {{ auth_gateway_url }};
+  proxy_pass $upstream;
+  include    {{ includes_path_reverse_proxy_conf }};
+}
+
+location = /{{ auth_service_uri }}/robots.txt {
+  set        $upstream {{ auth_gateway_url }};
+  proxy_pass $upstream;
+  include    {{ includes_path_reverse_proxy_conf }};
+}

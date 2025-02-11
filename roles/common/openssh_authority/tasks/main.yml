@@ -1,0 +1,11 @@
+---
+- name: Openssh authority - setup keypair authority
+  when: facts_machine_linux_distro
+  block:
+    - name: Openssh authority - create directory
+      ansible.builtin.file:
+        path: "{{ openssh_authority_openssh_dir }}"
+        state: directory
+        owner: "{{ openssh_authority_user_uid }}"
+        group: "{{ openssh_authority_user_gid }}"
+        mode: "{{ openssh_authority_directory_mode }}"

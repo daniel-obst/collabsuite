@@ -1,0 +1,11 @@
+---
+- name: Openssh bulk keypairs
+  when: facts_machine_linux_distro
+  block:
+    - name: Openssh bulk keypairs - generate keypairs
+      ansible.builtin.include_role:
+        name: openssh_keypair
+      vars:
+        openssh_keypair_username: "{{ item.username }}"
+        openssh_keypair_fqdn_client: "{{ item.fqdn_client }}"
+      loop: "{{ openssh_bulk_keypairs }}"

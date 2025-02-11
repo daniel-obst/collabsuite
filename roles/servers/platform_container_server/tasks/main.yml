@@ -1,0 +1,28 @@
+---
+- name: Platform container server
+  when: facts_machine_linux_distro
+  block:
+    - name: Platform container server - container runtime
+      ansible.builtin.include_role:
+        name: oci_container_runtime
+
+    - name: Platform container server - user accounts
+      ansible.builtin.include_role:
+        name: oci_container_account
+      vars:
+        oci_container_account_username: "{{ item.username }}"
+        oci_container_account_gecos: "{{ item.gecos }}"
+        oci_container_account_primary_group: "{{ item.username }}"
+        oci_container_account_long_running_services: true
+        oci_container_account_public_key_file: "{{ fact_openssh_keypair_info_public_key_file }}"
+      loop: "{{ platform_container_server_services_user_accounts }}"
+
+    - name: Platform container server - forward ports
+      ansible.builtin.include_role:
+        name: server_firewall_forward_ports
+      vars:
+        server_firewall_forward_ports_list: "{{ platform_container_server_services_forward_ports }}"
+
+    - name: Platform container server - restart firewall
+      community.general.ufw:
+        state: reloaded

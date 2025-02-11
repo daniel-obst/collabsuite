@@ -1,0 +1,16 @@
+---
+pki_service_certificate_san_dns: "DNS:{{ (pki_service_certificate_fqdn_server | ansible.builtin.mandatory) }}"
+
+pki_service_certificate_san_ip: "{{ (pki_service_certificate_service_ip is ansible.utils.ipv4)
+  | ansible.builtin.ternary(',IP:' + pki_service_certificate_service_ip, '') }}"
+
+pki_service_certificate_subject_alt_name: "{{ pki_service_certificate_san_dns }}{{ pki_service_certificate_san_ip }}"
+
+pki_service_certificate_cmd:
+  "export EASYRSA_KEY_SIZE={{ pki_service_certificate_default_key_size }};
+  export EASYRSA_CERT_EXPIRE={{ pki_service_certificate_cert_expire_in_days }};
+  export EASYRSA_DN='cn_only'; export EASYRSA_BATCH=1;
+  {{ pki_service_certificate_easyrsa_binary }}
+  --subject-alt-name='{{ pki_service_certificate_subject_alt_name }}'
+  --passin=file:{{ pki_service_certificate_ca_password_file | ansible.builtin.mandatory }}
+  build-server-full {{ pki_service_certificate_fqdn_service | ansible.builtin.mandatory }} nopass"

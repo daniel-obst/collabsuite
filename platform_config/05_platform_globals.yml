@@ -1,0 +1,1722 @@
+---
+######################
+# Platform - Globals #
+######################
+platform_globals:
+  production:
+    https_port: &platform_globals_prod_https_port "443"
+    https_redirect_port: &platform_globals_prod_https_redirect_port "8443"
+    external_gateway_ip: &platform_globals_prod_external_gateway_ip "{{ facts_platform_environment.external_server.production.ip }}"
+    internal_network_dns_ip: &platform_globals_prod_internal_network_dns_ip "{{ facts_platform_environment.external_server.production.platform_internal_network_dns }}"
+    landing_page_title: "Collabsuite (v2.0)"
+  staging:
+    https_port: &platform_globals_staging_https_port "8444"
+    https_redirect_port: &platform_globals_staging_https_redirect_port "8444"
+    external_gateway_ip: &platform_globals_staging_external_gateway_ip "{{ facts_platform_environment.external_server.staging.ip }}"
+    internal_network_dns_ip: &platform_globals_staging_internal_network_dns_ip "{{ facts_platform_environment.external_server.staging.platform_internal_network_dns }}"
+    landing_page_title: "Collabsuite (v2.0 - staging)"
+  rfc1918:
+    class_a: &platform_globals_rfc1918_class_a "10.0.0.0/8"
+    class_b: &platform_globals_rfc1918_class_b "172.16.0.0/12"
+    class_c: &platform_globals_rfc1918_class_c "192.168.0.0/16"
+  rfc1918_networks: &platform_globals_rfc1918_networks
+    - *platform_globals_rfc1918_class_a
+    - *platform_globals_rfc1918_class_b
+    - *platform_globals_rfc1918_class_c
+  servers:
+    external_gateway: &platform_globals_external_gateway "ext-gw.collabsuite.lan"
+    external_gateway_ip: &platform_globals_external_gateway_ip "{{ facts_platform_environment.external_server.production.ip }}"
+    internal_gateway: &platform_globals_internal_gateway "int-gw.collabsuite.lan"
+    identity_provider: &platform_globals_identity_provider "identity.collabsuite.lan"
+    domain_name_provider: &platform_globals_dns "dns.collabsuite.lan"
+    platform_server_1: &platform_globals_server_1 "server-1.collabsuite.lan"
+    platform_server_2: &platform_globals_server_2 "server-2.collabsuite.lan"
+    platform_server_3: &platform_globals_server_3 "server-3.collabsuite.lan"
+
+platform_global_external_gateway:
+  production: &platform_global_external_gateway_prod_info
+    server: *platform_globals_prod_external_gateway_ip
+    server_ip: *platform_globals_prod_external_gateway_ip
+    port: *platform_globals_prod_https_port
+  staging: &platform_global_external_gateway_staging_info
+    server: *platform_globals_staging_external_gateway_ip
+    server_ip: *platform_globals_staging_external_gateway_ip
+    port: *platform_globals_staging_https_port
+
+platform_global_internal_gateway:
+  production: &platform_global_internal_gateway_prod_info
+    server: *platform_globals_internal_gateway
+    port: *platform_globals_prod_https_port
+  staging: &platform_global_internal_gateway_staging_info
+    server: *platform_globals_internal_gateway
+    port: *platform_globals_staging_https_port
+
+########################################
+# Platform - Container Service Globals #
+########################################
+platform_oci_container_service_globals:
+  network_name: "service_network"
+  network_subnet: "10.89.0.0/24"
+  network_gateway: "10.89.0.1"
+  network_dns: "10.89.0.1"
+
+#########################################
+# Platform - Container Registry Globals #
+#########################################
+platform_registry_globals:
+  arch:
+    arm64: &platform_registry_globals_arch_arm64 "arm64"
+    amd64: &platform_registry_globals_arch_amd64 "amd64"
+  platform:
+    linux_arm64: &platform_registry_globals_linux_arm64 "linux/arm64"
+    linux_amd64: &platform_registry_globals_linux_amd64 "linux/amd64"
+  production:
+    platform_username: &platform_service_quayio_prod_platform_username "collabsuite"
+    platform_registry_path: "collabsuite/platform/v2.0"
+  staging:
+    platform_username: &platform_service_quayio_staging_platform_username "stagingcollabsuite"
+    platform_registry_path: "stagingcollabsuite/platform/v2.0"
+
+###############################
+# Platform - Container Images #
+###############################
+platform_container_images_prod_platform_registry_path: "{{ platform_registry_globals.production.platform_registry_path }}"
+platform_container_images_prod_registry_image_path: "{{ platform_service_quayio.production.fqdn_server }}:{{ platform_service_quayio.production.firewall_port }}/{{ platform_registry_globals.production.platform_registry_path }}"
+
+platform_container_images_staging_platform_registry_path: "{{ platform_registry_globals.staging.platform_registry_path }}"
+platform_container_images_staging_registry_image_path: "{{ platform_service_quayio.staging.fqdn_server }}:{{ platform_service_quayio.staging.firewall_port }}/{{ platform_registry_globals.staging.platform_registry_path }}"
+
+platform_container_images:
+  openresty:
+    production:
+      platform_registry_path: &platform_container_images_openresty_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/openresty"
+      platform_registry_build_platform_arches:
+        - *platform_registry_globals_linux_arm64
+        - *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_openresty_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/openresty"
+      image_tag: &platform_container_images_openresty_prod_image_tag "1.27.1.1-0-noble-0"
+      inline_container_file:
+        "FROM docker.io/openresty/openresty:1.27.1.1-0-noble\n
+        RUN luarocks install lua-resty-openidc\n
+        RUN luarocks install lua-resty-http\n
+        RUN luarocks install lua-resty-session"
+    staging:
+      platform_registry_path: &platform_container_images_openresty_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/openresty"
+      platform_registry_build_platform_arches:
+        - *platform_registry_globals_linux_arm64
+        - *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_openresty_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/openresty"
+      image_tag: &platform_container_images_openresty_staging_image_tag "1.27.1.1-0-noble-0"
+      inline_container_file:
+        "FROM docker.io/openresty/openresty:1.27.1.1-0-noble\n
+        RUN luarocks install lua-resty-openidc\n
+        RUN luarocks install lua-resty-http\n
+        RUN luarocks install lua-resty-session"
+  keycloak:
+    production:
+      platform_registry_path: &platform_container_images_keycloak_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/keycloak"
+      image_name: &platform_container_images_keycloak_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/keycloak"
+      image_tag: &platform_container_images_keycloak_prod_image_tag "26.0.1-0"
+    staging:
+      platform_registry_path: &platform_container_images_keycloak_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/keycloak"
+      image_name: &platform_container_images_keycloak_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/keycloak"
+      image_tag: &platform_container_images_keycloak_staging_image_tag "26.0.1-0"
+  code_server:
+    production:
+      platform_registry_path: &platform_container_images_code_server_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/linuxserver/code-server"
+      image_name: &platform_container_images_code_server_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/linuxserver/code-server"
+      image_tag: &platform_container_images_code_server_prod_image_tag "4.96.2-0"
+    staging:
+      platform_registry_path: &platform_container_images_code_server_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/linuxserver/code-server"
+      image_name: &platform_container_images_code_server_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/linuxserver/code-server"
+      image_tag: &platform_container_images_code_server_staging_image_tag "4.96.2-0"
+  nginx:
+    production:
+      image_name: &platform_container_images_nginx_prod_image_name "docker.io/nginx"
+      image_tag: &platform_container_images_nginx_prod_image_tag "1.27.3"
+    staging:
+      image_name: &platform_container_images_nginx_staging_image_name "docker.io/nginx"
+      image_tag: &platform_container_images_nginx_staging_image_tag "1.27.3"
+  postgresql_16:
+    production:
+      external_registry_path: &platform_container_images_postgres_16_prod_external_registry_path "docker.io/postgres"
+      platform_registry_path: &platform_container_images_postgresql_16_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/postgres"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_postgresql_16_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/postgres"
+      image_tag: &platform_container_images_postgresql_16_prod_image_tag "16.6"
+    staging:
+      external_registry_path: &platform_container_images_postgres_16_staging_external_registry_path "docker.io/postgres"
+      platform_registry_path: &platform_container_images_postgresql_16_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/postgres"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_postgresql_16_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/postgres"
+      image_tag: &platform_container_images_postgresql_16_staging_image_tag "16.6"
+  quay_io:
+    production:
+      image_name: &platform_container_images_quay_io_prod_image_name "quay.io/projectquay/quay"
+      image_tag: &platform_container_images_quay_io_prod_image_tag "v3.13.1"
+    staging:
+      image_name: &platform_container_images_quay_io_staging_image_name "quay.io/projectquay/quay"
+      image_tag: &platform_container_images_quay_io_staging_image_tag "v3.13.1"
+  redis:
+    production:
+      external_registry_path: &platform_container_images_redis_prod_external_registry_path "docker.io/bitnami/redis"
+      platform_registry_path: &platform_container_images_redis_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/bitnami/redis"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_redis_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/bitnami/redis"
+      image_tag: &platform_container_images_redis_prod_image_tag "7.4.1"
+    staging:
+      external_registry_path: &platform_container_images_redis_staging_external_registry_path "docker.io/bitnami/redis"
+      platform_registry_path: &platform_container_images_redis_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/bitnami/redis"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_redis_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/bitnami/redis"
+      image_tag: &platform_container_images_redis_staging_image_tag "7.4.1"
+  memcached:
+    production:
+      external_registry_path: &platform_container_images_memcached_prod_external_registry_path "docker.io/memcached"
+      platform_registry_path: &platform_container_images_memcached_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/memcached"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_memcached_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/memcached"
+      image_tag: &platform_container_images_memcached_prod_image_tag "1.6.34"
+    staging:
+      external_registry_path: &platform_container_images_memcached_staging_external_registry_path "docker.io/memcached"
+      platform_registry_path: &platform_container_images_memcached_staging_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/memcached"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_memcached_staging_image_name "{{ platform_container_images_prod_registry_image_path }}/memcached"
+      image_tag: &platform_container_images_memcached_staging_image_tag "1.6.34"
+  node_red:
+    production:
+      external_registry_path: &platform_container_images_node_red_prod_external_registry_path "docker.io/nodered/node-red"
+      platform_registry_path: &platform_container_images_node_red_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/nodered/node-red"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_node_red_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/nodered/node-red"
+      image_tag: &platform_container_images_node_red_prod_image_tag "4.0.8-22"
+    staging:
+      external_registry_path: &platform_container_images_node_red_staging_external_registry_path "docker.io/nodered/node-red"
+      platform_registry_path: &platform_container_images_node_red_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/nodered/node-red"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_node_red_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/nodered/node-red"
+      image_tag: &platform_container_images_node_red_staging_image_tag "4.0.8-22"
+  drawio:
+    production:
+      external_registry_path: &platform_container_images_drawio_prod_external_registry_path "docker.io/jgraph/drawio"
+      platform_registry_path: &platform_container_images_drawio_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/jgraph/drawio"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_drawio_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/jgraph/drawio"
+      image_tag: &platform_container_images_drawio_prod_image_tag "26.0.4"
+    staging:
+      external_registry_path: &platform_container_images_drawio_staging_external_registry_path "docker.io/jgraph/drawio"
+      platform_registry_path: &platform_container_images_drawio_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/jgraph/drawio"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_drawio_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/jgraph/drawio"
+      image_tag: &platform_container_images_drawio_staging_image_tag "26.0.4"
+  pgadmin4:
+    production:
+      external_registry_path: &platform_container_images_pgadmin4_prod_external_registry_path "docker.io/dpage/pgadmin4"
+      platform_registry_path: &platform_container_images_pgadmin4_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/dpage/pgadmin4"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_pgadmin4_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/dpage/pgadmin4"
+      image_tag: &platform_container_images_pgadmin4_prod_image_tag "8.14.0"
+    staging:
+      external_registry_path: &platform_container_images_pgadmin4_staging_external_registry_path "docker.io/dpage/pgadmin4"
+      platform_registry_path: &platform_container_images_pgadmin4_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/dpage/pgadmin4"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_pgadmin4_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/dpage/pgadmin4"
+      image_tag: &platform_container_images_pgadmin4_staging_image_tag "8.14.0"
+  rstudio:
+    production:
+      external_registry_path: &platform_container_images_rstudio_prod_external_registry_path "ghcr.io/rocker-org/rstudio"
+      platform_registry_path: &platform_container_images_rstudio_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/rocker-org/rstudio"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_rstudio_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/rocker-org/rstudio"
+      image_tag: &platform_container_images_rstudio_prod_image_tag "4.4.2"
+    staging:
+      external_registry_path: &platform_container_images_rstudio_staging_external_registry_path "ghcr.io/rocker-org/rstudio"
+      platform_registry_path: &platform_container_images_rstudio_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/rocker-org/rstudio"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_rstudio_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/rocker-org/rstudio"
+      image_tag: &platform_container_images_rstudio_staging_image_tag "4.4.2"
+  gitlab:
+    production:
+      external_registry_path: &platform_container_images_gitlab_ce_prod_external_registry_path "docker.io/gitlab/gitlab-ce"
+      platform_registry_path: &platform_container_images_gitlab_ce_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/gitlab/gitlab-ce"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_gitlab_ce_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/gitlab/gitlab-ce"
+      image_tag: &platform_container_images_gitlab_ce_prod_image_tag "17.4.4-ce.0"
+    staging:
+      external_registry_path: &platform_container_images_gitlab_ce_staging_external_registry_path "docker.io/gitlab/gitlab-ce"
+      platform_registry_path: &platform_container_images_gitlab_ce_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/gitlab/gitlab-ce"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_gitlab_ce_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/gitlab/gitlab-ce"
+      image_tag: &platform_container_images_gitlab_ce_staging_image_tag "17.4.4-ce.0"
+  collabora:
+    production:
+      external_registry_path: &platform_container_images_collabora_prod_external_registry_path "docker.io/collabora/code"
+      platform_registry_path: &platform_container_images_collabora_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/collabora/code"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_collabora_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/collabora/code"
+      image_tag: &platform_container_images_collabora_prod_image_tag "24.04.11.2.1"
+    staging:
+      external_registry_path: &platform_container_images_collabora_staging_external_registry_path "docker.io/collabora/code"
+      platform_registry_path: &platform_container_images_collabora_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/collabora/code"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_collabora_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/collabora/code"
+      image_tag: &platform_container_images_collabora_staging_image_tag "24.04.11.2.1"
+  nextcloud:
+    production:
+      external_registry_path: &platform_container_images_nextcloud_prod_external_registry_path "docker.io/nextcloud"
+      platform_registry_path: &platform_container_images_nextcloud_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/nextcloud"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_nextcloud_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/nextcloud"
+      image_tag: &platform_container_images_nextcloud_prod_image_tag "30.0.4"
+    staging:
+      external_registry_path: &platform_container_images_nextcloud_staging_external_registry_path "docker.io/nextcloud"
+      platform_registry_path: &platform_container_images_nextcloud_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/nextcloud"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_nextcloud_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/nextcloud"
+      image_tag: &platform_container_images_nextcloud_staging_image_tag "30.0.4"
+  data_science_notebook:
+    production:
+      external_registry_path: &platform_container_images_data_science_notebook_prod_external_registry_path "quay.io/jupyter/datascience-notebook"
+      platform_registry_path: &platform_container_images_data_science_notebook_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/jupyter/datascience-notebook"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_data_science_notebook_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/jupyter/datascience-notebook"
+      image_tag: &platform_container_images_data_science_notebook_prod_image_tag "2025-01-13"
+    staging:
+      external_registry_path: &platform_container_images_data_science_notebook_staging_external_registry_path "quay.io/jupyter/datascience-notebook"
+      platform_registry_path: &platform_container_images_data_science_notebook_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/jupyter/datascience-notebook"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_data_science_notebook_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/jupyter/datascience-notebook"
+      image_tag: &platform_container_images_data_science_notebook_staging_image_tag "2025-01-13"
+  redmine:
+    production:
+      external_registry_path: &platform_container_images_redmine_prod_external_registry_path "docker.io/redmine"
+      platform_registry_path: &platform_container_images_redmine_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/redmine"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_redmine_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/redmine"
+      image_tag: &platform_container_images_redmine_prod_image_tag "6.0.2"
+    staging:
+      external_registry_path: &platform_container_images_redmine_staging_external_registry_path "docker.io/redmine"
+      platform_registry_path: &platform_container_images_redmine_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/redmine"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_redmine_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/redmine"
+      image_tag: &platform_container_images_redmine_staging_image_tag "6.0.2"
+  grafana:
+    production:
+      external_registry_path: &platform_container_images_grafana_prod_external_registry_path "docker.io/grafana/grafana"
+      platform_registry_path: &platform_container_images_grafana_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/grafana/grafana"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_grafana_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/grafana/grafana"
+      image_tag: &platform_container_images_grafana_prod_image_tag "11.4.0"
+    staging:
+      external_registry_path: &platform_container_images_grafana_staging_external_registry_path "docker.io/grafana/grafana"
+      platform_registry_path: &platform_container_images_grafana_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/grafana/grafana"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_grafana_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/grafana/grafana"
+      image_tag: &platform_container_images_grafana_staging_image_tag "11.4.0"
+  openproject:
+    production:
+      external_registry_path: &platform_container_images_openproject_prod_external_registry_path "docker.io/openproject/openproject"
+      platform_registry_path: &platform_container_images_openproject_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/openproject/openproject"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_openproject_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/openproject/openproject"
+      image_tag: &platform_container_images_openproject_prod_image_tag "15.2.0-slim"
+    staging:
+      external_registry_path: &platform_container_images_openproject_staging_external_registry_path "docker.io/openproject/openproject"
+      platform_registry_path: &platform_container_images_openproject_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/openproject/openproject"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_openproject_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/openproject/openproject"
+      image_tag: &platform_container_images_openproject_staging_image_tag "15.2.0-slim"
+  it_tools:
+    production:
+      external_registry_path: &platform_container_images_it_tools_prod_external_registry_path "docker.io/corentinth/it-tools"
+      platform_registry_path: &platform_container_images_it_tools_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/corentinth/it-tools"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_it_tools_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/corentinth/it-tools"
+      image_tag: &platform_container_images_it_tools_prod_image_tag "2024.10.22-7ca5933"
+    staging:
+      external_registry_path: &platform_container_images_it_tools_staging_external_registry_path "docker.io/corentinth/it-tools"
+      platform_registry_path: &platform_container_images_it_tools_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/corentinth/it-tools"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_it_tools_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/corentinth/it-tools"
+      image_tag: &platform_container_images_it_tools_staging_image_tag "2024.10.22-7ca5933"
+
+platform_container_registry_repositories:
+  production:
+    - *platform_container_images_openresty_prod_platform_registry_path
+    - *platform_container_images_keycloak_prod_platform_registry_path
+    - *platform_container_images_code_server_prod_platform_registry_path
+    - *platform_container_images_postgresql_16_prod_platform_registry_path
+    - *platform_container_images_redis_prod_platform_registry_path
+    - *platform_container_images_memcached_prod_platform_registry_path
+    - *platform_container_images_node_red_prod_platform_registry_path
+    - *platform_container_images_drawio_prod_platform_registry_path
+    - *platform_container_images_pgadmin4_prod_platform_registry_path
+    - *platform_container_images_rstudio_prod_platform_registry_path
+    - *platform_container_images_gitlab_ce_prod_platform_registry_path
+    - *platform_container_images_collabora_prod_platform_registry_path
+    - *platform_container_images_nextcloud_prod_platform_registry_path
+    - *platform_container_images_data_science_notebook_prod_platform_registry_path
+    - *platform_container_images_redmine_prod_platform_registry_path
+    - *platform_container_images_grafana_prod_platform_registry_path
+    - *platform_container_images_openproject_prod_platform_registry_path
+    - *platform_container_images_it_tools_prod_platform_registry_path
+  staging:
+    - *platform_container_images_openresty_staging_platform_registry_path
+    - *platform_container_images_keycloak_staging_platform_registry_path
+    - *platform_container_images_code_server_staging_platform_registry_path
+    - *platform_container_images_postgresql_16_staging_platform_registry_path
+    - *platform_container_images_redis_staging_platform_registry_path
+    - *platform_container_images_memcached_staging_platform_registry_path
+    - *platform_container_images_node_red_staging_platform_registry_path
+    - *platform_container_images_drawio_staging_platform_registry_path
+    - *platform_container_images_pgadmin4_staging_platform_registry_path
+    - *platform_container_images_rstudio_staging_platform_registry_path
+    - *platform_container_images_gitlab_ce_staging_platform_registry_path
+    - *platform_container_images_collabora_staging_platform_registry_path
+    - *platform_container_images_nextcloud_staging_platform_registry_path
+    - *platform_container_images_data_science_notebook_staging_platform_registry_path
+    - *platform_container_images_redmine_staging_platform_registry_path
+    - *platform_container_images_grafana_staging_platform_registry_path
+    - *platform_container_images_openproject_staging_platform_registry_path
+    - *platform_container_images_it_tools_staging_platform_registry_path
+
+platform_container_registry_repository_supported_platform_arches:
+  - *platform_registry_globals_linux_arm64
+  - *platform_registry_globals_linux_amd64
+
+#####################################
+# Platform - Service Configurations #
+#####################################
+platform_service_quayio:
+  production:
+    fqdn_service: "registry-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_1
+    firewall_port: *platform_globals_prod_https_port
+    server_port: *platform_globals_prod_https_redirect_port
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_quay_image_name: *platform_container_images_quay_io_prod_image_name
+    worker_quay_image_tag: *platform_container_images_quay_io_prod_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgres_16_prod_external_registry_path
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    worker_redis_image_name: *platform_container_images_redis_prod_external_registry_path
+    worker_redis_image_tag: *platform_container_images_redis_prod_image_tag
+    service_uri: ""
+    max_body_size_in_megabytes: 6000
+    admin_username: "quayadmin"
+    admin_email: "quayadmin@{{ ansible_service_domain }}"
+    platform_username: *platform_service_quayio_prod_platform_username
+    platform_user_email: "collabsuiteplatform@{{ ansible_service_domain }}"
+    service_account: &platform_service_quayio_prod_service_account
+      username: &platform_service_quayio_prod_username "quayio"
+      gecos: "quay.io user"
+    service_forward_port: &platform_service_quayio_prod_forward_port
+      destination_port: *platform_globals_prod_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_prod_https_redirect_port
+      service_name: *platform_service_quayio_prod_username
+      username: *platform_service_quayio_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    branding_long_title: "Collabsuite Platform Registry"
+    branding_short_title: "Collabsuite Platform Registry"
+  staging:
+    fqdn_service: "stagingregistry-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_1
+    firewall_port: *platform_globals_staging_https_port
+    server_port: *platform_globals_staging_https_redirect_port
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_quay_image_name: *platform_container_images_quay_io_staging_image_name
+    worker_quay_image_tag: *platform_container_images_quay_io_staging_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgres_16_staging_external_registry_path
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    worker_redis_image_name: *platform_container_images_redis_staging_external_registry_path
+    worker_redis_image_tag: *platform_container_images_redis_staging_image_tag
+    service_uri: ""
+    max_body_size_in_megabytes: 6000
+    admin_username: "stagingquayadmin"
+    admin_email: "stagingquayadmin@{{ ansible_service_domain }}"
+    platform_username: *platform_service_quayio_staging_platform_username
+    platform_user_email: "collabsuiteplatform@{{ ansible_service_domain }}"
+    service_account: &platform_service_quayio_staging_service_account
+      username: &platform_service_quayio_staging_username "stagingquayio"
+      gecos: "quay.io user (staging)"
+    service_forward_port: &platform_service_quayio_staging_forward_port
+      destination_port: *platform_globals_staging_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_staging_https_redirect_port
+      service_name: *platform_service_quayio_staging_username
+      username: *platform_service_quayio_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    branding_long_title: "Collabsuite Platform Registry (staging)"
+    branding_short_title: "Collabsuite Platform Registry (staging)"
+
+platform_service_keycloak:
+  production:
+    fqdn_service: "keycloak-{{ ansible_service_domain }}"
+    fqdn_service_external: "keycloak-external-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_identity_provider
+    external_fqdn_server: *platform_globals_external_gateway
+    external_gateway_ip: *platform_globals_prod_external_gateway_ip
+    firewall_port: *platform_globals_prod_https_port
+    server_port: *platform_globals_prod_https_redirect_port
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_prod_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    worker_keycloak_image_name: *platform_container_images_keycloak_prod_image_name
+    worker_keycloak_image_tag: *platform_container_images_keycloak_prod_image_tag
+    service_uri: &platform_service_keycloak_prod_service_uri "auth"
+    auth_realm: "master"
+    user_realm: "master"
+    bootstrap_admin_username: "bootstrapadmin"
+    admin_username: "admin"
+    admin_user_email: "keycloakadmin@{{ ansible_service_domain }}"
+    max_queued_requests: 40
+    openid_client_info: &platform_service_keycloak_prod_openid_client_info
+      security_realm_display_name: "CollabSuite v2.0"
+      security_realm: "collab-suite-v2.0"
+      security_realm_id: "collab-suite-v2.0"
+      discovery_uri: "auth/realms/collab-suite-v2.0/.well-known/openid-configuration"
+      redirect_after_logout_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/logout"
+      web_origins: &platform_service_keycloak_prod_client_domain "{{ ansible_host_domain }}"
+      identity_provider_gateway: *platform_global_external_gateway_prod_info
+    service_account: &platform_service_keycloak_prod_service_account
+      username: &platform_service_keycloak_prod_username "keycloak"
+      gecos: "keycloak user"
+    service_forward_port: &platform_service_keycloak_prod_forward_port
+      destination_port: *platform_globals_prod_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_prod_https_redirect_port
+      service_name: *platform_service_keycloak_prod_username
+      username: *platform_service_keycloak_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+  staging:
+    fqdn_service: "stagingkeycloak-{{ ansible_service_domain }}"
+    fqdn_service_external: "stagingkeycloak-external-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_identity_provider
+    external_fqdn_server: *platform_globals_external_gateway
+    external_gateway_ip: *platform_globals_staging_external_gateway_ip
+    firewall_port: *platform_globals_staging_https_port
+    server_port: *platform_globals_staging_https_redirect_port
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_staging_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    worker_keycloak_image_name: *platform_container_images_keycloak_staging_image_name
+    worker_keycloak_image_tag: *platform_container_images_keycloak_staging_image_tag
+    service_uri: &platform_service_keycloak_staging_service_uri "auth"
+    auth_realm: "master"
+    user_realm: "master"
+    bootstrap_admin_username: "stagingbootstrapadmin"
+    admin_username: "stagingadmin"
+    admin_user_email: "stagingkeycloakadmin@{{ ansible_service_domain }}"
+    max_queued_requests: 5
+    openid_client_info: &platform_service_keycloak_staging_openid_client_info
+      security_realm_display_name: "CollabSuite v2.0 (staging)"
+      security_realm: "staging-collab-suite-v2.0"
+      security_realm_id: "staging-collab-suite-v2.0"
+      discovery_uri: "auth/realms/staging-collab-suite-v2.0/.well-known/openid-configuration"
+      redirect_after_logout_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/logout"
+      web_origins: &platform_service_keycloak_staging_client_domain "{{ ansible_host_domain }}"
+      identity_provider_gateway: *platform_global_external_gateway_staging_info
+    service_account: &platform_service_keycloak_staging_service_account
+      username: &platform_service_keycloak_staging_username "stagingkeycloak"
+      gecos: "keycloak user (staging)"
+    service_forward_port: &platform_service_keycloak_staging_forward_port
+      destination_port: *platform_globals_staging_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_staging_https_redirect_port
+      service_name: *platform_service_keycloak_staging_username
+      username: *platform_service_keycloak_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+
+platform_service_node_red:
+  production:
+    fqdn_service: "nodered-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: *platform_globals_prod_https_port
+    server_port: *platform_globals_prod_https_redirect_port
+    service_image_name: *platform_container_images_openresty_prod_image_name
+    service_image_tag: *platform_container_images_openresty_prod_image_tag
+    worker_image_name: *platform_container_images_node_red_prod_image_name
+    worker_image_tag: *platform_container_images_node_red_prod_image_tag
+    service_uri: &platform_service_node_red_prod_service_uri "nodered"
+    upstream_service: &platform_service_node_red_prod_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_globals_prod_https_port
+      location_uri: *platform_service_node_red_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_node_red_prod_service_account
+      username: &platform_service_node_red_prod_username "nodered"
+      gecos: "node-red user"
+    service_forward_port: &platform_service_node_red_prod_forward_port
+      destination_port: *platform_globals_prod_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_prod_https_redirect_port
+      service_name: *platform_service_node_red_prod_username
+      username: *platform_service_node_red_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_prod_info
+    openid_client: &platform_service_node_red_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "node-red"
+      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}node-red"
+      base_uri: "nodered"
+      redirect_uri: "nodered/{{ platform_keycloak_authority_redirect_uri_suffix }}"
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
+  staging:
+    fqdn_service: "stagingnodered-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: *platform_globals_staging_https_port
+    server_port: *platform_globals_staging_https_redirect_port
+    service_image_name: *platform_container_images_openresty_staging_image_name
+    service_image_tag: *platform_container_images_openresty_staging_image_tag
+    worker_image_name: *platform_container_images_node_red_staging_image_name
+    worker_image_tag: *platform_container_images_node_red_staging_image_tag
+    service_uri: &platform_service_node_red_staging_service_uri "nodered"
+    upstream_service: &platform_service_node_red_staging_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_globals_staging_https_port
+      location_uri: *platform_service_node_red_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_node_red_staging_service_account
+      username: &platform_service_node_red_staging_username "stagingnodered"
+      gecos: "node-red user (staging)"
+    service_forward_port: &platform_service_node_red_staging_forward_port
+      destination_port: *platform_globals_staging_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_staging_https_redirect_port
+      service_name: *platform_service_node_red_staging_username
+      username: *platform_service_node_red_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_staging_info
+    openid_client: &platform_service_node_red_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-node-red"
+      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}staging-node-red"
+      base_uri: "nodered"
+      redirect_uri: "nodered/{{ platform_keycloak_authority_redirect_uri_suffix }}"
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
+
+platform_service_drawio:
+  production:
+    fqdn_service: "drawio-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_drawio_prod_firewall_port "4431"
+    server_port: &platform_service_drawio_prod_server_port "4431"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_image_name: *platform_container_images_drawio_prod_image_name
+    worker_image_tag: *platform_container_images_drawio_prod_image_tag
+    service_uri: &platform_service_drawio_prod_service_uri "drawio"
+    upstream_service: &platform_service_drawio_prod_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_drawio_prod_firewall_port
+      location_uri: *platform_service_drawio_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_drawio_prod_service_account
+      username: &platform_service_drawio_prod_username "drawio"
+      gecos: "drawio user"
+    service_forward_port: &platform_service_drawio_prod_forward_port
+      destination_port: *platform_service_drawio_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_drawio_prod_server_port
+      service_name: *platform_service_drawio_prod_username
+      username: *platform_service_drawio_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_prod_info
+  staging:
+    fqdn_service: "stagingdrawio-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_drawio_staging_firewall_port "5431"
+    server_port: &platform_service_drawio_staging_server_port "5431"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_image_name: *platform_container_images_drawio_staging_image_name
+    worker_image_tag: *platform_container_images_drawio_staging_image_tag
+    service_uri: &platform_service_drawio_staging_service_uri "drawio"
+    upstream_service: &platform_service_drawio_staging_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_drawio_staging_firewall_port
+      location_uri: *platform_service_drawio_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_drawio_staging_service_account
+      username: &platform_service_drawio_staging_username "stagingdrawio"
+      gecos: "drawio user (staging)"
+    service_forward_port: &platform_service_drawio_staging_forward_port
+      destination_port: *platform_service_drawio_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_drawio_staging_server_port
+      service_name: *platform_service_drawio_staging_username
+      username: *platform_service_drawio_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_staging_info
+
+platform_service_pgadmin4:
+  production:
+    fqdn_service: "pgadmin4-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_pgadmin4_prod_firewall_port "4432"
+    server_port: &platform_service_pgadmin4_prod_server_port "4432"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_image_name: *platform_container_images_pgadmin4_prod_image_name
+    worker_image_tag: *platform_container_images_pgadmin4_prod_image_tag
+    service_uri: &platform_service_pgadmin4_prod_service_uri "pgadmin4"
+    admin_username: &platform_service_pgadmin4_prod_username "pgadmin4"
+    admin_email: "pgadmin4@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_pgadmin4_prod_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_pgadmin4_prod_firewall_port
+      location_uri: *platform_service_pgadmin4_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_pgadmin4_prod_service_account
+      username: *platform_service_pgadmin4_prod_username
+      gecos: "pgadmin4 user"
+    service_forward_port: &platform_service_pgadmin4_prod_forward_port
+      destination_port: *platform_service_pgadmin4_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_pgadmin4_prod_server_port
+      service_name: *platform_service_pgadmin4_prod_username
+      username: *platform_service_pgadmin4_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+  staging:
+    fqdn_service: "stagingpgadmin4-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_pgadmin4_staging_firewall_port "5432"
+    server_port: &platform_service_pgadmin4_staging_server_port "5432"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_image_name: *platform_container_images_pgadmin4_staging_image_name
+    worker_image_tag: *platform_container_images_pgadmin4_staging_image_tag
+    service_uri: &platform_service_pgadmin4_staging_service_uri "pgadmin4"
+    admin_username: &platform_service_pgadmin4_staging_username "stagingpgadmin4"
+    admin_email: "pgadmin4@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_pgadmin4_staging_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_pgadmin4_staging_firewall_port
+      location_uri: *platform_service_pgadmin4_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_pgadmin4_staging_service_account
+      username: *platform_service_pgadmin4_staging_username
+      gecos: "pgadmin4 user (staging)"
+    service_forward_port: &platform_service_pgadmin4_staging_forward_port
+      destination_port: *platform_service_pgadmin4_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_pgadmin4_staging_server_port
+      service_name: *platform_service_pgadmin4_staging_username
+      username: *platform_service_pgadmin4_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_staging_info
+
+platform_service_rstudio:
+  production:
+    fqdn_service: "rstudio-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_rstudio_prod_firewall_port "4433"
+    server_port: &platform_service_rstudio_prod_server_port "4433"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_image_name: *platform_container_images_rstudio_prod_image_name
+    worker_image_tag: *platform_container_images_rstudio_prod_image_tag
+    service_uri: &platform_service_rstudio_prod_service_uri "rstudio"
+    username: &platform_service_rstudio_prod_username "rstudio"
+    upstream_service: &platform_service_rstudio_prod_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_rstudio_prod_firewall_port
+      location_uri: *platform_service_rstudio_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_rstudio_prod_service_account
+      username: *platform_service_rstudio_prod_username
+      gecos: "rstudio user"
+    service_forward_port: &platform_service_rstudio_prod_forward_port
+      destination_port: *platform_service_rstudio_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_rstudio_prod_server_port
+      service_name: *platform_service_rstudio_prod_username
+      username: *platform_service_rstudio_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_prod_info
+  staging:
+    fqdn_service: "stagingrstudio-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_rstudio_staging_firewall_port "5433"
+    server_port: &platform_service_rstudio_staging_server_port "5433"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_image_name: *platform_container_images_rstudio_staging_image_name
+    worker_image_tag: *platform_container_images_rstudio_staging_image_tag
+    service_uri: &platform_service_rstudio_staging_service_uri "rstudio"
+    username: &platform_service_rstudio_staging_username "stagingrstudio"
+    upstream_service: &platform_service_rstudio_staging_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_rstudio_staging_firewall_port
+      location_uri: *platform_service_rstudio_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_rstudio_staging_service_account
+      username: *platform_service_rstudio_staging_username
+      gecos: "rstudio user (staging)"
+    service_forward_port: &platform_service_rstudio_staging_forward_port
+      destination_port: *platform_service_rstudio_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_rstudio_staging_server_port
+      service_name: *platform_service_rstudio_staging_username
+      username: *platform_service_rstudio_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_staging_info
+
+platform_service_code_server:
+  production:
+    fqdn_service: "code-server-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_code_server_prod_firewall_port "4434"
+    server_port: &platform_service_code_server_prod_server_port "4434"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_image_name: *platform_container_images_code_server_prod_image_name
+    worker_image_tag: *platform_container_images_code_server_prod_image_tag
+    service_uri: &platform_service_code_server_prod_service_uri "codeserver"
+    username: &platform_service_code_server_prod_username "codeserver"
+    upstream_service: &platform_service_code_server_prod_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_code_server_prod_firewall_port
+      location_uri: *platform_service_code_server_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_code_server_prod_service_account
+      username: *platform_service_code_server_prod_username
+      gecos: "code-server user"
+    service_forward_port: &platform_service_code_server_prod_forward_port
+      destination_port: *platform_service_code_server_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_code_server_prod_server_port
+      service_name: *platform_service_code_server_prod_username
+      username: *platform_service_code_server_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_prod_info
+  staging:
+    fqdn_service: "stagingcode-server-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_code_server_staging_firewall_port "5434"
+    server_port: &platform_service_code_server_staging_server_port "5434"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_image_name: *platform_container_images_code_server_staging_image_name
+    worker_image_tag: *platform_container_images_code_server_staging_image_tag
+    service_uri: &platform_service_code_server_staging_service_uri "codeserver"
+    username: &platform_service_code_server_staging_username "stagingcodeserver"
+    upstream_service: &platform_service_code_server_staging_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_code_server_staging_firewall_port
+      location_uri: *platform_service_code_server_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_code_server_staging_service_account
+      username: *platform_service_code_server_staging_username
+      gecos: "code-server user (staging)"
+    service_forward_port: &platform_service_code_server_staging_forward_port
+      destination_port: *platform_service_code_server_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_code_server_staging_server_port
+      service_name: *platform_service_code_server_staging_username
+      username: *platform_service_code_server_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_staging_info
+
+platform_service_collabora:
+  production:
+    fqdn_service: "collabora-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_collabora_prod_firewall_port "4436"
+    server_port: &platform_service_collabora_prod_server_port "4436"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_image_name: *platform_container_images_collabora_prod_image_name
+    worker_image_tag: *platform_container_images_collabora_prod_image_tag
+    service_uri: &platform_service_collabora_prod_service_uri "collabora"
+    username: &platform_service_collabora_prod_username "collabora"
+    admin_username: "admin"
+    upstream_service: &platform_service_collabora_prod_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_collabora_prod_firewall_port
+      location_uri: *platform_service_collabora_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_collabora_prod_service_account
+      username: *platform_service_collabora_prod_username
+      gecos: "collabora user"
+    service_forward_port: &platform_service_collabora_prod_forward_port
+      destination_port: *platform_service_collabora_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_collabora_prod_server_port
+      service_name: *platform_service_collabora_prod_username
+      username: *platform_service_collabora_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+  staging:
+    fqdn_service: "stagingcollabora-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_collabora_staging_firewall_port "5436"
+    server_port: &platform_service_collabora_staging_server_port "5436"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_image_name: *platform_container_images_collabora_staging_image_name
+    worker_image_tag: *platform_container_images_collabora_staging_image_tag
+    service_uri: &platform_service_collabora_staging_service_uri "collabora"
+    username: &platform_service_collabora_staging_username "stagingcollabora"
+    admin_username: "stagingadmin"
+    upstream_service: &platform_service_collabora_staging_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_collabora_staging_firewall_port
+      location_uri: *platform_service_collabora_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_collabora_staging_service_account
+      username: *platform_service_collabora_staging_username
+      gecos: "collabora user (staging)"
+    service_forward_port: &platform_service_collabora_staging_forward_port
+      destination_port: *platform_service_collabora_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_collabora_staging_server_port
+      service_name: *platform_service_collabora_staging_username
+      username: *platform_service_collabora_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_staging_info
+
+platform_service_gitlab_ce:
+  production:
+    fqdn_service: "gitlab-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: *platform_globals_prod_https_port
+    server_port: *platform_globals_prod_https_redirect_port
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_image_name: *platform_container_images_gitlab_ce_prod_image_name
+    worker_image_tag: *platform_container_images_gitlab_ce_prod_image_tag
+    service_uri: &platform_service_gitlab_ce_prod_service_uri "gitlab"
+    username: &platform_service_gitlab_ce_prod_username "gitlabce"
+    upstream_service: &platform_service_gitlab_ce_prod_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_globals_prod_https_port
+      location_uri: *platform_service_gitlab_ce_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_gitlab_ce_prod_service_account
+      username: *platform_service_gitlab_ce_prod_username
+      gecos: "gitlab-ce user"
+    service_forward_port: &platform_service_gitlab_ce_prod_forward_port
+      destination_port: *platform_globals_prod_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_prod_https_redirect_port
+      service_name: *platform_service_gitlab_ce_prod_username
+      username: *platform_service_gitlab_ce_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_prod_info
+  staging:
+    fqdn_service: "staginggitlab-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: *platform_globals_staging_https_port
+    server_port: *platform_globals_staging_https_redirect_port
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_image_name: *platform_container_images_gitlab_ce_staging_image_name
+    worker_image_tag: *platform_container_images_gitlab_ce_staging_image_tag
+    service_uri: &platform_service_gitlab_ce_staging_service_uri "gitlab"
+    username: &platform_service_gitlab_ce_staging_username "staginggitlabce"
+    upstream_service: &platform_service_gitlab_ce_staging_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_globals_staging_https_port
+      location_uri: *platform_service_gitlab_ce_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_gitlab_ce_staging_service_account
+      username: *platform_service_gitlab_ce_staging_username
+      gecos: "gitlab-ce user (staging)"
+    service_forward_port: &platform_service_gitlab_ce_staging_forward_port
+      destination_port: *platform_globals_staging_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_staging_https_redirect_port
+      service_name: *platform_service_gitlab_ce_staging_username
+      username: *platform_service_gitlab_ce_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_staging_info
+
+platform_service_nextcloud:
+  production:
+    fqdn_service: "nextcloud-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_nextcloud_prod_firewall_port "4435"
+    server_port: &platform_service_nextcloud_prod_server_port "4435"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_prod_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    worker_nextcloud_image_name: *platform_container_images_nextcloud_prod_image_name
+    worker_nextcloud_image_tag: *platform_container_images_nextcloud_prod_image_tag
+    service_uri: &platform_service_nextcloud_prod_service_uri "nextcloud"
+    username: &platform_service_nextcloud_prod_username "nextcloud"
+    admin_username: "admin"
+    max_body_size_in_megabytes: 100
+    upstream_service: &platform_service_nextcloud_prod_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_nextcloud_prod_firewall_port
+      location_uri: *platform_service_nextcloud_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_nextcloud_prod_service_account
+      username: *platform_service_nextcloud_prod_username
+      gecos: "nextcloud user"
+    service_forward_port: &platform_service_nextcloud_prod_forward_port
+      destination_port: *platform_service_nextcloud_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_nextcloud_prod_server_port
+      service_name: *platform_service_nextcloud_prod_username
+      username: *platform_service_nextcloud_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+  staging:
+    fqdn_service: "stagingnextcloud-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_nextcloud_staging_firewall_port "5435"
+    server_port: &platform_service_nextcloud_staging_server_port "5435"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_staging_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    worker_nextcloud_image_name: *platform_container_images_nextcloud_staging_image_name
+    worker_nextcloud_image_tag: *platform_container_images_nextcloud_staging_image_tag
+    service_uri: &platform_service_nextcloud_staging_service_uri "nextcloud"
+    username: &platform_service_nextcloud_staging_username "stagingnextcloud"
+    admin_username: "stagingadmin"
+    max_body_size_in_megabytes: 100
+    upstream_service: &platform_service_nextcloud_staging_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_nextcloud_staging_firewall_port
+      location_uri: *platform_service_nextcloud_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_nextcloud_staging_service_account
+      username: *platform_service_nextcloud_staging_username
+      gecos: "nextcloud user (staging)"
+    service_forward_port: &platform_service_nextcloud_staging_forward_port
+      destination_port: *platform_service_nextcloud_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_nextcloud_staging_server_port
+      service_name: *platform_service_nextcloud_staging_username
+      username: *platform_service_nextcloud_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+
+platform_service_grafana:
+  production:
+    fqdn_service: "grafana-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_grafana_prod_firewall_port "4436"
+    server_port: &platform_service_grafana_prod_server_port "4436"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_grafana_image_name: *platform_container_images_grafana_prod_image_name
+    worker_grafana_image_tag: *platform_container_images_grafana_prod_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_prod_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    service_uri: &platform_service_grafana_prod_service_uri "grafana"
+    username: &platform_service_grafana_prod_username "grafana"
+    admin_username: "admin"
+    admin_email: "grafanaadmin@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_grafana_prod_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_grafana_prod_firewall_port
+      location_uri: *platform_service_grafana_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_grafana_prod_service_account
+      username: *platform_service_grafana_prod_username
+      gecos: "grafana user"
+    service_forward_port: &platform_service_grafana_prod_forward_port
+      destination_port: *platform_service_grafana_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_grafana_prod_server_port
+      service_name: *platform_service_grafana_prod_username
+      username: *platform_service_grafana_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+  staging:
+    fqdn_service: "staginggrafana-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_grafana_staging_firewall_port "5436"
+    server_port: &platform_service_grafana_staging_server_port "5436"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_grafana_image_name: *platform_container_images_grafana_staging_image_name
+    worker_grafana_image_tag: *platform_container_images_grafana_staging_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_staging_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    service_uri: &platform_service_grafana_staging_service_uri "grafana"
+    username: &platform_service_grafana_staging_username "staginggrafana"
+    admin_username: "stagingadmin"
+    admin_email: "staginggrafanaadmin@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_grafana_staging_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_grafana_staging_firewall_port
+      location_uri: *platform_service_grafana_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_grafana_staging_service_account
+      username: *platform_service_grafana_staging_username
+      gecos: "grafana user (staging)"
+    service_forward_port: &platform_service_grafana_staging_forward_port
+      destination_port: *platform_service_grafana_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_grafana_staging_server_port
+      service_name: *platform_service_grafana_staging_username
+      username: *platform_service_grafana_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+
+platform_service_redmine:
+  production:
+    fqdn_service: "redmine-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_redmine_prod_firewall_port "4437"
+    server_port: &platform_service_redmine_prod_server_port "4437"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_redmine_image_name: *platform_container_images_redmine_prod_image_name
+    worker_redmine_image_tag: *platform_container_images_redmine_prod_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_prod_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    service_uri: &platform_service_redmine_prod_service_uri "redmine"
+    username: &platform_service_redmine_prod_username "redmine"
+    admin_username: "admin"
+    admin_email: "redmineadmin@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_redmine_prod_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_redmine_prod_firewall_port
+      location_uri: *platform_service_redmine_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_redmine_prod_service_account
+      username: *platform_service_redmine_prod_username
+      gecos: "redmine user"
+    service_forward_port: &platform_service_redmine_prod_forward_port
+      destination_port: *platform_service_redmine_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_redmine_prod_server_port
+      service_name: *platform_service_redmine_prod_username
+      username: *platform_service_redmine_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+  staging:
+    fqdn_service: "stagingredmine-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_redmine_staging_firewall_port "5437"
+    server_port: &platform_service_redmine_staging_server_port "5437"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_redmine_image_name: *platform_container_images_redmine_staging_image_name
+    worker_redmine_image_tag: *platform_container_images_redmine_staging_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_staging_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    service_uri: &platform_service_redmine_staging_service_uri "redmine"
+    username: &platform_service_redmine_staging_username "stagingredmine"
+    admin_username: "stagingadmin"
+    admin_email: "stagingredmineadmin@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_redmine_staging_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_redmine_staging_firewall_port
+      location_uri: *platform_service_redmine_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_redmine_staging_service_account
+      username: *platform_service_redmine_staging_username
+      gecos: "redmine user (staging)"
+    service_forward_port: &platform_service_redmine_staging_forward_port
+      destination_port: *platform_service_redmine_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_redmine_staging_server_port
+      service_name: *platform_service_redmine_staging_username
+      username: *platform_service_redmine_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+
+platform_service_node_red_pgsql:
+  production:
+    fqdn_service: "node-red-pgsql-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_node_red_pgsql_prod_firewall_port "4438"
+    server_port: &platform_service_node_red_pgsql_prod_server_port "4438"
+    service_image_name: *platform_container_images_postgresql_16_prod_image_name
+    service_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    service_uri: "node-red-pgsql"
+    username: &platform_service_node_red_pgsql_prod_username "noderedpgsql"
+    db: "cars"
+    db_user: "user1"
+    service_account: &platform_service_node_red_pgsql_prod_service_account
+      username: *platform_service_node_red_pgsql_prod_username
+      gecos: "node-red pgsql user"
+    service_forward_port: &platform_service_node_red_pgsql_prod_forward_port
+      destination_port: *platform_service_node_red_pgsql_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_node_red_pgsql_prod_server_port
+      service_name: *platform_service_node_red_pgsql_prod_username
+      username: *platform_service_node_red_pgsql_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+  staging:
+    fqdn_service: "staging-node-red-pgsql-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_node_red_pgsql_staging_firewall_port "5438"
+    server_port: &platform_service_node_red_pgsql_staging_server_port "5438"
+    service_image_name: *platform_container_images_postgresql_16_prod_image_name
+    service_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    service_uri: "staging-node-red-pgsql"
+    username: &platform_service_node_red_pgsql_staging_username "stagingnoderedpgsql"
+    db: "stagingcars"
+    db_user: "staginguser1"
+    service_account: &platform_service_node_red_pgsql_staging_service_account
+      username: *platform_service_node_red_pgsql_staging_username
+      gecos: "node-red pgsql user (staging)"
+    service_forward_port: &platform_service_node_red_pgsql_staging_forward_port
+      destination_port: *platform_service_node_red_pgsql_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_node_red_pgsql_staging_server_port
+      service_name: *platform_service_node_red_pgsql_staging_username
+      username: *platform_service_node_red_pgsql_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+
+platform_service_data_science_notebook:
+  production:
+    fqdn_service: "data-science-notebook-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_data_science_notebook_prod_firewall_port "4439"
+    server_port: &platform_service_data_science_notebook_prod_server_port "4439"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_image_name: *platform_container_images_data_science_notebook_prod_image_name
+    worker_image_tag: *platform_container_images_data_science_notebook_prod_image_tag
+    service_uri: &platform_service_data_science_notebook_prod_service_uri "datasciencenotebook"
+    username: &platform_service_data_science_notebook_prod_username "datasciencenotebook"
+    upstream_service: &platform_service_data_science_notebook_prod_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_data_science_notebook_prod_firewall_port
+      location_uri: *platform_service_data_science_notebook_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_data_science_notebook_prod_service_account
+      username: *platform_service_data_science_notebook_prod_username
+      gecos: "data science notebook user"
+    service_forward_port: &platform_service_data_science_notebook_prod_forward_port
+      destination_port: *platform_service_data_science_notebook_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_data_science_notebook_prod_server_port
+      service_name: *platform_service_data_science_notebook_prod_username
+      username: *platform_service_data_science_notebook_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_prod_info
+    openid_client: &platform_service_data_science_notebook_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "data-science-notebook"
+      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}data-science-notebook"
+      base_uri: "datasciencenotebook"
+      redirect_uri: "datasciencenotebook/{{ platform_keycloak_authority_redirect_uri_suffix }}"
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
+  staging:
+    fqdn_service: "staging-data-science-notebook-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_data_science_notebook_staging_firewall_port "5439"
+    server_port: &platform_service_data_science_notebook_staging_server_port "5439"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_image_name: *platform_container_images_data_science_notebook_staging_image_name
+    worker_image_tag: *platform_container_images_data_science_notebook_staging_image_tag
+    service_uri: &platform_service_data_science_notebook_staging_service_uri "datasciencenotebook"
+    username: &platform_service_data_science_notebook_staging_username "stagingdatasciencenotebook"
+    upstream_service: &platform_service_data_science_notebook_staging_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_data_science_notebook_staging_firewall_port
+      location_uri: *platform_service_data_science_notebook_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_data_science_notebook_staging_service_account
+      username: *platform_service_data_science_notebook_staging_username
+      gecos: "data science notebook user (staging)"
+    service_forward_port: &platform_service_data_science_notebook_staging_forward_port
+      destination_port: *platform_service_data_science_notebook_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_data_science_notebook_staging_server_port
+      service_name: *platform_service_data_science_notebook_staging_username
+      username: *platform_service_data_science_notebook_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_staging_info
+    openid_client: &platform_service_data_science_notebook_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "staging-data-science-notebook"
+      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}staging-data_science-notebook"
+      base_uri: "datasciencenotebook"
+      redirect_uri: "datasciencenotebook/{{ platform_keycloak_authority_redirect_uri_suffix }}"
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
+
+platform_service_openproject:
+  production:
+    fqdn_service: "open-project-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_openproject_prod_firewall_port "4440"
+    server_port: &platform_service_openproject_prod_server_port "4440"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_prod_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    worker_memcached_image_name: *platform_container_images_memcached_prod_image_name
+    worker_memcached_image_tag: *platform_container_images_memcached_prod_image_tag
+    worker_openproject_image_name: *platform_container_images_openproject_prod_image_name
+    worker_openproject_image_tag: *platform_container_images_openproject_prod_image_tag
+    service_uri: &platform_service_openproject_prod_service_uri "openproject"
+    username: &platform_service_openproject_prod_username "openproject"
+    admin_username: "admin"
+    admin_email: "adminopenproject@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_openproject_prod_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_openproject_prod_firewall_port
+      location_uri: *platform_service_openproject_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_openproject_prod_service_account
+      username: *platform_service_openproject_prod_username
+      gecos: "openproject user"
+    service_forward_port: &platform_service_openproject_prod_forward_port
+      destination_port: *platform_service_openproject_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_openproject_prod_server_port
+      service_name: *platform_service_openproject_prod_username
+      username: *platform_service_openproject_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+  staging:
+    fqdn_service: "staging-open-project-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_openproject_staging_firewall_port "5440"
+    server_port: &platform_service_openproject_staging_server_port "5440"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_staging_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    worker_memcached_image_name: *platform_container_images_memcached_staging_image_name
+    worker_memcached_image_tag: *platform_container_images_memcached_staging_image_tag
+    worker_openproject_image_name: *platform_container_images_openproject_staging_image_name
+    worker_openproject_image_tag: *platform_container_images_openproject_staging_image_tag
+    service_uri: &platform_service_openproject_staging_service_uri "openproject"
+    username: &platform_service_openproject_staging_username "stagingopenproject"
+    admin_username: "stagingadmin"
+    admin_email: "stagingadminopenproject@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_openproject_staging_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_openproject_staging_firewall_port
+      location_uri: *platform_service_openproject_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_openproject_staging_service_account
+      username: *platform_service_openproject_staging_username
+      gecos: "openproject user (staging)"
+    service_forward_port: &platform_service_openproject_staging_forward_port
+      destination_port: *platform_service_openproject_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_openproject_staging_server_port
+      service_name: *platform_service_openproject_staging_username
+      username: *platform_service_openproject_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_staging_info
+
+platform_service_it_tools:
+  production:
+    fqdn_service: "it-tools-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_it_tools_prod_firewall_port "4441"
+    server_port: &platform_service_it_tools_prod_server_port "4441"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_image_name: *platform_container_images_it_tools_prod_image_name
+    worker_image_tag: *platform_container_images_it_tools_prod_image_tag
+    service_uri: &platform_service_it_tools_prod_service_uri "ittools"
+    username: &platform_service_it_tools_prod_username "ittools"
+    upstream_service: &platform_service_it_tools_prod_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_it_tools_prod_firewall_port
+      location_uri: *platform_service_it_tools_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_it_tools_prod_service_account
+      username: *platform_service_it_tools_prod_username
+      gecos: "IT tools user"
+    service_forward_port: &platform_service_it_tools_prod_forward_port
+      destination_port: *platform_service_it_tools_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_it_tools_prod_server_port
+      service_name: *platform_service_it_tools_prod_username
+      username: *platform_service_it_tools_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_prod_info
+  staging:
+    fqdn_service: "staging-it-tools-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_2
+    firewall_port: &platform_service_it_tools_staging_firewall_port "5441"
+    server_port: &platform_service_it_tools_staging_server_port "5441"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_image_name: *platform_container_images_it_tools_staging_image_name
+    worker_image_tag: *platform_container_images_it_tools_staging_image_tag
+    service_uri: &platform_service_it_tools_staging_service_uri "ittools"
+    username: &platform_service_it_tools_staging_username "stagingittools"
+    upstream_service: &platform_service_it_tools_staging_upstream_service
+      upstream_server: *platform_globals_server_2
+      upstream_server_firewall_port: *platform_service_it_tools_staging_firewall_port
+      location_uri: *platform_service_it_tools_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_it_tools_staging_service_account
+      username: *platform_service_it_tools_staging_username
+      gecos: "IT tools user (staging)"
+    service_forward_port: &platform_service_it_tools_staging_forward_port
+      destination_port: *platform_service_it_tools_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_it_tools_staging_server_port
+      service_name: *platform_service_it_tools_staging_username
+      username: *platform_service_it_tools_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_internal_gateway_staging_info
+
+platform_service_internal_gateway:
+  production:
+    fqdn_service: "int-gw-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_internal_gateway
+    external_gateway_ip: *platform_globals_prod_external_gateway_ip
+    internal_network_dns_ip: *platform_globals_prod_internal_network_dns_ip
+    firewall_port: *platform_globals_prod_https_port
+    server_port: *platform_globals_prod_https_redirect_port
+    service_image_name: *platform_container_images_openresty_prod_image_name
+    service_image_tag: *platform_container_images_openresty_prod_image_tag
+    service_account: &platform_service_internal_gateway_prod_service_account
+      username: &platform_service_internal_gateway_prod_username "intgw"
+      gecos: "Internal gateway user"
+    service_forward_port: &platform_service_internal_gateway_prod_forward_port
+      destination_port: *platform_globals_prod_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_prod_https_redirect_port
+      service_name: *platform_service_internal_gateway_prod_username
+      username: *platform_service_internal_gateway_prod_username
+      restricted_to_ipv4_with_cidr: ""
+    service_uri: ""
+    base_uri: &platform_service_internal_gateway_prod_base_uri ""
+    redirect_uri: &platform_service_internal_gateway_prod_redirect_uri "{{ platform_keycloak_authority_redirect_uri_suffix }}"
+    openid_client: &platform_service_internal_gateway_prod_openid_client
+      enable_session_cache: true
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "internal-gateway"
+      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}internal-gateway"
+      base_uri: *platform_service_internal_gateway_prod_base_uri
+      redirect_uri: *platform_service_internal_gateway_prod_redirect_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
+    upstream_services:
+      - *platform_service_node_red_prod_upstream_service
+      - *platform_service_drawio_prod_upstream_service
+      - *platform_service_pgadmin4_prod_upstream_service
+      - *platform_service_rstudio_prod_upstream_service
+      - *platform_service_code_server_prod_upstream_service
+      - *platform_service_gitlab_ce_prod_upstream_service
+      - *platform_service_nextcloud_prod_upstream_service
+      - *platform_service_collabora_prod_upstream_service
+      - *platform_service_grafana_prod_upstream_service
+      - *platform_service_redmine_prod_upstream_service
+      - *platform_service_data_science_notebook_prod_upstream_service
+      - *platform_service_openproject_prod_upstream_service
+      # - *platform_service_it_tools_prod_upstream_service
+  staging:
+    fqdn_service: "staging-int-gw-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_internal_gateway
+    external_gateway_ip: *platform_globals_staging_external_gateway_ip
+    internal_network_dns_ip: *platform_globals_staging_internal_network_dns_ip
+    firewall_port: *platform_globals_staging_https_port
+    server_port: *platform_globals_staging_https_redirect_port
+    service_image_name: *platform_container_images_openresty_staging_image_name
+    service_image_tag: *platform_container_images_openresty_staging_image_tag
+    service_account: &platform_service_internal_gateway_staging_service_account
+      username: &platform_service_internal_gateway_staging_username "stagingintgw"
+      gecos: "Internal gateway user (staging)"
+    service_forward_port:
+      &platform_service_internal_gateway_staging_forward_port
+      destination_port: *platform_globals_staging_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_staging_https_redirect_port
+      service_name: *platform_service_internal_gateway_staging_username
+      username: *platform_service_internal_gateway_staging_username
+      restricted_to_ipv4_with_cidr: ""
+    service_uri: ""
+    base_uri: &platform_service_internal_gateway_staging_base_uri ""
+    redirect_uri: &platform_service_internal_gateway_staging_redirect_uri "{{ platform_keycloak_authority_redirect_uri_suffix }}"
+    openid_client: &platform_service_internal_gateway_staging_openid_client
+      enable_session_cache: true
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "staging-internal-gateway"
+      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}staging-internal-gateway"
+      base_uri: *platform_service_internal_gateway_staging_base_uri
+      redirect_uri: *platform_service_internal_gateway_staging_redirect_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
+    upstream_services:
+      - *platform_service_node_red_staging_upstream_service
+      - *platform_service_drawio_staging_upstream_service
+      - *platform_service_pgadmin4_staging_upstream_service
+      - *platform_service_rstudio_staging_upstream_service
+      - *platform_service_code_server_staging_upstream_service
+      - *platform_service_gitlab_ce_staging_upstream_service
+      - *platform_service_nextcloud_staging_upstream_service
+      - *platform_service_collabora_staging_upstream_service
+      - *platform_service_grafana_staging_upstream_service
+      - *platform_service_redmine_staging_upstream_service
+      - *platform_service_data_science_notebook_staging_upstream_service
+      - *platform_service_openproject_staging_upstream_service
+      # - *platform_service_it_tools_staging_upstream_service
+
+platform_service_external_gateway:
+  production:
+    fqdn_service: "ext-gw-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_external_gateway
+    server_ip: *platform_globals_prod_external_gateway_ip
+    firewall_port: *platform_globals_prod_https_port
+    server_port: *platform_globals_prod_https_redirect_port
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    service_account: &platform_service_external_gateway_prod_service_account
+      username: &platform_service_external_gateway_prod_username "extgw"
+      gecos: "External gateway user"
+    service_forward_port: &platform_service_external_gateway_prod_forward_port
+      destination_port: *platform_globals_prod_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_prod_https_redirect_port
+      service_name: *platform_service_external_gateway_prod_username
+      username: *platform_service_external_gateway_prod_username
+      restricted_to_ipv4_with_cidr: ""
+    auth_service_uri: *platform_service_keycloak_prod_service_uri
+    auth_gateway: *platform_globals_identity_provider
+    auth_gateway_firewall_port: *platform_globals_prod_https_port
+    internal_gateway: *platform_globals_internal_gateway
+    internal_gateway_firewall_port: *platform_globals_prod_https_port
+  staging:
+    fqdn_service: "staging-ext-gw-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_external_gateway
+    server_ip: *platform_globals_staging_external_gateway_ip
+    firewall_port: *platform_globals_staging_https_port
+    server_port: *platform_globals_staging_https_redirect_port
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    service_account: &platform_service_external_gateway_staging_service_account
+      username: &platform_service_external_gateway_staging_username "stagingextgw"
+      gecos: "External gateway user (staging)"
+    service_forward_port:
+      &platform_service_external_gateway_staging_forward_port
+      destination_port: *platform_globals_staging_https_port
+      protocol: "tcp"
+      redirect_port: *platform_globals_staging_https_redirect_port
+      service_name: *platform_service_external_gateway_staging_username
+      username: *platform_service_external_gateway_staging_username
+      restricted_to_ipv4_with_cidr: ""
+    auth_service_uri: *platform_service_keycloak_staging_service_uri
+    auth_gateway: *platform_globals_identity_provider
+    auth_gateway_firewall_port: *platform_globals_staging_https_port
+    internal_gateway: *platform_globals_internal_gateway
+    internal_gateway_firewall_port: *platform_globals_staging_https_port
+
+#################################################
+# Platform - Identity Management Configurations #
+#################################################
+platform_service_keycloak_clients:
+  production:
+    - *platform_service_internal_gateway_prod_openid_client
+    - *platform_service_node_red_prod_openid_client
+    # - client_id: "drawio"
+    #   service_uri: *platform_service_drawio_prod_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "pgadmin4"
+    #   service_uri: *platform_service_pgadmin4_prod_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "gitlab-ce"
+    #   service_uri: *platform_service_gitlab_ce_prod_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "code-server"
+    #   service_uri: *platform_service_code_server_prod_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "rstudio"
+    #   service_uri: *platform_service_rstudio_prod_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "nextcloud"
+    #   service_uri: *platform_service_nextcloud_prod_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+  staging:
+    - *platform_service_internal_gateway_staging_openid_client
+    - *platform_service_node_red_staging_openid_client
+    # - client_id: "staging-drawio"
+    #   service_uri: *platform_service_drawio_staging_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "staging-pgadmin4"
+    #   service_uri: *platform_service_pgadmin4_staging_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "staging-gitlab-ce"
+    #   service_uri: *platform_service_gitlab_ce_staging_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "staging-code-server"
+    #   service_uri: *platform_service_code_server_staging_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "rstudio"
+    #   service_uri: *platform_service_rstudio_staging_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+    # - client_id: "nextcloud"
+    #   service_uri: *platform_service_nextcloud_staging_service_uri
+    #   shared_memory_zone_mb: 20
+    #   idling_timeout_seconds: 1800
+    #   rolling_timeout_seconds: 3600
+
+platform_openid_global_client_info:
+  production: *platform_service_keycloak_prod_openid_client_info
+  staging: *platform_service_keycloak_staging_openid_client_info
+
+####################################
+# Platform - Server Configurations #
+####################################
+platform_external_gateway_server_config:
+  production:
+    services_user_accounts:
+      - *platform_service_external_gateway_prod_service_account
+    services_forward_ports:
+      - *platform_service_external_gateway_prod_forward_port
+  staging:
+    services_user_accounts:
+      - *platform_service_external_gateway_staging_service_account
+    services_forward_ports:
+      - *platform_service_external_gateway_staging_forward_port
+
+platform_internal_gateway_server_config:
+  production:
+    services_user_accounts:
+      - *platform_service_internal_gateway_prod_service_account
+    services_forward_ports:
+      - *platform_service_internal_gateway_prod_forward_port
+  staging:
+    services_user_accounts:
+      - *platform_service_internal_gateway_staging_service_account
+    services_forward_ports:
+      - *platform_service_internal_gateway_staging_forward_port
+
+platform_identity_provider_server_config:
+  production:
+    services_user_accounts:
+      - *platform_service_keycloak_prod_service_account
+    services_forward_ports:
+      - *platform_service_keycloak_prod_forward_port
+  staging:
+    services_user_accounts:
+      - *platform_service_keycloak_staging_service_account
+    services_forward_ports:
+      - *platform_service_keycloak_staging_forward_port
+
+platform_server_1_server_config:
+  production:
+    services_user_accounts:
+      - *platform_service_quayio_prod_service_account
+    services_forward_ports:
+      - *platform_service_quayio_prod_forward_port
+  staging:
+    services_user_accounts:
+      - *platform_service_quayio_staging_service_account
+    services_forward_ports:
+      - *platform_service_quayio_staging_forward_port
+
+platform_server_2_server_config:
+  production:
+    services_user_accounts:
+      - *platform_service_node_red_prod_service_account
+      - *platform_service_drawio_prod_service_account
+      - *platform_service_pgadmin4_prod_service_account
+      - *platform_service_rstudio_prod_service_account
+      - *platform_service_code_server_prod_service_account
+      - *platform_service_collabora_prod_service_account
+      - *platform_service_data_science_notebook_prod_service_account
+      - *platform_service_it_tools_prod_service_account
+    services_forward_ports:
+      - *platform_service_node_red_prod_forward_port
+      - *platform_service_drawio_prod_forward_port
+      - *platform_service_pgadmin4_prod_forward_port
+      - *platform_service_rstudio_prod_forward_port
+      - *platform_service_code_server_prod_forward_port
+      - *platform_service_collabora_prod_forward_port
+      - *platform_service_data_science_notebook_prod_forward_port
+      - *platform_service_it_tools_prod_forward_port
+  staging:
+    services_user_accounts:
+      - *platform_service_node_red_staging_service_account
+      - *platform_service_drawio_staging_service_account
+      - *platform_service_pgadmin4_staging_service_account
+      - *platform_service_rstudio_staging_service_account
+      - *platform_service_code_server_staging_service_account
+      - *platform_service_collabora_staging_service_account
+      - *platform_service_data_science_notebook_staging_service_account
+      - *platform_service_it_tools_staging_service_account
+    services_forward_ports:
+      - *platform_service_node_red_staging_forward_port
+      - *platform_service_drawio_staging_forward_port
+      - *platform_service_pgadmin4_staging_forward_port
+      - *platform_service_rstudio_staging_forward_port
+      - *platform_service_code_server_staging_forward_port
+      - *platform_service_collabora_staging_forward_port
+      - *platform_service_data_science_notebook_staging_forward_port
+      - *platform_service_it_tools_staging_forward_port
+
+platform_server_3_server_config:
+  production:
+    services_user_accounts:
+      - *platform_service_gitlab_ce_prod_service_account
+      - *platform_service_nextcloud_prod_service_account
+      - *platform_service_grafana_prod_service_account
+      - *platform_service_redmine_prod_service_account
+      - *platform_service_node_red_pgsql_prod_service_account
+      - *platform_service_openproject_prod_service_account
+    services_forward_ports:
+      - *platform_service_gitlab_ce_prod_forward_port
+      - *platform_service_nextcloud_prod_forward_port
+      - *platform_service_grafana_prod_forward_port
+      - *platform_service_redmine_prod_forward_port
+      - *platform_service_node_red_pgsql_prod_forward_port
+      - *platform_service_openproject_prod_forward_port
+  staging:
+    services_user_accounts:
+      - *platform_service_gitlab_ce_staging_service_account
+      - *platform_service_nextcloud_staging_service_account
+      - *platform_service_grafana_staging_service_account
+      - *platform_service_redmine_staging_service_account
+      - *platform_service_node_red_pgsql_staging_service_account
+      - *platform_service_openproject_staging_service_account
+    services_forward_ports:
+      - *platform_service_gitlab_ce_staging_forward_port
+      - *platform_service_nextcloud_staging_forward_port
+      - *platform_service_grafana_staging_forward_port
+      - *platform_service_redmine_staging_forward_port
+      - *platform_service_node_red_pgsql_staging_forward_port
+      - *platform_service_openproject_staging_forward_port

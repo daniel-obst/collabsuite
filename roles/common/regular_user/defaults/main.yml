@@ -1,0 +1,11 @@
+---
+regular_user_home_dir_mode: "0700"
+regular_user_shell: "{{ facts_machine_linux_default_shell }}"
+regular_user_gecos: "Default user gecos"
+regular_user_secondary_groups: ""
+regular_user_long_running_services: false
+regular_user_upload_authorized_user_public_key: true
+regular_user_fqdn_client: "{{ ansible_service_domain }}"
+regular_user_password_hash: "sha512"
+# regular_user_password_file: ""
+regular_user_upload_public_key: true

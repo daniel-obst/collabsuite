@@ -1,0 +1,24 @@
+---
+openid_tls_web_proxy_config_user_uid: "{{ ansible_user_uid }}"
+openid_tls_web_proxy_config_user_gid: "{{ ansible_user_gid }}"
+
+openid_tls_web_proxy_config_ssl_ca_certificates_path: "{{ facts_machine_linux_machine_ca_cert_path }}"
+
+openid_tls_web_proxy_config_conf_dir: "{{ gv_service_conf_dir }}"
+openid_tls_web_proxy_config_conf_dir_mode: "{{ gv_service_conf_dir_mode }}"
+openid_tls_web_proxy_config_conf_file_mode: "{{ gv_service_conf_file_mode }}"
+
+openid_tls_web_proxy_config_includes_dir: "{{ gv_service_conf_includes_dir }}"
+openid_tls_web_proxy_config_html_dir: "{{ gv_service_conf_html_dir }}"
+openid_tls_web_proxy_config_html_dir_mode: "{{ gv_service_html_dir_mode }}"
+openid_tls_web_proxy_config_html_file_mode: "{{ gv_service_html_file_mode }}"
+
+openid_tls_web_proxy_config_set_deny_root_uri_location: true
+openid_tls_web_proxy_config_set_x_forwarded_host: true
+
+openid_tls_web_proxy_config_enable_session_cache: false
+openid_tls_web_proxy_config_client_enable_login: false
+openid_tls_web_proxy_config_ssl_verify_depth: 2
+openid_tls_web_proxy_config_cache_shared_memory_zone_mb: 20
+openid_tls_web_proxy_config_cache_idling_timeout_seconds: 1800
+openid_tls_web_proxy_config_cache_rolling_timeout_seconds: 3600

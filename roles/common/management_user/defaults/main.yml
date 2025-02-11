@@ -1,0 +1,5 @@
+---
+management_user_username: "{{ platform_management_username }}"
+management_user_gecos: "{{ platform_management_gecos }}"
+management_user_primary_group: "{{ platform_management_username }}"
+management_user_fqdn_client: "{{ platform_management_fqdn_client }}"

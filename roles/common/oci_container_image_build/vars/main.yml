@@ -1,0 +1,22 @@
+---
+oci_container_image_build_registry_host: "{{ oci_container_image_build_registry_hostname | ansible.builtin.mandatory }}:{{ oci_container_image_build_registry_port | ansible.builtin.mandatory }}"
+oci_container_image_build_manifest_name: "{{ oci_container_image_build_registry_host | ansible.builtin.mandatory }}/{{ oci_container_image_build_registry_repository_path | ansible.builtin.mandatory }}:{{ oci_container_image_build_image_tag | ansible.builtin.mandatory }}"
+
+oci_container_image_build_platform_arg: "{{ (oci_container_image_build_platform_arches | ansible.builtin.mandatory) | join(',') }}"
+
+oci_container_image_build_manifest_exists_cmd:
+  "((podman search --list-tags {{ oci_container_image_build_registry_host }}/{{ oci_container_image_build_registry_repository_path }}
+  | grep {{ oci_container_image_build_image_tag }} &> /dev/null) && echo 'y') || echo 'n'"
+
+oci_container_image_build_manifest_cmd:
+  "podman manifest exists {{ oci_container_image_build_manifest_name }} || podman manifest create {{ oci_container_image_build_manifest_name }}"
+
+oci_container_image_build_cmd:
+  "podman build --rm --platform {{ oci_container_image_build_platform_arg }} --format oci 
+    --manifest {{ oci_container_image_build_manifest_name }}
+    -f - < <(echo -e '{{ oci_container_image_build_inline_container_file | ansible.builtin.mandatory }}')"
+
+oci_container_image_build_registry_login_cmd:
+  "podman login --username {{ oci_container_image_build_registry_username | ansible.builtin.mandatory }}
+  --password {{ lookup('user_account_password', (oci_container_image_build_registry_password_file_path | ansible.builtin.mandatory)) }}
+  --tls-verify=true {{ oci_container_image_build_registry_host | ansible.builtin.mandatory }}"
