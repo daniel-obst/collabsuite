@@ -94,7 +94,7 @@ platform_container_images:
         - *platform_registry_globals_linux_arm64
         - *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_openresty_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/openresty"
-      image_tag: &platform_container_images_openresty_prod_image_tag "1.27.1.1-0-noble-0"
+      image_tag: &platform_container_images_openresty_prod_image_tag "1.27.4.1-0-noble-0"
       inline_container_file:
         "FROM docker.io/openresty/openresty:1.27.1.1-0-noble\n
         RUN luarocks install lua-resty-openidc\n
@@ -106,7 +106,7 @@ platform_container_images:
         - *platform_registry_globals_linux_arm64
         - *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_openresty_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/openresty"
-      image_tag: &platform_container_images_openresty_staging_image_tag "1.27.1.1-0-noble-0"
+      image_tag: &platform_container_images_openresty_staging_image_tag "1.27.4.1-0-noble-0"
       inline_container_file:
         "FROM docker.io/openresty/openresty:1.27.1.1-0-noble\n
         RUN luarocks install lua-resty-openidc\n
@@ -133,10 +133,10 @@ platform_container_images:
   nginx:
     production:
       image_name: &platform_container_images_nginx_prod_image_name "docker.io/nginx"
-      image_tag: &platform_container_images_nginx_prod_image_tag "1.27.3"
+      image_tag: &platform_container_images_nginx_prod_image_tag "1.27.4"
     staging:
       image_name: &platform_container_images_nginx_staging_image_name "docker.io/nginx"
-      image_tag: &platform_container_images_nginx_staging_image_tag "1.27.3"
+      image_tag: &platform_container_images_nginx_staging_image_tag "1.27.4"
   postgresql_16:
     production:
       external_registry_path: &platform_container_images_postgres_16_prod_external_registry_path "docker.io/postgres"
@@ -153,36 +153,36 @@ platform_container_images:
   quay_io:
     production:
       image_name: &platform_container_images_quay_io_prod_image_name "quay.io/projectquay/quay"
-      image_tag: &platform_container_images_quay_io_prod_image_tag "v3.13.1"
+      image_tag: &platform_container_images_quay_io_prod_image_tag "v3.13.3"
     staging:
       image_name: &platform_container_images_quay_io_staging_image_name "quay.io/projectquay/quay"
-      image_tag: &platform_container_images_quay_io_staging_image_tag "v3.13.1"
+      image_tag: &platform_container_images_quay_io_staging_image_tag "v3.13.3"
   redis:
     production:
       external_registry_path: &platform_container_images_redis_prod_external_registry_path "docker.io/bitnami/redis"
       platform_registry_path: &platform_container_images_redis_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/bitnami/redis"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_redis_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/bitnami/redis"
-      image_tag: &platform_container_images_redis_prod_image_tag "7.4.1"
+      image_tag: &platform_container_images_redis_prod_image_tag "7.4.2"
     staging:
       external_registry_path: &platform_container_images_redis_staging_external_registry_path "docker.io/bitnami/redis"
       platform_registry_path: &platform_container_images_redis_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/bitnami/redis"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_redis_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/bitnami/redis"
-      image_tag: &platform_container_images_redis_staging_image_tag "7.4.1"
+      image_tag: &platform_container_images_redis_staging_image_tag "7.4.2"
   memcached:
     production:
       external_registry_path: &platform_container_images_memcached_prod_external_registry_path "docker.io/memcached"
       platform_registry_path: &platform_container_images_memcached_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/memcached"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_memcached_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/memcached"
-      image_tag: &platform_container_images_memcached_prod_image_tag "1.6.34"
+      image_tag: &platform_container_images_memcached_prod_image_tag "1.6.36"
     staging:
       external_registry_path: &platform_container_images_memcached_staging_external_registry_path "docker.io/memcached"
       platform_registry_path: &platform_container_images_memcached_staging_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/memcached"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_memcached_staging_image_name "{{ platform_container_images_prod_registry_image_path }}/memcached"
-      image_tag: &platform_container_images_memcached_staging_image_tag "1.6.34"
+      image_tag: &platform_container_images_memcached_staging_image_tag "1.6.36"
   node_red:
     production:
       external_registry_path: &platform_container_images_node_red_prod_external_registry_path "docker.io/nodered/node-red"
@@ -202,13 +202,13 @@ platform_container_images:
       platform_registry_path: &platform_container_images_drawio_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/jgraph/drawio"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_drawio_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/jgraph/drawio"
-      image_tag: &platform_container_images_drawio_prod_image_tag "26.0.4"
+      image_tag: &platform_container_images_drawio_prod_image_tag "26.0.9"
     staging:
       external_registry_path: &platform_container_images_drawio_staging_external_registry_path "docker.io/jgraph/drawio"
       platform_registry_path: &platform_container_images_drawio_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/jgraph/drawio"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_drawio_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/jgraph/drawio"
-      image_tag: &platform_container_images_drawio_staging_image_tag "26.0.4"
+      image_tag: &platform_container_images_drawio_staging_image_tag "26.0.9"
   pgadmin4:
     production:
       external_registry_path: &platform_container_images_pgadmin4_prod_external_registry_path "docker.io/dpage/pgadmin4"
@@ -254,78 +254,78 @@ platform_container_images:
       platform_registry_path: &platform_container_images_collabora_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/collabora/code"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_collabora_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/collabora/code"
-      image_tag: &platform_container_images_collabora_prod_image_tag "24.04.11.2.1"
+      image_tag: &platform_container_images_collabora_prod_image_tag "24.04.12.3.1"
     staging:
       external_registry_path: &platform_container_images_collabora_staging_external_registry_path "docker.io/collabora/code"
       platform_registry_path: &platform_container_images_collabora_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/collabora/code"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_collabora_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/collabora/code"
-      image_tag: &platform_container_images_collabora_staging_image_tag "24.04.11.2.1"
+      image_tag: &platform_container_images_collabora_staging_image_tag "24.04.12.3.1"
   nextcloud:
     production:
       external_registry_path: &platform_container_images_nextcloud_prod_external_registry_path "docker.io/nextcloud"
       platform_registry_path: &platform_container_images_nextcloud_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/nextcloud"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_nextcloud_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/nextcloud"
-      image_tag: &platform_container_images_nextcloud_prod_image_tag "30.0.4"
+      image_tag: &platform_container_images_nextcloud_prod_image_tag "30.0.5"
     staging:
       external_registry_path: &platform_container_images_nextcloud_staging_external_registry_path "docker.io/nextcloud"
       platform_registry_path: &platform_container_images_nextcloud_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/nextcloud"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_nextcloud_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/nextcloud"
-      image_tag: &platform_container_images_nextcloud_staging_image_tag "30.0.4"
+      image_tag: &platform_container_images_nextcloud_staging_image_tag "30.0.5"
   data_science_notebook:
     production:
       external_registry_path: &platform_container_images_data_science_notebook_prod_external_registry_path "quay.io/jupyter/datascience-notebook"
       platform_registry_path: &platform_container_images_data_science_notebook_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/jupyter/datascience-notebook"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_data_science_notebook_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/jupyter/datascience-notebook"
-      image_tag: &platform_container_images_data_science_notebook_prod_image_tag "2025-01-13"
+      image_tag: &platform_container_images_data_science_notebook_prod_image_tag "2025-02-12"
     staging:
       external_registry_path: &platform_container_images_data_science_notebook_staging_external_registry_path "quay.io/jupyter/datascience-notebook"
       platform_registry_path: &platform_container_images_data_science_notebook_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/jupyter/datascience-notebook"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_data_science_notebook_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/jupyter/datascience-notebook"
-      image_tag: &platform_container_images_data_science_notebook_staging_image_tag "2025-01-13"
+      image_tag: &platform_container_images_data_science_notebook_staging_image_tag "2025-02-12"
   redmine:
     production:
       external_registry_path: &platform_container_images_redmine_prod_external_registry_path "docker.io/redmine"
       platform_registry_path: &platform_container_images_redmine_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/redmine"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_redmine_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/redmine"
-      image_tag: &platform_container_images_redmine_prod_image_tag "6.0.2"
+      image_tag: &platform_container_images_redmine_prod_image_tag "6.0.3"
     staging:
       external_registry_path: &platform_container_images_redmine_staging_external_registry_path "docker.io/redmine"
       platform_registry_path: &platform_container_images_redmine_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/redmine"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_redmine_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/redmine"
-      image_tag: &platform_container_images_redmine_staging_image_tag "6.0.2"
+      image_tag: &platform_container_images_redmine_staging_image_tag "6.0.3"
   grafana:
     production:
       external_registry_path: &platform_container_images_grafana_prod_external_registry_path "docker.io/grafana/grafana"
       platform_registry_path: &platform_container_images_grafana_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/grafana/grafana"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_grafana_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/grafana/grafana"
-      image_tag: &platform_container_images_grafana_prod_image_tag "11.4.0"
+      image_tag: &platform_container_images_grafana_prod_image_tag "11.5.1"
     staging:
       external_registry_path: &platform_container_images_grafana_staging_external_registry_path "docker.io/grafana/grafana"
       platform_registry_path: &platform_container_images_grafana_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/grafana/grafana"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_grafana_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/grafana/grafana"
-      image_tag: &platform_container_images_grafana_staging_image_tag "11.4.0"
+      image_tag: &platform_container_images_grafana_staging_image_tag "11.5.1"
   openproject:
     production:
       external_registry_path: &platform_container_images_openproject_prod_external_registry_path "docker.io/openproject/openproject"
       platform_registry_path: &platform_container_images_openproject_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/openproject/openproject"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_openproject_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/openproject/openproject"
-      image_tag: &platform_container_images_openproject_prod_image_tag "15.2.0-slim"
+      image_tag: &platform_container_images_openproject_prod_image_tag "15.2.1-slim"
     staging:
       external_registry_path: &platform_container_images_openproject_staging_external_registry_path "docker.io/openproject/openproject"
       platform_registry_path: &platform_container_images_openproject_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/openproject/openproject"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_openproject_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/openproject/openproject"
-      image_tag: &platform_container_images_openproject_staging_image_tag "15.2.0-slim"
+      image_tag: &platform_container_images_openproject_staging_image_tag "15.2.1-slim"
   it_tools:
     production:
       external_registry_path: &platform_container_images_it_tools_prod_external_registry_path "docker.io/corentinth/it-tools"
