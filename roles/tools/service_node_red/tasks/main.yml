@@ -15,6 +15,7 @@
         openid_tls_web_proxy_service_config_network_dns: "{{ service_node_red_config_network_dns }}"
         openid_tls_web_proxy_service_config_reverse_proxy_additional_headers: "{{ service_node_red_config_reverse_proxy_additional_headers }}"
         openid_tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_node_red_config_reverse_proxy_enable_web_socket }}"
+        openid_tls_web_proxy_service_config_http_gateway: "{{ service_node_red_config_http_gateway }}"
         openid_tls_web_proxy_service_config_set_deny_root_uri_location: "{{ service_node_red_config_set_deny_root_uri_location }}"
         openid_tls_web_proxy_service_config_enable_session_cache: "{{ service_node_red_config_enable_session_cache }}"
         openid_tls_web_proxy_service_config_session_cache_domain: "{{ service_node_red_config_session_cache_domain }}"
