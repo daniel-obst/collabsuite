@@ -1,0 +1,67 @@
+---
+- name: Service (ckan)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (ckan) - TLS web proxy configuration
+      ansible.builtin.include_role:
+        name: tls_web_proxy_service_config
+      vars:
+        tls_web_proxy_service_config_server_firewall_port: "{{ service_ckan_server_firewall_port }}"
+        tls_web_proxy_service_config_fqdn_server: "{{ service_ckan_fqdn_server }}"
+        tls_web_proxy_service_config_cert_file_path: "{{ service_ckan_config_cert_file_path }}"
+        tls_web_proxy_service_config_key_file_path: "{{ service_ckan_config_key_file_path }}"
+        tls_web_proxy_service_config_dh_file_path: "{{ service_ckan_config_dh_file_path }}"
+        tls_web_proxy_service_config_ca_cert_file_path: "{{ service_ckan_config_ca_cert_file_path }}"
+        tls_web_proxy_service_config_network_dns: "{{ service_ckan_service_network_dns }}"
+        tls_web_proxy_service_config_reverse_proxy_additional_headers: "{{ service_ckan_config_reverse_proxy_additional_headers }}"
+        tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_ckan_config_reverse_proxy_enable_web_socket }}"
+        tls_web_proxy_service_config_http_gateway: "{{ service_ckan_config_http_gateway }}"
+
+- name: Service (ckan) - database configuration
+  ansible.builtin.include_role:
+    name: service_postgresql_init
+  vars:
+    service_postgresql_init_service_name: "{{ service_ckan_service_name }}"
+    service_postgresql_init_service_config_dir: "{{ service_ckan_service_config_dir }}"
+    service_postgresql_init_pgsql_db: "{{ service_ckan_pgsql_db }}"
+    service_postgresql_init_pgsql_user: "{{ service_ckan_pgsql_user }}"
+    service_postgresql_init_enable_pg_trgm_extension: "{{ service_ckan_pgsql_enable_pg_trgm_extension }}"
+
+- name: Service (ckan) - locations.conf
+  ansible.builtin.template:
+    src: "service_ckan_locations.conf.j2"
+    dest: "{{ service_ckan_config_locations_server_path }}"
+    owner: "{{ fact_tls_web_proxy_config_uid }}"
+    group: "{{ fact_tls_web_proxy_config_gid }}"
+    mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+    force: true
+  vars:
+    service_uri: "{{ service_ckan_service_uri }}"
+    server_url: "{{ service_ckan_server_url }}"
+    includes_path_reverse_proxy_conf: "{{ service_ckan_reverse_proxy_conf_container_path }}"
+
+- name: Service (ckan) - ckan_podman_environment
+  ansible.builtin.template:
+    src: "service_ckan_ckan_podman_environment.j2"
+    dest: "{{ service_ckan_ckan_podman_environment_server_path }}"
+    owner: "{{ fact_tls_web_proxy_config_uid }}"
+    group: "{{ fact_tls_web_proxy_config_gid }}"
+    mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+    force: true
+  vars:
+    server_domain: "{{ service_ckan_server_domain }}"
+    https_root_url: "{{ service_ckan_https_root_url }}"
+    host_with_port: "{{ service_ckan_host_with_port }}"
+    pgsql_db: "{{ service_ckan_pgsql_db }}"
+    pgsql_user: "{{ service_ckan_pgsql_user }}"
+    pgsql_password_file_path: "{{ service_ckan_pgsql_user_password_file_path }}"
+    admin_user: "{{ service_ckan_admin_user }}"
+    admin_user_password_file_path: "{{ service_ckan_admin_user_password_file_path }}"
+    admin_email: "{{ service_ckan_admin_email }}"
+
+- name: Service (ckan) - deploy service
+  ansible.builtin.include_role:
+    name: oci_container_service
+  vars:
+    oci_container_service_config: "{{ service_ckan_oci_service }}"
+    oci_container_service_workers: "{{ service_ckan_oci_service_workers }}"

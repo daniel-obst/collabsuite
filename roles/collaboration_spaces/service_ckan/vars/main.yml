@@ -1,0 +1,96 @@
+---
+service_ckan_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_ckan.production, platform_service_ckan.staging) }}"
+
+service_ckan_config_http_gateway: "{{ service_ckan_config.http_gateway }}"
+
+service_ckan_service_name: "ckan"
+service_ckan_password_path_prefix: "{{ platform_management_passwords_path }}/{{ service_ckan_service_name }}_"
+
+# web proxy config
+service_ckan_server_firewall_port: "{{ service_ckan_config.firewall_port }}"
+service_ckan_fqdn_server: "{{ service_ckan_config.fqdn_server }}"
+service_ckan_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+service_ckan_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
+service_ckan_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
+service_ckan_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
+service_ckan_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca_cert_file }}"
+
+service_ckan_config_reverse_proxy_additional_headers: []
+service_ckan_config_reverse_proxy_enable_web_socket: true
+
+# service_postgresql_init
+service_ckan_pgsql_worker: "pgsql_worker"
+service_ckan_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
+service_ckan_pgsql_user: "{{ service_ckan_config.admin_username }}"
+service_ckan_pgsql_db: "ckan"
+service_ckan_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
+service_ckan_pgsql_enable_pg_trgm_extension: false
+
+# locations.conf
+service_ckan_base_worker: "ckan_base_worker"
+service_ckan_service_uri: "{{ service_ckan_config.service_uri }}"
+service_ckan_server_url: "http://{{ service_ckan_base_worker }}:5000"
+service_ckan_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_ckan_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
+
+# ckan_podman_environment"
+# service_ckan_server_domain: "{{ ansible_host_domain }}"
+# service_ckan_https_root_url:
+#   "https://{{ service_ckan_config.http_gateway.server }}:{{ service_ckan_config.http_gateway.port }}/{{ service_ckan_config.service_uri }}/"
+# service_ckan_host_with_port: "{{ service_ckan_pgsql_worker }}:5432"
+# service_ckan_admin_user: "{{ service_ckan_config.admin_username }}"
+# service_ckan_admin_user_password_file_path: "{{ service_ckan_password_path_prefix }}{{ service_ckan_admin_user }}"
+# service_ckan_admin_email: "{{ service_ckan_config.admin_email }}"
+# service_ckan_ckan_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/ckan_podman_environment"
+
+# service
+service_ckan_oci_service:
+  image_name: "{{ service_ckan_config.service_image_name }}"
+  image_tag: "{{ service_ckan_config.service_image_tag }}"
+  service_name: "{{ service_ckan_config.service_account.username }}"
+  server_dest_port: "{{ service_ckan_config.server_port }}"
+  container_dest_port: "{{ service_ckan_config.firewall_port }}"
+  volumes: []
+  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  env_file: ""
+  added_capabilities: []
+
+service_ckan_oci_service_workers:
+  - image_name: "{{ service_ckan_config.worker_pgsql_image_name }}"
+    image_tag: "{{ service_ckan_config.worker_pgsql_image_tag }}"
+    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_ckan_pgsql_worker }}"
+        volumes: "{{ fact_service_postgresql_init_volumes }}"
+        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
+
+  - image_name: "{{ service_ckan_config.worker_redis_image_name }}"
+    image_tag: "{{ service_ckan_config.worker_redis_image_tag }}"
+    env_file: ""
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_ckan_redis_worker }}"
+        volumes: [] 
+        readonly_volumes: []
+
+  - image_name: "{{ service_ckan_config.worker_ckan_solr_image_name }}"
+    image_tag: "{{ service_ckan_config.worker_ckan_solr_image_tag }}"
+    env_file: ""
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_ckan_solr_worker }}"
+        volumes:
+          - "ckan_solr_data:/var/solr" 
+        readonly_volumes: []
+
+  - image_name: "{{ service_ckan_config.worker_ckan_base_image_name }}"
+    image_tag: "{{ service_ckan_config.worker_ckan_base_image_tag }}"
+    env_file: "{{ service_ckan_ckan_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_ckan_base_worker }}"
+        volumes:
+          - "ckan_storage:/var/lib/ckan"
+        readonly_volumes: []

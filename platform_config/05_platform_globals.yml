@@ -241,13 +241,13 @@ platform_container_images:
       platform_registry_path: &platform_container_images_gitlab_ce_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/gitlab/gitlab-ce"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_gitlab_ce_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/gitlab/gitlab-ce"
-      image_tag: &platform_container_images_gitlab_ce_prod_image_tag "17.4.4-ce.0"
+      image_tag: &platform_container_images_gitlab_ce_prod_image_tag "17.6.0-ce.0"
     staging:
       external_registry_path: &platform_container_images_gitlab_ce_staging_external_registry_path "docker.io/gitlab/gitlab-ce"
       platform_registry_path: &platform_container_images_gitlab_ce_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/gitlab/gitlab-ce"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_gitlab_ce_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/gitlab/gitlab-ce"
-      image_tag: &platform_container_images_gitlab_ce_staging_image_tag "17.4.4-ce.0"
+      image_tag: &platform_container_images_gitlab_ce_staging_image_tag "17.6.0-ce.0"
   collabora:
     production:
       external_registry_path: &platform_container_images_collabora_prod_external_registry_path "docker.io/collabora/code"
@@ -339,6 +339,32 @@ platform_container_images:
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_it_tools_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/corentinth/it-tools"
       image_tag: &platform_container_images_it_tools_staging_image_tag "2024.10.22-7ca5933"
+  ckan_base:
+    production:
+      external_registry_path: &platform_container_images_ckan_base_prod_external_registry_path "docker.io/ckan/ckan-base"
+      platform_registry_path: &platform_container_images_ckan_base_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/ckan/ckan-base"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_ckan_base_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/ckan/ckan-base"
+      image_tag: &platform_container_images_ckan_base_prod_image_tag "2.11.2"
+    staging:
+      external_registry_path: &platform_container_images_ckan_base_staging_external_registry_path "docker.io/ckan/ckan-base"
+      platform_registry_path: &platform_container_images_ckan_base_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/ckan/ckan-base"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_ckan_base_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/ckan/ckan-base"
+      image_tag: &platform_container_images_ckan_base_staging_image_tag "2.11.2"
+  ckan_solr:
+    production:
+      external_registry_path: &platform_container_images_ckan_solr_prod_external_registry_path "docker.io/ckan/ckan-solr"
+      platform_registry_path: &platform_container_images_ckan_solr_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/ckan/ckan-solr"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_ckan_solr_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/ckan/ckan-solr"
+      image_tag: &platform_container_images_ckan_solr_prod_image_tag "2.11-solr9.7"
+    staging:
+      external_registry_path: &platform_container_images_ckan_solr_staging_external_registry_path "docker.io/ckan/ckan-solr"
+      platform_registry_path: &platform_container_images_ckan_solr_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/ckan/ckan-solr"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_ckan_solr_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/ckan/ckan-solr"
+      image_tag: &platform_container_images_ckan_solr_staging_image_tag "2.11-solr9.7"
 
 platform_container_registry_repositories:
   production:
@@ -360,6 +386,8 @@ platform_container_registry_repositories:
     - *platform_container_images_grafana_prod_platform_registry_path
     - *platform_container_images_openproject_prod_platform_registry_path
     - *platform_container_images_it_tools_prod_platform_registry_path
+    - *platform_container_images_ckan_base_prod_platform_registry_path
+    - *platform_container_images_ckan_solr_prod_platform_registry_path
   staging:
     - *platform_container_images_openresty_staging_platform_registry_path
     - *platform_container_images_keycloak_staging_platform_registry_path
@@ -379,6 +407,8 @@ platform_container_registry_repositories:
     - *platform_container_images_grafana_staging_platform_registry_path
     - *platform_container_images_openproject_staging_platform_registry_path
     - *platform_container_images_it_tools_staging_platform_registry_path
+    - *platform_container_images_ckan_base_staging_platform_registry_path
+    - *platform_container_images_ckan_solr_staging_platform_registry_path
 
 platform_container_registry_repository_supported_platform_arches:
   - *platform_registry_globals_linux_arm64
@@ -1379,6 +1409,78 @@ platform_service_it_tools:
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_staging_info
 
+platform_service_ckan:
+  production:
+    fqdn_service: "ckan-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_ckan_prod_firewall_port "4441"
+    server_port: &platform_service_ckan_prod_server_port "4441"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_prod_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    worker_redis_image_name: *platform_container_images_redis_prod_image_name
+    worker_redis_image_tag: *platform_container_images_redis_prod_image_tag
+    worker_ckan_solr_image_name: *platform_container_images_ckan_solr_prod_image_name
+    worker_ckan_solr_image_tag: *platform_container_images_ckan_solr_prod_image_tag
+    worker_ckan_base_image_name: *platform_container_images_ckan_base_prod_image_name
+    worker_ckan_base_image_tag: *platform_container_images_ckan_base_prod_image_tag
+    service_uri: &platform_service_ckan_prod_service_uri "ckan"
+    username: &platform_service_ckan_prod_username "ckan"
+    admin_username: "admin"
+    admin_email: "adminckan@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_ckan_prod_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_ckan_prod_firewall_port
+      location_uri: *platform_service_ckan_prod_service_uri
+      url_rewrite: false
+    service_account: &platform_service_ckan_prod_service_account
+      username: *platform_service_ckan_prod_username
+      gecos: "ckan user"
+    service_forward_port: &platform_service_ckan_prod_forward_port
+      destination_port: *platform_service_ckan_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_ckan_prod_server_port
+      service_name: *platform_service_ckan_prod_username
+      username: *platform_service_ckan_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
+  staging:
+    fqdn_service: "staging-ckan-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_ckan_staging_firewall_port "5441"
+    server_port: &platform_service_ckan_staging_server_port "5441"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_staging_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    worker_redis_image_name: *platform_container_images_redis_staging_image_name
+    worker_redis_image_tag: *platform_container_images_redis_staging_image_tag
+    worker_ckan_solr_image_name: *platform_container_images_ckan_solr_staging_image_name
+    worker_ckan_solr_image_tag: *platform_container_images_ckan_solr_staging_image_tag
+    worker_ckan_base_image_name: *platform_container_images_ckan_base_staging_image_name
+    worker_ckan_base_image_tag: *platform_container_images_ckan_base_staging_image_tag
+    service_uri: &platform_service_ckan_staging_service_uri "ckan"
+    username: &platform_service_ckan_staging_username "stagingckan"
+    admin_username: "stagingadmin"
+    admin_email: "stagingadminckan@{{ ansible_service_domain }}"
+    upstream_service: &platform_service_ckan_staging_upstream_service
+      upstream_server: *platform_globals_server_3
+      upstream_server_firewall_port: *platform_service_ckan_staging_firewall_port
+      location_uri: *platform_service_ckan_staging_service_uri
+      url_rewrite: false
+    service_account: &platform_service_ckan_staging_service_account
+      username: *platform_service_ckan_staging_username
+      gecos: "ckan user (staging)"
+    service_forward_port: &platform_service_ckan_staging_forward_port
+      destination_port: *platform_service_ckan_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_ckan_staging_server_port
+      service_name: *platform_service_ckan_staging_username
+      username: *platform_service_ckan_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_staging_info
+
 platform_service_internal_gateway:
   production:
     fqdn_service: "int-gw-{{ ansible_service_domain }}"
@@ -1426,6 +1528,7 @@ platform_service_internal_gateway:
       - *platform_service_data_science_notebook_prod_upstream_service
       - *platform_service_openproject_prod_upstream_service
       # - *platform_service_it_tools_prod_upstream_service
+      # - *platform_service_ckan_prod_upstream_service
   staging:
     fqdn_service: "staging-int-gw-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_internal_gateway
@@ -1473,6 +1576,7 @@ platform_service_internal_gateway:
       - *platform_service_data_science_notebook_staging_upstream_service
       - *platform_service_openproject_staging_upstream_service
       # - *platform_service_it_tools_staging_upstream_service
+      # - *platform_service_ckan_staging_upstream_service
 
 platform_service_external_gateway:
   production:
@@ -1698,6 +1802,7 @@ platform_server_3_server_config:
       - *platform_service_redmine_prod_service_account
       - *platform_service_node_red_pgsql_prod_service_account
       - *platform_service_openproject_prod_service_account
+      - *platform_service_ckan_prod_service_account
     services_forward_ports:
       - *platform_service_gitlab_ce_prod_forward_port
       - *platform_service_nextcloud_prod_forward_port
@@ -1705,6 +1810,7 @@ platform_server_3_server_config:
       - *platform_service_redmine_prod_forward_port
       - *platform_service_node_red_pgsql_prod_forward_port
       - *platform_service_openproject_prod_forward_port
+      - *platform_service_ckan_prod_forward_port
   staging:
     services_user_accounts:
       - *platform_service_gitlab_ce_staging_service_account
@@ -1713,6 +1819,7 @@ platform_server_3_server_config:
       - *platform_service_redmine_staging_service_account
       - *platform_service_node_red_pgsql_staging_service_account
       - *platform_service_openproject_staging_service_account
+      - *platform_service_ckan_staging_service_account
     services_forward_ports:
       - *platform_service_gitlab_ce_staging_forward_port
       - *platform_service_nextcloud_staging_forward_port
@@ -1720,3 +1827,4 @@ platform_server_3_server_config:
       - *platform_service_redmine_staging_forward_port
       - *platform_service_node_red_pgsql_staging_forward_port
       - *platform_service_openproject_staging_forward_port
+      - *platform_service_ckan_staging_forward_port
