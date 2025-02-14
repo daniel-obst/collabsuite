@@ -33,6 +33,7 @@
             fact_oci_container_service_init_dh_file: "{{ fact_pki_service_certificate_info_dh_file }}"
             fact_oci_container_service_init_ca_cert_file: "{{ fact_pki_certificate_authority_info_ca_file }}"
             fact_oci_container_service_init_fqdn_server: "{{ oci_container_service_init_fqdn_server }}"
+            fact_oci_container_service_init_platform_title: "{{ oci_container_service_init_platform_title }}"
 
     - name: OCI container service init - server
       when: oci_container_service_init_fqdn_service | length < 1
