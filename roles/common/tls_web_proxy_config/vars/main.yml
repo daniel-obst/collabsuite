@@ -3,7 +3,8 @@ tls_web_proxy_config_container_conf_dir_path: "/etc/nginx/conf.d"
 tls_web_proxy_config_container_includes_dir_path: "/etc/nginx/includes"
 tls_web_proxy_config_container_tls_dir_path: "/etc/nginx/tls"
 
-tls_web_proxy_config_reverse_proxy_conf: "nginx_reverse_proxy.conf"
+tls_web_proxy_config_reverse_proxy_conf: "playbooks_templates_nginx_reverse_proxy.conf"
+tls_web_proxy_config_playbooks_files_html_error_pages_conf: "playbooks_files_nginx_html_error_pages.conf"
 tls_web_proxy_config_html_error_pages_conf: "nginx_html_error_pages.conf"
 
 tls_web_proxy_config_dest_default_conf_path: "{{ tls_web_proxy_config_conf_dir }}/default.conf"
@@ -11,18 +12,96 @@ tls_web_proxy_config_dest_reverse_proxy_conf_path: "{{ tls_web_proxy_config_incl
 tls_web_proxy_config_reverse_proxy_conf_container_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/reverse_proxy.conf"
 
 tls_web_proxy_config_dest_html_error_pages:
-  - path: "html_error_pages.conf"
+  - path: "{{ tls_web_proxy_config_playbooks_files_html_error_pages_conf }}"
     dest: "{{ tls_web_proxy_config_includes_dir }}/{{ tls_web_proxy_config_html_error_pages_conf }}"
-  - path: "40x.html"
-    dest: "{{ tls_web_proxy_config_html_dir }}/40x.html"
-  - path: "404.html"
-    dest: "{{ tls_web_proxy_config_html_dir }}/404.html"
-  - path: "500.html"
-    dest: "{{ tls_web_proxy_config_html_dir }}/500.html"
-  - path: "500.html"
-    dest: "{{ tls_web_proxy_config_html_dir }}/50x.html"
-  - path: "styles.css"
-    dest: "{{ tls_web_proxy_config_html_dir }}/styles.css"
+
+tls_web_proxy_config_base_error_html: "playbooks_templates_base_error.html.j2"
+
+tls_web_proxy_config_dest_html_40x_error_page_dest: "{{ tls_web_proxy_config_html_dir }}/40x.html"
+tls_web_proxy_config_dest_html_40x_error_page_contents: |
+    '<div class="content">
+      <h1>Unauthorized</h1>
+      <div class="row">
+        <div class="column">
+          <div class="card">
+            <h2>Page Currently Off-Limits</h2>
+            <div class="readonly">
+              <p>Please contact support if you have any questions.
+            </div>
+            <p>
+              <a href="/">
+                <button>Back to Home Page</button>
+              </a>
+            </p>
+            </div>
+          </div>
+      </div>
+    </div>'
+
+tls_web_proxy_config_dest_html_404_error_page_dest: "{{ tls_web_proxy_config_html_dir }}/404.html"
+tls_web_proxy_config_dest_html_404_error_page_contents: |
+    '<div class="content">
+      <h1>Page Not Found</h1>
+      <div class="row">
+        <div class="column">
+          <div class="card">
+            <h2>Page Temporarily Unavailable</h2>
+            <div class="readonly">
+              <p>Please contact support if you have any questions.
+            </div>
+            <p>
+              <a href="/">
+                <button>Back to Home Page</button>
+              </a>
+            </p>
+            </div>
+          </div>
+      </div>
+    </div>'
+
+tls_web_proxy_config_dest_html_500_error_page_dest: "{{ tls_web_proxy_config_html_dir }}/500.html"
+tls_web_proxy_config_dest_html_500_error_page_contents: |
+    '<div class="content">
+      <h1>Something Went Wrong</h1>
+      <div class="row">
+        <div class="column">
+          <div class="card">
+            <h2>Working To Fix The Issue</h2>
+            <div class="readonly">
+              <p>We expect to have things back up and running soon.</p>
+              <p>Please contact support if you have any questions.
+            </div>
+            <p>
+              <a href="/">
+                <button>Back to Home Page</button>
+              </a>
+            </p>
+            </div>
+          </div>
+      </div>
+    </div>'
+
+tls_web_proxy_config_dest_html_50x_error_page_dest: "{{ tls_web_proxy_config_html_dir }}/50x.html"
+tls_web_proxy_config_dest_html_50x_error_page_contents: |
+    '<div class="content">
+      <h1>Something Went Wrong</h1>
+      <div class="row">
+        <div class="column">
+          <div class="card">
+            <h2>Working To Fix The Issue</h2>
+            <div class="readonly">
+              <p>We expect to have things back up and running soon.</p>
+              <p>Please contact support if you have any questions.
+            </div>
+            <p>
+              <a href="/">
+                <button>Back to Home Page</button>
+              </a>
+            </p>
+            </div>
+          </div>
+      </div>
+    </div>'
 
 tls_web_proxy_config_readonly_volumes:
   - "./{{ tls_web_proxy_config_dest_default_conf_path }}:{{ tls_web_proxy_config_container_conf_dir_path }}/default.conf"

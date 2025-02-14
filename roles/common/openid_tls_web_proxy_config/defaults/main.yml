@@ -22,3 +22,5 @@ openid_tls_web_proxy_config_ssl_verify_depth: 2
 openid_tls_web_proxy_config_cache_shared_memory_zone_mb: 20
 openid_tls_web_proxy_config_cache_idling_timeout_seconds: 1800
 openid_tls_web_proxy_config_cache_rolling_timeout_seconds: 3600
+
+openid_tls_web_proxy_config_platform_title: "{{ fact_oci_container_service_init_platform_title }}"

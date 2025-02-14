@@ -34,7 +34,8 @@ lua_ssl_trusted_certificate {{ openid_ssl_trusted_certificate }};
 server {
   listen {{ server_firewall_port }} ssl;
 
-  server_name {{ fqdn_server }};
+  server_name   {{ fqdn_server }};
+  server_tokens off;
 
   ssl_certificate        {{ server_cert_file_path }};
   ssl_certificate_key    {{ server_key_file_path }};

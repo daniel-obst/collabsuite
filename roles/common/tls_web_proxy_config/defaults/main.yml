@@ -20,3 +20,5 @@ tls_web_proxy_config_set_x_forwarded_host: true
 tls_web_proxy_config_enable_secondary: false
 tls_web_proxy_config_secondary_set_x_forwarded_host: true
 tls_web_proxy_config_secondary_set_deny_root_uri_location: true
+
+tls_web_proxy_config_platform_title: "{{ fact_oci_container_service_init_platform_title }}"

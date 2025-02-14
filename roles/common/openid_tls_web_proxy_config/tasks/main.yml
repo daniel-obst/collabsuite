@@ -110,6 +110,54 @@
         force: true
       loop: "{{ openid_tls_web_proxy_config_dest_html_error_pages }}"
 
+    - name: OpenID - TLS (web proxy config) - 40x.html
+      ansible.builtin.template:
+        src: "{{ openid_tls_web_proxy_config_base_error_html }}"
+        dest: "{{ openid_tls_web_proxy_config_dest_html_40x_error_page_dest }}"
+        owner: "{{ openid_tls_web_proxy_config_user_uid }}"
+        group: "{{ openid_tls_web_proxy_config_user_gid }}"
+        mode: "{{ openid_tls_web_proxy_config_html_file_mode }}"
+        force: true
+      vars:
+        platform_title: "{{ openid_tls_web_proxy_config_platform_title }}"
+        page_contents: "{{ openid_tls_web_proxy_config_dest_html_40x_error_page_contents }}"
+
+    - name: OpenID - TLS (web proxy config) - 404.html
+      ansible.builtin.template:
+        src: "{{ openid_tls_web_proxy_config_base_error_html }}"
+        dest: "{{ openid_tls_web_proxy_config_dest_html_404_error_page_dest }}"
+        owner: "{{ openid_tls_web_proxy_config_user_uid }}"
+        group: "{{ openid_tls_web_proxy_config_user_gid }}"
+        mode: "{{ openid_tls_web_proxy_config_html_file_mode }}"
+        force: true
+      vars:
+        platform_title: "{{ openid_tls_web_proxy_config_platform_title }}"
+        page_contents: "{{ openid_tls_web_proxy_config_dest_html_404_error_page_contents }}"
+
+    - name: OpenID - TLS (web proxy config) - 500.html
+      ansible.builtin.template:
+        src: "{{ openid_tls_web_proxy_config_base_error_html }}"
+        dest: "{{ openid_tls_web_proxy_config_dest_html_500_error_page_dest }}"
+        owner: "{{ openid_tls_web_proxy_config_user_uid }}"
+        group: "{{ openid_tls_web_proxy_config_user_gid }}"
+        mode: "{{ openid_tls_web_proxy_config_html_file_mode }}"
+        force: true
+      vars:
+        platform_title: "{{ openid_tls_web_proxy_config_platform_title }}"
+        page_contents: "{{ openid_tls_web_proxy_config_dest_html_500_error_page_contents }}"
+
+    - name: OpenID - TLS (web proxy config) - 50x.html
+      ansible.builtin.template:
+        src: "{{ openid_tls_web_proxy_config_base_error_html }}"
+        dest: "{{ openid_tls_web_proxy_config_dest_html_50x_error_page_dest }}"
+        owner: "{{ openid_tls_web_proxy_config_user_uid }}"
+        group: "{{ openid_tls_web_proxy_config_user_gid }}"
+        mode: "{{ openid_tls_web_proxy_config_html_file_mode }}"
+        force: true
+      vars:
+        platform_title: "{{ openid_tls_web_proxy_config_platform_title }}"
+        page_contents: "{{ openid_tls_web_proxy_config_dest_html_50x_error_page_contents }}"
+
     - name: OpenID - TLS (web proxy config) - TLS configuration
       ansible.builtin.include_role:
         name: tls_config

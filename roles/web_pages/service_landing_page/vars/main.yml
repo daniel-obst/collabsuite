@@ -1,17 +1,9 @@
 ---
-service_landing_page_external_gateway_ip: "{{ ansible_deploy_production
-  | ansible.builtin.ternary(platform_global_external_gateway.production.server_ip, platform_global_external_gateway.staging.server_ip) }}"
-service_landing_page_external_gateway_firewall_port: "{{ ansible_deploy_production
-  | ansible.builtin.ternary(platform_global_external_gateway.production.port, platform_global_external_gateway.staging.port) }}"
-service_landing_page_url_prefix: "https://{{ service_landing_page_external_gateway_ip }}:{{ service_landing_page_external_gateway_firewall_port }}/"
-service_landing_page_url_suffix: "/"
-
 service_landing_page_upstream_services: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_internal_gateway.production.upstream_services, platform_service_internal_gateway.staging.upstream_services) }}"
 
-service_landing_page_platform_title: "{{ ansible_deploy_production
-  | ansible.builtin.ternary(platform_globals.production.landing_page_title, platform_globals.staging.landing_page_title) }}"
-service_landing_page_logout_url: "{{ service_landing_page_url_prefix }}/logout"
+service_landing_page_platform_title: "{{ fact_oci_container_service_init_platform_title }}"
+service_landing_page_logout_url: "/logout"
 
 service_landing_page_images:
   - "ansible-icon.png"

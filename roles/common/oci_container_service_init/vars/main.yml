@@ -1,0 +1,3 @@
+---
+oci_container_service_init_platform_title: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_globals.production.landing_page_title, platform_globals.staging.landing_page_title) }}"
