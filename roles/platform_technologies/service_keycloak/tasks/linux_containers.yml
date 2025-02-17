@@ -13,6 +13,7 @@
     tls_web_proxy_config_x_forwarded_port: "{{ service_keycloak_config_x_forwarded_port }}"
     tls_web_proxy_config_reverse_proxy_additional_headers: "{{ service_keycloak_config_reverse_proxy_additional_headers }}"
     tls_web_proxy_config_reverse_proxy_enable_web_socket: "{{ service_keycloak_config_reverse_proxy_enable_web_socket }}"
+    tls_web_proxy_config_set_deny_root_uri_location: "{{ service_keycloak_config_set_deny_root_uri_location }}"
     tls_web_proxy_config_enable_secondary: true
     tls_web_proxy_config_secondary_server_firewall_port: "{{ service_keycloak_secondary_server_firewall_port }}"
     tls_web_proxy_config_secondary_fqdn_server: "{{ service_keycloak_secondary_fqdn_server }}"

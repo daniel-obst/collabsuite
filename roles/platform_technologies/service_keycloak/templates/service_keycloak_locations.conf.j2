@@ -10,3 +10,7 @@ location ~* ^/{{ service_uri }}(|/|/admin|/metrics|/health) {
   proxy_pass $workerPod;
   include    {{ reverse_proxy_conf_path }};
 }
+
+location / {
+  return 301 /{{ service_uri }};
+}
