@@ -69,7 +69,7 @@
           | ansible.builtin.mandatory }}"
         openid_client_enable_login: "{{ openid_tls_web_proxy_config_client_enable_login }}"
         openid_client_id: "{{ openid_tls_web_proxy_config_client_id | ansible.builtin.mandatory }}"
-        openid_client_secret_file_path: "{{ openid_tls_web_proxy_config_client_secret_file_path | ansible.builtin.mandatory }}"
+        openid_client_secret_file_path: "{{ openid_tls_web_proxy_config_client_secret_file_path }}"
         openid_redirect_uri: "{{ openid_tls_web_proxy_config_redirect_uri }}"
         openid_discovery_uri: "{{ openid_tls_web_proxy_config_discovery_uri }}"
         openid_redirect_after_logout_uri: "{{ openid_tls_web_proxy_config_redirect_after_logout_uri }}"

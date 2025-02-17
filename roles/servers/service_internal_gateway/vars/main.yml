@@ -31,7 +31,7 @@ service_internal_gateway_config_cache_session_secret_file_path: "{{ service_inte
 
 service_internal_gateway_config_client_id: "{{ service_internal_gateway_openid_config.client_id }}"
 service_internal_gateway_config_client_secret_file_path: "{{ service_internal_gateway_openid_config.secret_file_path }}"
-service_internal_gateway_config_redirect_uri: "{{ service_internal_gateway_openid_config.redirect_uri }}"
+service_internal_gateway_config_base_uri: "{{ service_internal_gateway_openid_config.base_uri }}"
 service_internal_gateway_config_client_enable_login: true
 service_internal_gateway_config_cache_shared_memory_zone_mb: "{{ service_internal_gateway_openid_config.shared_memory_zone_mb }}"
 service_internal_gateway_config_cache_idling_timeout_seconds: "{{ service_internal_gateway_openid_config.idling_timeout_seconds }}"

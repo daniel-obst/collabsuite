@@ -241,13 +241,13 @@ platform_container_images:
       platform_registry_path: &platform_container_images_gitlab_ce_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/gitlab/gitlab-ce"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_gitlab_ce_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/gitlab/gitlab-ce"
-      image_tag: &platform_container_images_gitlab_ce_prod_image_tag "17.6.0-ce.0"
+      image_tag: &platform_container_images_gitlab_ce_prod_image_tag "17.6.2-ce.0"
     staging:
       external_registry_path: &platform_container_images_gitlab_ce_staging_external_registry_path "docker.io/gitlab/gitlab-ce"
       platform_registry_path: &platform_container_images_gitlab_ce_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/gitlab/gitlab-ce"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_gitlab_ce_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/gitlab/gitlab-ce"
-      image_tag: &platform_container_images_gitlab_ce_staging_image_tag "17.6.0-ce.0"
+      image_tag: &platform_container_images_gitlab_ce_staging_image_tag "17.6.2-ce.0"
   collabora:
     production:
       external_registry_path: &platform_container_images_collabora_prod_external_registry_path "docker.io/collabora/code"
@@ -509,7 +509,9 @@ platform_service_keycloak:
       security_realm_id: "collab-suite-v2.0"
       discovery_uri: "auth/realms/collab-suite-v2.0/.well-known/openid-configuration"
       redirect_after_logout_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/logout"
+      client_redirect_uri_suffix: "redirect_uri"
       web_origins: &platform_service_keycloak_prod_client_domain "{{ ansible_host_domain }}"
+      base_secret_file_path: "{{ platform_management_openid_path }}/openid_client_secret_"
       identity_provider_gateway: *platform_global_external_gateway_prod_info
     service_account: &platform_service_keycloak_prod_service_account
       username: &platform_service_keycloak_prod_username "keycloak"
@@ -548,7 +550,9 @@ platform_service_keycloak:
       security_realm_id: "staging-collab-suite-v2.0"
       discovery_uri: "auth/realms/staging-collab-suite-v2.0/.well-known/openid-configuration"
       redirect_after_logout_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/logout"
+      client_redirect_uri_suffix: "redirect_uri"
       web_origins: &platform_service_keycloak_staging_client_domain "{{ ansible_host_domain }}"
+      base_secret_file_path: "{{ platform_management_openid_path }}/openid_client_secret_"
       identity_provider_gateway: *platform_global_external_gateway_staging_info
     service_account: &platform_service_keycloak_staging_service_account
       username: &platform_service_keycloak_staging_username "stagingkeycloak"
@@ -592,9 +596,7 @@ platform_service_node_red:
       enable_session_cache: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "node-red"
-      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}node-red"
-      base_uri: "nodered"
-      redirect_uri: "nodered/{{ platform_keycloak_authority_redirect_uri_suffix }}"
+      base_uri: *platform_service_node_red_prod_service_uri
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -628,9 +630,7 @@ platform_service_node_red:
       enable_session_cache: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-node-red"
-      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}staging-node-red"
-      base_uri: "nodered"
-      redirect_uri: "nodered/{{ platform_keycloak_authority_redirect_uri_suffix }}"
+      base_uri: *platform_service_node_red_staging_service_uri
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -662,6 +662,14 @@ platform_service_drawio:
       username: *platform_service_drawio_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_prod_info
+    openid_client: &platform_service_drawio_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "drawio"
+      base_uri: *platform_service_drawio_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "stagingdrawio-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
@@ -688,6 +696,14 @@ platform_service_drawio:
       username: *platform_service_drawio_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_staging_info
+    openid_client: &platform_service_drawio_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-drawio"
+      base_uri: *platform_service_drawio_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_pgadmin4:
   production:
@@ -718,6 +734,14 @@ platform_service_pgadmin4:
       username: *platform_service_pgadmin4_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_prod_info
+    openid_client: &platform_service_pgadmin4_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "pgadmin4"
+      base_uri: *platform_service_pgadmin4_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "stagingpgadmin4-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
@@ -746,6 +770,14 @@ platform_service_pgadmin4:
       username: *platform_service_pgadmin4_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_staging_info
+    openid_client: &platform_service_pgadmin4_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-pgadmin4"
+      base_uri: *platform_service_pgadmin4_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_rstudio:
   production:
@@ -775,6 +807,14 @@ platform_service_rstudio:
       username: *platform_service_rstudio_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_prod_info
+    openid_client: &platform_service_rstudio_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "rstudio"
+      base_uri: *platform_service_rstudio_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "stagingrstudio-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
@@ -802,6 +842,14 @@ platform_service_rstudio:
       username: *platform_service_rstudio_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_staging_info
+    openid_client: &platform_service_rstudio_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-rstudio"
+      base_uri: *platform_service_rstudio_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_code_server:
   production:
@@ -831,6 +879,14 @@ platform_service_code_server:
       username: *platform_service_code_server_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_prod_info
+    openid_client: &platform_service_code_server_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "code-server"
+      base_uri: *platform_service_code_server_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "stagingcode-server-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
@@ -858,6 +914,14 @@ platform_service_code_server:
       username: *platform_service_code_server_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_staging_info
+    openid_client: &platform_service_code_server_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-code-server"
+      base_uri: *platform_service_code_server_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_collabora:
   production:
@@ -945,6 +1009,14 @@ platform_service_gitlab_ce:
       username: *platform_service_gitlab_ce_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_prod_info
+    openid_client: &platform_service_gitlab_ce_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "gitlab-ce"
+      base_uri: *platform_service_gitlab_ce_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "staginggitlab-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_3
@@ -972,6 +1044,14 @@ platform_service_gitlab_ce:
       username: *platform_service_gitlab_ce_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_staging_info
+    openid_client: &platform_service_gitlab_ce_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-gitlab-ce"
+      base_uri: *platform_service_gitlab_ce_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_nextcloud:
   production:
@@ -1005,6 +1085,14 @@ platform_service_nextcloud:
       username: *platform_service_nextcloud_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_prod_info
+    openid_client: &platform_service_nextcloud_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "nextcloud"
+      base_uri: *platform_service_nextcloud_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "stagingnextcloud-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_3
@@ -1036,6 +1124,14 @@ platform_service_nextcloud:
       username: *platform_service_nextcloud_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_prod_info
+    openid_client: &platform_service_nextcloud_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-nextcloud"
+      base_uri: *platform_service_nextcloud_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_grafana:
   production:
@@ -1069,6 +1165,14 @@ platform_service_grafana:
       username: *platform_service_grafana_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_prod_info
+    openid_client: &platform_service_grafana_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "grafana"
+      base_uri: *platform_service_grafana_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "staginggrafana-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_3
@@ -1100,6 +1204,14 @@ platform_service_grafana:
       username: *platform_service_grafana_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_prod_info
+    openid_client: &platform_service_grafana_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-grafana"
+      base_uri: *platform_service_grafana_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_redmine:
   production:
@@ -1133,6 +1245,14 @@ platform_service_redmine:
       username: *platform_service_redmine_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_prod_info
+    openid_client: &platform_service_redmine_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "redmine"
+      base_uri: *platform_service_redmine_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "stagingredmine-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_3
@@ -1164,6 +1284,14 @@ platform_service_redmine:
       username: *platform_service_redmine_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_prod_info
+    openid_client: &platform_service_redmine_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-redmine"
+      base_uri: *platform_service_redmine_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_node_red_pgsql:
   production:
@@ -1241,9 +1369,7 @@ platform_service_data_science_notebook:
       enable_session_cache: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "data-science-notebook"
-      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}data-science-notebook"
-      base_uri: "datasciencenotebook"
-      redirect_uri: "datasciencenotebook/{{ platform_keycloak_authority_redirect_uri_suffix }}"
+      base_uri: *platform_service_data_science_notebook_prod_service_uri
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1276,11 +1402,9 @@ platform_service_data_science_notebook:
     http_gateway: *platform_global_internal_gateway_staging_info
     openid_client: &platform_service_data_science_notebook_staging_openid_client
       enable_session_cache: false
-      domain: *platform_service_keycloak_prod_client_domain
+      domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-data-science-notebook"
-      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}staging-data_science-notebook"
-      base_uri: "datasciencenotebook"
-      redirect_uri: "datasciencenotebook/{{ platform_keycloak_authority_redirect_uri_suffix }}"
+      base_uri: *platform_service_data_science_notebook_staging_service_uri
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1319,6 +1443,14 @@ platform_service_openproject:
       username: *platform_service_openproject_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_prod_info
+    openid_client: &platform_service_openproject_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "openproject"
+      base_uri: *platform_service_openproject_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "staging-open-project-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_3
@@ -1352,6 +1484,14 @@ platform_service_openproject:
       username: *platform_service_openproject_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_external_gateway_staging_info
+    openid_client: &platform_service_openproject_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-openproject"
+      base_uri: *platform_service_openproject_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_it_tools:
   production:
@@ -1381,6 +1521,14 @@ platform_service_it_tools:
       username: *platform_service_it_tools_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_prod_info
+    openid_client: &platform_service_it_tools_prod_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_prod_client_domain
+      client_id: "it-tools"
+      base_uri: *platform_service_it_tools_prod_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
   staging:
     fqdn_service: "staging-it-tools-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
@@ -1408,6 +1556,14 @@ platform_service_it_tools:
       username: *platform_service_it_tools_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
     http_gateway: *platform_global_internal_gateway_staging_info
+    openid_client: &platform_service_it_tools_staging_openid_client
+      enable_session_cache: false
+      domain: *platform_service_keycloak_staging_client_domain
+      client_id: "staging-it-tools"
+      base_uri: *platform_service_it_tools_staging_service_uri
+      shared_memory_zone_mb: 20
+      idling_timeout_seconds: 1800
+      rolling_timeout_seconds: 3600
 
 platform_service_ckan:
   production:
@@ -1491,6 +1647,7 @@ platform_service_internal_gateway:
     server_port: *platform_globals_prod_https_redirect_port
     service_image_name: *platform_container_images_openresty_prod_image_name
     service_image_tag: *platform_container_images_openresty_prod_image_tag
+    service_uri: &platform_service_internal_gateway_prod_service_uri ""
     service_account: &platform_service_internal_gateway_prod_service_account
       username: &platform_service_internal_gateway_prod_username "intgw"
       gecos: "Internal gateway user"
@@ -1501,16 +1658,11 @@ platform_service_internal_gateway:
       service_name: *platform_service_internal_gateway_prod_username
       username: *platform_service_internal_gateway_prod_username
       restricted_to_ipv4_with_cidr: ""
-    service_uri: ""
-    base_uri: &platform_service_internal_gateway_prod_base_uri ""
-    redirect_uri: &platform_service_internal_gateway_prod_redirect_uri "{{ platform_keycloak_authority_redirect_uri_suffix }}"
     openid_client: &platform_service_internal_gateway_prod_openid_client
       enable_session_cache: true
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "internal-gateway"
-      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}internal-gateway"
-      base_uri: *platform_service_internal_gateway_prod_base_uri
-      redirect_uri: *platform_service_internal_gateway_prod_redirect_uri
+      base_uri: *platform_service_internal_gateway_prod_service_uri
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1538,6 +1690,7 @@ platform_service_internal_gateway:
     server_port: *platform_globals_staging_https_redirect_port
     service_image_name: *platform_container_images_openresty_staging_image_name
     service_image_tag: *platform_container_images_openresty_staging_image_tag
+    service_uri: &platform_service_internal_gateway_staging_service_uri ""
     service_account: &platform_service_internal_gateway_staging_service_account
       username: &platform_service_internal_gateway_staging_username "stagingintgw"
       gecos: "Internal gateway user (staging)"
@@ -1549,16 +1702,11 @@ platform_service_internal_gateway:
       service_name: *platform_service_internal_gateway_staging_username
       username: *platform_service_internal_gateway_staging_username
       restricted_to_ipv4_with_cidr: ""
-    service_uri: ""
-    base_uri: &platform_service_internal_gateway_staging_base_uri ""
-    redirect_uri: &platform_service_internal_gateway_staging_redirect_uri "{{ platform_keycloak_authority_redirect_uri_suffix }}"
     openid_client: &platform_service_internal_gateway_staging_openid_client
       enable_session_cache: true
-      domain: *platform_service_keycloak_prod_client_domain
+      domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-internal-gateway"
-      secret_file_path: "{{ platform_keycloak_authority_client_secrets_path }}staging-internal-gateway"
-      base_uri: *platform_service_internal_gateway_staging_base_uri
-      redirect_uri: *platform_service_internal_gateway_staging_redirect_uri
+      base_uri: *platform_service_internal_gateway_staging_service_uri
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1634,69 +1782,31 @@ platform_service_keycloak_clients:
   production:
     - *platform_service_internal_gateway_prod_openid_client
     - *platform_service_node_red_prod_openid_client
-    # - client_id: "drawio"
-    #   service_uri: *platform_service_drawio_prod_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "pgadmin4"
-    #   service_uri: *platform_service_pgadmin4_prod_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "gitlab-ce"
-    #   service_uri: *platform_service_gitlab_ce_prod_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "code-server"
-    #   service_uri: *platform_service_code_server_prod_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "rstudio"
-    #   service_uri: *platform_service_rstudio_prod_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "nextcloud"
-    #   service_uri: *platform_service_nextcloud_prod_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
+    - *platform_service_drawio_prod_openid_client
+    - *platform_service_pgadmin4_prod_openid_client
+    - *platform_service_rstudio_prod_openid_client
+    - *platform_service_code_server_prod_openid_client
+    - *platform_service_gitlab_ce_prod_openid_client
+    - *platform_service_nextcloud_prod_openid_client
+    - *platform_service_grafana_prod_openid_client
+    - *platform_service_redmine_prod_openid_client
+    - *platform_service_data_science_notebook_prod_openid_client
+    - *platform_service_openproject_prod_openid_client
+    - *platform_service_it_tools_prod_openid_client
   staging:
     - *platform_service_internal_gateway_staging_openid_client
     - *platform_service_node_red_staging_openid_client
-    # - client_id: "staging-drawio"
-    #   service_uri: *platform_service_drawio_staging_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "staging-pgadmin4"
-    #   service_uri: *platform_service_pgadmin4_staging_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "staging-gitlab-ce"
-    #   service_uri: *platform_service_gitlab_ce_staging_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "staging-code-server"
-    #   service_uri: *platform_service_code_server_staging_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "rstudio"
-    #   service_uri: *platform_service_rstudio_staging_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
-    # - client_id: "nextcloud"
-    #   service_uri: *platform_service_nextcloud_staging_service_uri
-    #   shared_memory_zone_mb: 20
-    #   idling_timeout_seconds: 1800
-    #   rolling_timeout_seconds: 3600
+    - *platform_service_drawio_staging_openid_client
+    - *platform_service_pgadmin4_staging_openid_client
+    - *platform_service_rstudio_staging_openid_client
+    - *platform_service_code_server_staging_openid_client
+    - *platform_service_gitlab_ce_staging_openid_client
+    - *platform_service_nextcloud_staging_openid_client
+    - *platform_service_grafana_staging_openid_client
+    - *platform_service_redmine_staging_openid_client
+    - *platform_service_data_science_notebook_staging_openid_client
+    - *platform_service_openproject_staging_openid_client
+    - *platform_service_it_tools_staging_openid_client
 
 platform_openid_global_client_info:
   production: *platform_service_keycloak_prod_openid_client_info

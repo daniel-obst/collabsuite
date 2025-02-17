@@ -51,15 +51,11 @@ server {
   root /usr/share/nginx/html;
 
 {% if deny_root_uri_location %}
-  location ~* ^/(?!style\.css)$ {
+  location ~* ^/$ {
     return 403;
   }
 
-  location ~* ^/style\.css$ {
-    return 200;
-  }
 {% endif %}
-
   include {{ includes_locations_config_path }};
 
   include {{ includes_html_error_pages_conf_path }};

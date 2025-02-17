@@ -78,17 +78,15 @@ server {
     local opts = {
       redirect_uri = "{{ openid_redirect_uri }}",
       discovery = "{{ openid_discovery_uri }}",
+      token_endpoint_auth_method = client_secret_post,
       client_id = "{{ openid_client_id }}",
       client_secret = "{{ lookup('openid_client_password', openid_client_secret_file_path) }}",
       ssl_verify = "no",
       redirect_uri_scheme = "https",
-{% if openid_client_service_uri is defined %}
-      logout_path = "/{{ openid_client_service_uri }}/logout",
-{% else %}
       logout_path = "/logout",
-{% endif %}
-      redirect_after_logout_uri = "{{ openid_redirect_after_logout_uri }}",
-      redirect_after_logout_with_id_token_hint = false,
+      response_mode = form_post,
+      use_nonce = true,
+      revoke_tokens_on_logout = true,
       scope = "openid email profile",
       renew_access_token_on_expiry = true,
       access_token_expires_in = 3660,
@@ -114,42 +112,11 @@ server {
   }
 
 {% if deny_root_uri_location %}
-  location ~* ^/(?!style\.css)$ {
+  location ~* ^/$ {
     return 403;
   }
 
-  location ~* ^/style\.css$ {
-    return 200;
-  }
 {% endif %}
-
-{% if openid_client_enable_login %}
-{% if openid_client_service_uri is defined %}
-  location /{{ openid_client_service_uri }}/logout {
-{% else %}
-  location /logout {
-{% endif %}
-    content_by_lua_block {
-      local opts = {
-        redirect_uri = "{{ openid_redirect_uri }}",
-        discovery = "{{ openid_discovery_uri }}",
-        client_id = "{{ openid_client_id }}",
-        client_secret = "{{ lookup('openid_client_password', openid_client_secret_file_path) }}",
-        ssl_verify = "no",
-        redirect_uri_scheme = "https",
-      }
-
-      local res, err = require("resty.openidc").openidc_logout(opts)
-
-      if err then
-        ngx.status = ngx.HTTP_FORBIDDEN
-        ngx.log(ngx.ERR, err)
-        ngx.exit(ngx.HTTP_FORBIDDEN)
-      end
-    }
-  }
-{% endif %}
-
   include {{ includes_locations_config_path }};
 
   include {{ includes_html_error_pages_conf_path }};

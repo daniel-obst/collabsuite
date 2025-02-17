@@ -8,6 +8,8 @@ service_keycloak_config: "{{ ansible_deploy_production
 service_keycloak_clients_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_keycloak_clients.production, platform_service_keycloak_clients.staging) }}"
 
+service_keycloak_openid_client_info: "{{ service_keycloak_config.openid_client_info }}"
+
 service_keycloak_service_name: "keycloak"
 service_keycloak_password_path_prefix: "{{ platform_management_passwords_path }}/{{ service_keycloak_service_name }}_"
 
@@ -72,16 +74,18 @@ service_keycloak_config_admin_email: "{{ service_keycloak_config.admin_user_emai
 service_keycloak_admin_init_lock_file_path: "{{ platform_management_init_lock_path }}/{{ service_keycloak_service_name }}_{{ service_keycloak_config.admin_username }}"
 
 service_keycloak_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
-service_keycloak_config_external_root_uri: "https://{{ service_keycloak_config.external_gateway_ip }}:{{ service_keycloak_config.firewall_port }}/"
+service_keycloak_config_external_root_uri: "https://{{ service_keycloak_config.external_gateway_ip }}:{{ service_keycloak_config.firewall_port }}"
 service_keycloak_service_uri: "{{ service_keycloak_config.service_uri }}"
 
 service_keycloak_config_auth_realm: "{{ service_keycloak_config.auth_realm }}"
 service_keycloak_config_user_realm: "{{ service_keycloak_config.user_realm }}"
 
-service_keycloak_config_client_security_realm: "{{ service_keycloak_config.openid_client_info.security_realm }}"
-service_keycloak_config_client_security_realm_display_name: "{{ service_keycloak_config.openid_client_info.security_realm_display_name }}"
-service_keycloak_config_client_security_id: "{{ service_keycloak_config.openid_client_info.security_realm_id }}"
-service_keycloak_config_client_security_web_origins: "{{ service_keycloak_config.openid_client_info.web_origins }}"
+service_keycloak_config_client_security_realm: "{{ service_keycloak_openid_client_info.security_realm }}"
+service_keycloak_config_client_security_realm_display_name: "{{ service_keycloak_openid_client_info.security_realm_display_name }}"
+service_keycloak_config_client_security_id: "{{ service_keycloak_openid_client_info.security_realm_id }}"
+service_keycloak_config_client_redirect_uri_suffix: "/{{ service_keycloak_openid_client_info.client_redirect_uri_suffix }}"
+service_keycloak_config_client_security_web_origins: "{{ service_keycloak_openid_client_info.web_origins }}"
+service_keycloak_config_client_base_secret_file_path: "{{ service_keycloak_openid_client_info.base_secret_file_path }}"
 
 # users (init)
 service_keycloak_users_init_lock_file_path: "{{ platform_management_init_lock_path }}/{{ service_keycloak_service_name }}_seed_users"

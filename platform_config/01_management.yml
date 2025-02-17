@@ -4,5 +4,6 @@ platform_management_gecos: "Ansible User"
 platform_management_fqdn_client: "controller.{{ ansible_host_domain }}"
 platform_management_passwords_path: "{{ facts_platform_vault_path }}/platform/passwords"
 platform_management_init_lock_path: "{{ facts_platform_vault_path }}/platform/init_locks"
+platform_management_openid_path: "{{ facts_platform_vault_path }}/platform/openid"
 
 platform_management_seed_users_file_path: "{{ facts_platform_data_path }}/seed_users.yml"
