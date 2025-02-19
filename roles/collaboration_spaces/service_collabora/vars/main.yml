@@ -29,8 +29,8 @@ service_collabora_locations_conf_server_path: "{{ fact_tls_web_proxy_config_incl
 service_collabora_admin_username: "{{ service_collabora_config.admin_username }}"
 service_collabora_password_file_path:
   "{{ platform_management_passwords_path }}/{{ service_collabora_env_prefix }}{{ service_collabora_config.username }}"
-service_collabora_server_name_with_port: "{{ service_collabora_config_http_gateway.server }}:{{ service_collabora_config_http_gateway.port }}"
-service_collabora_alias_group_1: "https://{{ service_collabora_config_http_gateway.server }}:{{ service_collabora_config_http_gateway.port }}"
+service_collabora_server_name_with_port: "{{ service_collabora_config_http_gateway.server_ip }}:{{ service_collabora_config_http_gateway.port }}"
+service_collabora_alias_group_1: "https://{{ service_collabora_config_http_gateway.server_ip }}:{{ service_collabora_config_http_gateway.port }}"
 service_collabora_domain: "{{ ansible_host_domain }}"
 service_collabora_service_root: "/{{ service_collabora_config.service_uri }}"
 service_collabora_podman_environment_server_path: "{{ fact_tls_web_proxy_config_dir }}/podman_environment"

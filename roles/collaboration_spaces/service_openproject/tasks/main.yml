@@ -52,7 +52,7 @@
     force: true
   vars:
     service_uri: "{{ service_openproject_service_uri }}"
-    openproject_hostname_with_port: "{{ service_openproject_hostname_with_port }}"
+    openproject_hostname: "{{ service_openproject_hostname }}"
     db_hostname_with_port: "{{ service_openproject_pgsql_db_hostname_with_port }}"
     db_user: "{{ service_openproject_pgsql_user }}"
     db_user_password_file_path: "{{ service_openproject_pgsql_user_password_file_path }}"

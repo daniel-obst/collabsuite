@@ -35,11 +35,11 @@ platform_globals:
 
 platform_global_external_gateway:
   production: &platform_global_external_gateway_prod_info
-    server: *platform_globals_prod_external_gateway_ip
+    server: *platform_globals_external_gateway
     server_ip: *platform_globals_prod_external_gateway_ip
     port: *platform_globals_prod_https_port
   staging: &platform_global_external_gateway_staging_info
-    server: *platform_globals_staging_external_gateway_ip
+    server: *platform_globals_external_gateway
     server_ip: *platform_globals_staging_external_gateway_ip
     port: *platform_globals_staging_https_port
 
@@ -485,6 +485,7 @@ platform_service_keycloak:
   production:
     fqdn_service: "keycloak-{{ ansible_service_domain }}"
     fqdn_service_external: "keycloak-external-{{ ansible_service_domain }}"
+    fqdn_service_external_ip: *platform_globals_prod_external_gateway_ip
     fqdn_server: *platform_globals_identity_provider
     external_fqdn_server: *platform_globals_external_gateway
     external_gateway_ip: *platform_globals_prod_external_gateway_ip
@@ -534,6 +535,7 @@ platform_service_keycloak:
   staging:
     fqdn_service: "stagingkeycloak-{{ ansible_service_domain }}"
     fqdn_service_external: "stagingkeycloak-external-{{ ansible_service_domain }}"
+    fqdn_service_external_ip: *platform_globals_staging_external_gateway_ip
     fqdn_server: *platform_globals_identity_provider
     external_fqdn_server: *platform_globals_external_gateway
     external_gateway_ip: *platform_globals_staging_external_gateway_ip
@@ -1139,7 +1141,7 @@ platform_service_nextcloud:
       service_name: *platform_service_nextcloud_staging_username
       username: *platform_service_nextcloud_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
-    http_gateway: *platform_global_external_gateway_prod_info
+    http_gateway: *platform_global_external_gateway_staging_info
     openid_client: &platform_service_nextcloud_staging_openid_client
       enable_session_cache: false
       domain: *platform_service_keycloak_staging_client_domain
@@ -1219,7 +1221,7 @@ platform_service_grafana:
       service_name: *platform_service_grafana_staging_username
       username: *platform_service_grafana_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
-    http_gateway: *platform_global_external_gateway_prod_info
+    http_gateway: *platform_global_external_gateway_staging_info
     openid_client: &platform_service_grafana_staging_openid_client
       enable_session_cache: false
       domain: *platform_service_keycloak_staging_client_domain
@@ -1299,7 +1301,7 @@ platform_service_redmine:
       service_name: *platform_service_redmine_staging_username
       username: *platform_service_redmine_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
-    http_gateway: *platform_global_external_gateway_prod_info
+    http_gateway: *platform_global_external_gateway_staging_info
     openid_client: &platform_service_redmine_staging_openid_client
       enable_session_cache: false
       domain: *platform_service_keycloak_staging_client_domain
