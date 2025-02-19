@@ -21,7 +21,7 @@ service_openproject_config_ca_cert_file_path: "{{ fact_oci_container_service_ini
 service_openproject_config_set_x_forwarded_host: false
 service_openproject_config_x_host_with_port: "$http_host"
 service_openproject_config_reverse_proxy_additional_headers: []
-service_openproject_config_reverse_proxy_enable_web_socket: true
+service_openproject_config_reverse_proxy_enable_web_socket: false
 
 # locations.conf
 service_openproject_service_uri: "{{ service_openproject_config.service_uri }}"
@@ -124,6 +124,7 @@ service_openproject_oci_service_workers:
     command: "./docker/prod/seeder"
     env_file: "{{ service_openproject_podman_environment_server_path }}"
     added_capabilities: []
+    restart_only_on_failure: true
     containers:
       - container_name: "seeder_worker"
         volumes:

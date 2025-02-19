@@ -5,6 +5,7 @@
     oci_container_service_pod_name: "{{ oci_container_service_worker_config.container_name }}"
     oci_container_service_server_dest_port: "{{ default(None) }}"
     oci_container_service_pod_dest_port: "{{ default(None) }}"
+    oci_container_service_restart_only_on_failure: "{{ oci_container_service_worker_restart_only_on_failure }}"
 
 - name: OCI container service - deploy OCI worker (container image)
   include_tasks: linux_oci_container.yml

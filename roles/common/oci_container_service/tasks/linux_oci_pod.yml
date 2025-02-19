@@ -8,7 +8,8 @@
         network: "{{ oci_container_service_network_name }}"
         network_alias: "{{ oci_container_service_pod_name }}"
         state: quadlet
-        restart_policy: "always"
+        restart_policy: "{{ (oci_container_service_restart_only_on_failure  | default(false))
+          | ansible.builtin.ternary('on-failure', 'always') }}"
       notify:
         - "oci_container_service_enable_service_handler"
         - "oci_container_service_restart_service_handler"
@@ -19,7 +20,8 @@
         network: "{{ oci_container_service_network_name }}"
         network_alias: "{{ oci_container_service_pod_name }}"
         state: started
-        restart_policy: "always"
+        restart_policy: "{{ (oci_container_service_restart_only_on_failure  | default(false))
+          | ansible.builtin.ternary('on-failure', 'always') }}"
         publish: "127.0.0.1:{{ oci_container_service_server_dest_port }}:{{ oci_container_service_pod_dest_port }}"
       notify:
         - "oci_container_service_enable_service_handler"
@@ -34,7 +36,8 @@
         network: "{{ oci_container_service_network_name }}"
         network_alias: "{{ oci_container_service_pod_name }}"
         state: quadlet
-        restart_policy: "always"
+        restart_policy: "{{ (oci_container_service_restart_only_on_failure  | default(false))
+          | ansible.builtin.ternary('on-failure', 'always') }}"
       notify:
         - "oci_container_service_enable_service_handler"
         - "oci_container_service_restart_service_handler"
@@ -45,7 +48,8 @@
         network: "{{ oci_container_service_network_name }}"
         network_alias: "{{ oci_container_service_pod_name }}"
         state: started
-        restart_policy: "always"
+        restart_policy: "{{ (oci_container_service_restart_only_on_failure  | default(false))
+          | ansible.builtin.ternary('on-failure', 'always') }}"
       notify:
         - "oci_container_service_enable_service_handler"
         - "oci_container_service_restart_service_handler"

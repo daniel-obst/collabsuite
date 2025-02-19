@@ -9,6 +9,7 @@
     oci_container_service_worker_config_added_capabilities: "{{ oci_container_service_worker.added_capabilities }}"
     oci_container_service_worker_config_entrypoint: "{{ oci_container_service_worker.entrypoint }}"
     oci_container_service_worker_config_command: "{{ oci_container_service_worker.command }}"
+    oci_container_service_worker_restart_only_on_failure: "{{ oci_container_service_worker.restart_only_on_failure }}"
   loop: "{{ oci_container_service_worker.containers }}"
   loop_control:
     loop_var: oci_container_service_deploy_oci_worker_item
