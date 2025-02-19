@@ -81,7 +81,7 @@ server {
       token_endpoint_auth_method = client_secret_post,
       client_id = "{{ openid_client_id }}",
       client_secret = "{{ lookup('openid_client_password', openid_client_secret_file_path) }}",
-      ssl_verify = "no",
+      ssl_verify = "true",
       redirect_uri_scheme = "https",
       logout_path = "/logout",
       response_mode = form_post,

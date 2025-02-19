@@ -8,7 +8,7 @@ service_external_gateway_config: "{{ ansible_deploy_production
 
 # web proxy config
 service_external_gateway_server_firewall_port: "{{ service_external_gateway_config.firewall_port }}"
-service_external_gateway_fqdn_server: "{{ service_external_gateway_config.fqdn_server }}"
+service_external_gateway_fqdn_server: "{{ service_external_gateway_config.server_ip }}"
 service_external_gateway_service_network_dns: "10.1.5.1"
 service_external_gateway_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
 service_external_gateway_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
