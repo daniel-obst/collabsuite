@@ -29,9 +29,11 @@ proxy_set_header {{ header.http_header }} {{ header.value }};
 {% endfor %}
 
 {% if reverse_proxy_enable_web_socket %}
-proxy_http_version          1.1;
-proxy_set_header Upgrade    $http_upgrade;
-proxy_set_header Connection $connection_upgrade;
+proxy_http_version 1.1;
+proxy_set_header   Upgrade    $http_upgrade;
+proxy_set_header   Connection $connection_upgrade;
+proxy_read_timeout 60s;
+proxy_send_timeout 60s;
 {% else %}
 # *** Server configured to not enable web socket proxy ***
 {% endif %}

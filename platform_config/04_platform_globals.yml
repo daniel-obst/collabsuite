@@ -513,6 +513,14 @@ platform_service_keycloak:
       web_origins: &platform_service_keycloak_prod_client_domain "{{ ansible_host_domain }}"
       base_secret_file_path: "{{ platform_management_openid_path }}/openid_client_secret_"
       identity_provider_gateway: *platform_global_external_gateway_prod_info
+      internationalization_enabled: true
+      login_with_email_allowed: true
+      reset_password_allowed: true
+      sso_session_idle_timeout_in_mins: 15
+      sso_session_max_lifespan_in_hours: 8
+      offline_session_idle_timeout_days: 2
+      offline_session_max_lifespan_days: 5
+      offline_session_max_lifespan_enabled: true
     service_account: &platform_service_keycloak_prod_service_account
       username: &platform_service_keycloak_prod_username "keycloak"
       gecos: "keycloak user"
@@ -554,6 +562,14 @@ platform_service_keycloak:
       web_origins: &platform_service_keycloak_staging_client_domain "{{ ansible_host_domain }}"
       base_secret_file_path: "{{ platform_management_openid_path }}/openid_client_secret_"
       identity_provider_gateway: *platform_global_external_gateway_staging_info
+      internationalization_enabled: true
+      login_with_email_allowed: true
+      reset_password_allowed: true
+      sso_session_idle_timeout_in_mins: 15
+      sso_session_max_lifespan_in_hours: 8
+      offline_session_idle_timeout_days: 2
+      offline_session_max_lifespan_days: 5
+      offline_session_max_lifespan_enabled: true
     service_account: &platform_service_keycloak_staging_service_account
       username: &platform_service_keycloak_staging_username "stagingkeycloak"
       gecos: "keycloak user (staging)"

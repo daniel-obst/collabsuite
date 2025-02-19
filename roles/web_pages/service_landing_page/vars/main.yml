@@ -26,3 +26,5 @@ service_landing_page_images:
   - "redmine-icon.png"
   - "keycloak-icon.png"
   - "rstudio-icon.png"
+  - "minio-icon.png"
+  - "qgis-icon.png"

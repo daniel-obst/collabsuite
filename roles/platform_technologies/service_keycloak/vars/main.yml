@@ -88,6 +88,15 @@ service_keycloak_config_client_redirect_uri_suffix: "/{{ service_keycloak_openid
 service_keycloak_config_client_security_web_origins: "{{ service_keycloak_openid_client_info.web_origins }}"
 service_keycloak_config_client_base_secret_file_path: "{{ service_keycloak_openid_client_info.base_secret_file_path }}"
 
+service_keycloak_config_internationalization_enabled: "{{ service_keycloak_openid_client_info.internationalization_enabled }}"
+service_keycloak_config_login_with_email_allowed: "{{ service_keycloak_openid_client_info.login_with_email_allowed }}"
+service_keycloak_config_reset_password_allowed: "{{ service_keycloak_openid_client_info.reset_password_allowed }}"
+service_keycloak_config_sso_session_idle_timeout_in_mins: "{{service_keycloak_openid_client_info.sso_session_idle_timeout_in_mins * 60 }}"
+service_keycloak_config_sso_session_max_lifespan_in_hours: "{{ service_keycloak_openid_client_info.sso_session_max_lifespan_in_hours * 3600 }}"
+service_keycloak_config_offline_session_idle_timeout_days: "{{ service_keycloak_openid_client_info.offline_session_idle_timeout_days * 86400 }}"
+service_keycloak_config_offline_session_max_lifespan_days: "{{ service_keycloak_openid_client_info.offline_session_max_lifespan_days * 86400 }}"
+service_keycloak_config_offline_session_max_lifespan_enabled: "{{ service_keycloak_openid_client_info.offline_session_max_lifespan_enabled }}"
+
 # users (init)
 service_keycloak_users_init_lock_file_path: "{{ platform_management_init_lock_path }}/{{ service_keycloak_service_name }}_seed_users"
 service_keycloak_users_seed_file_path: "{{ platform_management_seed_users_file_path }}"

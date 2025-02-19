@@ -9,13 +9,19 @@
     realm: "{{ service_keycloak_config_client_security_realm }}"
     id: "{{ service_keycloak_config_client_security_id }}"
     display_name: "{{ service_keycloak_config_client_security_realm_display_name }}"
-    internationalization_enabled: true
-    login_with_email_allowed: true
+    internationalization_enabled: "{{ service_keycloak_config_internationalization_enabled }}"
+    login_with_email_allowed: "{{ service_keycloak_config_login_with_email_allowed }}"
     registration_allowed: false
-    reset_password_allowed: true
+    reset_password_allowed: "{{ service_keycloak_config_reset_password_allowed }}"
     ssl_required: all
     validate_certs: true
     brute_force_protected: true
+    remember_me: false
+    sso_session_idle_timeout: "{{ service_keycloak_config_sso_session_idle_timeout_in_mins }}"
+    sso_session_max_lifespan: "{{ service_keycloak_config_sso_session_max_lifespan_in_hours }}"
+    offline_session_idle_timeout: "{{ service_keycloak_config_offline_session_idle_timeout_days }}"
+    offline_session_max_lifespan: "{{ service_keycloak_config_offline_session_max_lifespan_days }}"
+    offline_session_max_lifespan_enabled: "{{ service_keycloak_config_offline_session_max_lifespan_enabled }}"
     enabled: true
     state: present
   delegate_to: localhost
