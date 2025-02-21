@@ -587,25 +587,25 @@ platform_service_node_red:
   production:
     fqdn_service: "nodered-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
-    firewall_port: *platform_globals_prod_https_port
-    server_port: *platform_globals_prod_https_redirect_port
-    service_image_name: *platform_container_images_openresty_prod_image_name
-    service_image_tag: *platform_container_images_openresty_prod_image_tag
+    firewall_port: &platform_service_node_red_prod_firewall_port "4430"
+    server_port: &platform_service_node_red_prod_server_port "4430"
+    service_image_name: *platform_container_images_nginx_prod_image_name
+    service_image_tag: *platform_container_images_nginx_prod_image_tag
     worker_image_name: *platform_container_images_node_red_prod_image_name
     worker_image_tag: *platform_container_images_node_red_prod_image_tag
     service_uri: &platform_service_node_red_prod_service_uri "nodered"
     upstream_service: &platform_service_node_red_prod_upstream_service
       upstream_server: *platform_globals_server_2
-      upstream_server_firewall_port: *platform_globals_prod_https_port
+      upstream_server_firewall_port: *platform_service_node_red_prod_firewall_port
       location_uri: *platform_service_node_red_prod_service_uri
       url_rewrite: false
     service_account: &platform_service_node_red_prod_service_account
       username: &platform_service_node_red_prod_username "nodered"
       gecos: "node-red user"
     service_forward_port: &platform_service_node_red_prod_forward_port
-      destination_port: *platform_globals_prod_https_port
+      destination_port: *platform_service_node_red_prod_firewall_port
       protocol: "tcp"
-      redirect_port: *platform_globals_prod_https_redirect_port
+      redirect_port: *platform_service_node_red_prod_server_port
       service_name: *platform_service_node_red_prod_username
       username: *platform_service_node_red_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
@@ -621,25 +621,25 @@ platform_service_node_red:
   staging:
     fqdn_service: "stagingnodered-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
-    firewall_port: *platform_globals_staging_https_port
-    server_port: *platform_globals_staging_https_redirect_port
-    service_image_name: *platform_container_images_openresty_staging_image_name
-    service_image_tag: *platform_container_images_openresty_staging_image_tag
+    firewall_port: &platform_service_node_red_staging_firewall_port "5430"
+    server_port: &platform_service_node_red_staging_server_port "5430"
+    service_image_name: *platform_container_images_nginx_staging_image_name
+    service_image_tag: *platform_container_images_nginx_staging_image_tag
     worker_image_name: *platform_container_images_node_red_staging_image_name
     worker_image_tag: *platform_container_images_node_red_staging_image_tag
     service_uri: &platform_service_node_red_staging_service_uri "nodered"
     upstream_service: &platform_service_node_red_staging_upstream_service
       upstream_server: *platform_globals_server_2
-      upstream_server_firewall_port: *platform_globals_staging_https_port
+      upstream_server_firewall_port: *platform_service_node_red_staging_firewall_port
       location_uri: *platform_service_node_red_staging_service_uri
       url_rewrite: false
     service_account: &platform_service_node_red_staging_service_account
       username: &platform_service_node_red_staging_username "stagingnodered"
       gecos: "node-red user (staging)"
     service_forward_port: &platform_service_node_red_staging_forward_port
-      destination_port: *platform_globals_staging_https_port
+      destination_port: *platform_service_node_red_staging_firewall_port
       protocol: "tcp"
-      redirect_port: *platform_globals_staging_https_redirect_port
+      redirect_port: *platform_service_node_red_staging_server_port
       service_name: *platform_service_node_red_staging_username
       username: *platform_service_node_red_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
@@ -945,8 +945,8 @@ platform_service_collabora:
   production:
     fqdn_service: "collabora-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
-    firewall_port: &platform_service_collabora_prod_firewall_port "4436"
-    server_port: &platform_service_collabora_prod_server_port "4436"
+    firewall_port: &platform_service_collabora_prod_firewall_port "443"
+    server_port: &platform_service_collabora_prod_server_port "8443"
     service_image_name: *platform_container_images_nginx_prod_image_name
     service_image_tag: *platform_container_images_nginx_prod_image_tag
     worker_image_name: *platform_container_images_collabora_prod_image_name
@@ -973,8 +973,8 @@ platform_service_collabora:
   staging:
     fqdn_service: "stagingcollabora-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
-    firewall_port: &platform_service_collabora_staging_firewall_port "5436"
-    server_port: &platform_service_collabora_staging_server_port "5436"
+    firewall_port: &platform_service_collabora_staging_firewall_port "8444"
+    server_port: &platform_service_collabora_staging_server_port "8444"
     service_image_name: *platform_container_images_nginx_staging_image_name
     service_image_tag: *platform_container_images_nginx_staging_image_tag
     worker_image_name: *platform_container_images_collabora_staging_image_name

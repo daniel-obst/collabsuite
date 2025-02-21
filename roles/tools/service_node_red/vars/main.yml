@@ -21,30 +21,30 @@ service_node_red_config_reverse_proxy_additional_headers: []
 service_node_red_config_reverse_proxy_enable_web_socket: true
 service_node_red_config_set_deny_root_uri_location: true
 
-service_node_red_config_enable_session_cache: "{{ service_node_red_openid_config.enable_session_cache }}"
-service_node_red_config_session_cache_domain: "{{ service_node_red_openid_config.domain }}"
-service_node_red_config_cache_session_secret_file_path: "{{ service_node_red_password_path_prefix }}session_cache"
+# service_node_red_config_enable_session_cache: "{{ service_node_red_openid_config.enable_session_cache }}"
+# service_node_red_config_session_cache_domain: "{{ service_node_red_openid_config.domain }}"
+# service_node_red_config_cache_session_secret_file_path: "{{ service_node_red_password_path_prefix }}session_cache"
 
-service_node_red_config_client_id: "{{ service_node_red_openid_config.client_id }}"
-service_node_red_config_client_secret_file_path: "{{ service_node_red_openid_config.secret_file_path }}"
-service_node_red_config_redirect_uri: "{{ service_node_red_openid_config.redirect_uri }}"
-service_node_red_config_client_enable_login: false
-service_node_red_config_cache_shared_memory_zone_mb: "{{ service_node_red_openid_config.shared_memory_zone_mb }}"
-service_node_red_config_cache_idling_timeout_seconds: "{{ service_node_red_openid_config.idling_timeout_seconds }}"
-service_node_red_config_cache_rolling_timeout_seconds: "{{ service_node_red_openid_config.rolling_timeout_seconds }}"
+# service_node_red_config_client_id: "{{ service_node_red_openid_config.client_id }}"
+# service_node_red_config_client_secret_file_path: "{{ service_node_red_openid_config.secret_file_path }}"
+# service_node_red_config_redirect_uri: "{{ service_node_red_openid_config.redirect_uri }}"
+# service_node_red_config_client_enable_login: false
+# service_node_red_config_cache_shared_memory_zone_mb: "{{ service_node_red_openid_config.shared_memory_zone_mb }}"
+# service_node_red_config_cache_idling_timeout_seconds: "{{ service_node_red_openid_config.idling_timeout_seconds }}"
+# service_node_red_config_cache_rolling_timeout_seconds: "{{ service_node_red_openid_config.rolling_timeout_seconds }}"
 
 # locations.conf
 service_node_red_service_uri: "{{ service_node_red_config.service_uri }}"
 service_node_red_server_url: "http://${{ gv_openid_http_header_authorization_value }}:1880"
-service_node_red_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
-service_node_red_config_locations_server_path: "{{ fact_openid_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_node_red_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
+service_node_red_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
 
 # settings.js
-service_node_red_config_settings_js_server_path: "{{ fact_openid_tls_web_proxy_service_config_dir }}/settings.js"
+service_node_red_config_settings_js_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/settings.js"
 
 # seed users
 service_node_red_users_seed_file_path: "{{ platform_management_seed_users_file_path }}"
-service_node_red_user_settings_volume: "./{{ fact_openid_tls_web_proxy_service_config_dir }}/settings.js:/data/settings.js"
+service_node_red_user_settings_volume: "./{{ fact_tls_web_proxy_service_config_dir }}/settings.js:/data/settings.js"
 
 # service
 service_node_red_oci_service:
@@ -54,7 +54,7 @@ service_node_red_oci_service:
   server_dest_port: "{{ service_node_red_config.server_port }}"
   container_dest_port: "{{ service_node_red_config.firewall_port }}"
   volumes: []
-  readonly_volumes: "{{ fact_openid_tls_web_proxy_config_readonly_volumes }}"
+  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
   env_file: ""
   added_capabilities: []
 
