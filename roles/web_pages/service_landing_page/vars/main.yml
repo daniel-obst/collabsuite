@@ -1,4 +1,14 @@
 ---
+service_landing_page_user_uid: "{{ fact_oci_container_service_directories_uid }}"
+service_landing_page_user_gid: "{{ fact_oci_container_service_directories_gid }}"
+
+service_landing_page_html_dir: "{{ fact_oci_container_service_directories_html_dir }}"
+service_landing_page_html_file_mode: "{{ fact_oci_container_service_directories_html_file_mode }}"
+
+service_landing_page_images_dir: "{{ fact_oci_container_service_directories_html_dir }}/images"
+service_landing_page_images_dir_mode: "{{ fact_oci_container_service_directories_html_dir_mode }}"
+service_landing_page_images_file_mode: "{{ fact_oci_container_service_directories_html_file_mode }}"
+
 service_landing_page_upstream_services: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_internal_gateway.production.upstream_services, platform_service_internal_gateway.staging.upstream_services) }}"
 

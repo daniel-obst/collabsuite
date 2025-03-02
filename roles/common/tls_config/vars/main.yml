@@ -1,2 +1,3 @@
 ---
+tls_config_machine_pki_dir: "{{ fact_oci_container_service_directories_conf_dir }}/tls"
 tls_config_container_pki_dir: "/etc/nginx/tls"

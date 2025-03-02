@@ -39,7 +39,7 @@ platform_servers:
 
 all:
   vars:
-    become_method: "sudo"
+    ansible_become_method: "sudo"
     ansible_harden_ssh: true
     ansible_network_card_filter: "^(eth0|eno0|enp0|enp1|enp2)"
     ansible_host_domain: "collabsuite.lan"

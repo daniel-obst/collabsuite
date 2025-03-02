@@ -1,0 +1,3 @@
+---
+oci_container_service_directories_user_uid: "{{ ansible_user_uid }}"
+oci_container_service_directories_user_gid: "{{ ansible_user_gid }}"

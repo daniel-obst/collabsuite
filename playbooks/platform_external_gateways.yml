@@ -1,7 +1,7 @@
 ---
 - name: Platform (external gateways) - environment
   hosts: platform_external_gateways
-  tags: [servers, platform_external_gateways_servers, services, services_external_gateway]
+  tags: [servers, platform_external_gateways_servers, services, services_external_gateway, services_external_gateway_certbot]
   connection: local
   become: false
   roles:
@@ -24,6 +24,25 @@
     - role: platform_container_server
       vars:
         platform_container_server_config: "{{ platform_external_gateway_server_config }}"
+
+# Service: certbot #
+- name: Platform (external gateways) - deploy certbot
+  hosts: platform_external_gateways
+  tags: [never, services_external_gateway_certbot]
+  connection: local
+  become: false
+  roles:
+    - role: service_certbot_init
+
+- name: Platform (external gateways) - deploy certbot (service)
+  hosts: platform_external_gateways
+  tags: [never, services_external_gateway_certbot]
+  become: false
+  vars:
+    ansible_user: "{{ fact_oci_container_service_init_username }}"
+    ansible_ssh_private_key_file: "{{ fact_oci_container_service_init_private_key_file }}"
+  roles:
+    - role: service_certbot
 
 # Service: external gateway #
 - name: Platform (external gateways) - deploy gateway

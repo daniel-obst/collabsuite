@@ -1,4 +1,19 @@
 ---
+tls_web_proxy_config_user_uid: "{{ fact_oci_container_service_directories_uid }}"
+tls_web_proxy_config_user_gid: "{{ fact_oci_container_service_directories_gid }}"
+
+tls_web_proxy_config_conf_dir: "{{ fact_oci_container_service_directories_conf_dir }}"
+tls_web_proxy_config_conf_dir_mode: "{{ fact_oci_container_service_directories_conf_dir_mode }}"
+tls_web_proxy_config_conf_file_mode: "{{ fact_oci_container_service_directories_conf_file_mode }}"
+
+tls_web_proxy_config_includes_dir: "{{ fact_oci_container_service_directories_includes_dir }}"
+tls_web_proxy_config_includes_dir_mode: "{{ fact_oci_container_service_directories_includes_dir_mode }}"
+tls_web_proxy_config_includes_file_mode: "{{ fact_oci_container_service_directories_includes_file_mode }}"
+
+tls_web_proxy_config_html_dir: "{{ fact_oci_container_service_directories_html_dir }}"
+tls_web_proxy_config_html_dir_mode: "{{ fact_oci_container_service_directories_html_dir_mode }}"
+tls_web_proxy_config_html_file_mode: "{{ fact_oci_container_service_directories_html_file_mode }}"
+
 tls_web_proxy_config_container_conf_dir_path: "/etc/nginx/conf.d"
 tls_web_proxy_config_container_includes_dir_path: "/etc/nginx/includes"
 tls_web_proxy_config_container_tls_dir_path: "/etc/nginx/tls"
@@ -7,7 +22,9 @@ tls_web_proxy_config_reverse_proxy_conf: "playbooks_templates_nginx_reverse_prox
 tls_web_proxy_config_playbooks_files_html_error_pages_conf: "playbooks_files_nginx_html_error_pages.conf"
 tls_web_proxy_config_html_error_pages_conf: "nginx_html_error_pages.conf"
 
+tls_web_proxy_config_default_conf_filename: "tls_web_proxy_config_default.conf.j2"
 tls_web_proxy_config_dest_default_conf_path: "{{ tls_web_proxy_config_conf_dir }}/default.conf"
+
 tls_web_proxy_config_dest_reverse_proxy_conf_path: "{{ tls_web_proxy_config_includes_dir }}/reverse_proxy.conf"
 tls_web_proxy_config_reverse_proxy_conf_container_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/reverse_proxy.conf"
 

@@ -1,10 +1,13 @@
 ---
+service_node_red_pgsql_user_uid: "{{ fact_oci_container_service_directories_uid }}"
+service_node_red_pgsql_user_gid: "{{ fact_oci_container_service_directories_gid }}"
+
 service_node_red_pgsql_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_node_red_pgsql.production, platform_service_node_red_pgsql.staging) }}"
 
 service_node_red_pgsql_service_name: "{{ service_node_red_pgsql_config.service_uri }}"
-service_node_red_pgsql_service_config_dir: "{{ gv_service_conf_dir }}"
-service_node_red_pgsql_service_config_dir_mode: "{{ gv_service_conf_dir_mode }}"
+service_node_red_pgsql_service_config_dir: "{{ fact_oci_container_service_directories_conf_dir }}"
+service_node_red_pgsql_service_config_dir_mode: "{{ fact_oci_container_service_directories_conf_dir_mode }}"
 service_node_red_pgsql_pgsql_db: "{{ service_node_red_pgsql_config.db }}"
 service_node_red_pgsql_pgsql_user: "{{ service_node_red_pgsql_config.db_user }}"
 service_node_red_pgsql_pgsql_enable_pg_trgm_extension: true

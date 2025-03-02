@@ -1,0 +1,42 @@
+---
+service_certbot_config_user_uid: "{{ fact_oci_container_service_directories_uid }}"
+service_certbot_config_user_gid: "{{ fact_oci_container_service_directories_gid }}"
+
+service_certbot_config_conf_dir: "{{ fact_oci_container_service_directories_conf_dir }}"
+service_certbot_config_conf_dir_mode: "{{ fact_oci_container_service_directories_conf_dir_mode }}"
+service_certbot_config_conf_file_mode: "{{ fact_oci_container_service_directories_conf_file_mode }}"
+
+service_certbot_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_certbot.production, platform_service_certbot.staging) }}"
+
+service_certbot_config_base_dirname: "letsencrypt"
+service_certbot_config_base_dir_path: "{{ service_certbot_config_conf_dir }}/{{ service_certbot_config_base_dirname }}" 
+service_certbot_config_etc_dir_path: "{{ service_certbot_config_base_dir_path }}/etc"
+service_certbot_config_lib_dir_path: "{{ service_certbot_config_base_dir_path }}/lib"
+service_certbot_config_log_dir_path: "{{ service_certbot_config_base_dir_path }}/log"
+
+# cli.ini
+service_certbot_config_cli_ini_filename: "cli.ini"
+service_certbot_config_cli_ini_path: "{{ service_certbot_config_conf_dir }}/{{ service_certbot_config_cli_ini_filename }}"
+service_certbot_config_domain: "{{ service_certbot_config.http_gateway.domain }}"
+service_certbot_config_domain_email: "{{ service_certbot_config.http_gateway.domain_email }}"
+
+# service
+service_certbot_oci_service:
+  image_name: "{{ service_certbot_config.service_image_name }}"
+  image_tag: "{{ service_certbot_config.service_image_tag }}"
+  service_name: "{{ service_certbot_config.service_account.username }}"
+  server_dest_port: "{{ service_certbot_config.server_port }}"
+  container_dest_port: "{{ service_certbot_config.firewall_port }}"
+  command: "certonly -c {{ service_certbot_config_cli_ini_filename }} -d {{ service_certbot_config_domain }} --standalone"
+  restart_only_on_failure: true
+  volumes:
+    - "./{{ service_certbot_config_etc_dir_path }}:/etc/{{ service_certbot_config_base_dirname }}"
+    - "./{{ service_certbot_config_lib_dir_path }}:/var/lib/{{ service_certbot_config_base_dirname }}"
+    - "./{{ service_certbot_config_log_dir_path }}:/var/log/{{ service_certbot_config_base_dirname }}"
+  readonly_volumes:
+    - "./{{ service_certbot_config_cli_ini_path }}:/opt/certbot/{{ service_certbot_config_cli_ini_filename }}"
+  env_file: ""
+  added_capabilities: []
+
+service_certbot_oci_service_workers: []

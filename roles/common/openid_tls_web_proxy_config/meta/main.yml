@@ -1,0 +1,3 @@
+---
+dependencies:
+  - role: oci_container_service_directories

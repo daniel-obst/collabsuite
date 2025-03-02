@@ -6,14 +6,14 @@ platform_globals:
   production:
     https_port: &platform_globals_prod_https_port "443"
     https_redirect_port: &platform_globals_prod_https_redirect_port "8443"
-    external_gateway_ip: &platform_globals_prod_external_gateway_ip "{{ facts_platform_environment.external_server.production.ip }}"
-    internal_network_dns_ip: &platform_globals_prod_internal_network_dns_ip "{{ facts_platform_environment.external_server.production.platform_internal_network_dns }}"
+    internal_network_dns_ip: &platform_globals_prod_internal_network_dns_ip
+      "{{ facts_platform_environment.external_server.production.platform_internal_network_dns }}"
     landing_page_title: "Collabsuite (v2.0)"
   staging:
     https_port: &platform_globals_staging_https_port "8444"
     https_redirect_port: &platform_globals_staging_https_redirect_port "8444"
-    external_gateway_ip: &platform_globals_staging_external_gateway_ip "{{ facts_platform_environment.external_server.staging.ip }}"
-    internal_network_dns_ip: &platform_globals_staging_internal_network_dns_ip "{{ facts_platform_environment.external_server.staging.platform_internal_network_dns }}"
+    internal_network_dns_ip: &platform_globals_staging_internal_network_dns_ip
+      "{{ facts_platform_environment.external_server.staging.platform_internal_network_dns }}"
     landing_page_title: "Collabsuite (v2.0 - staging)"
   rfc1918:
     class_a: &platform_globals_rfc1918_class_a "10.0.0.0/8"
@@ -24,8 +24,6 @@ platform_globals:
     - *platform_globals_rfc1918_class_b
     - *platform_globals_rfc1918_class_c
   servers:
-    external_gateway: &platform_globals_external_gateway "ext-gw.collabsuite.lan"
-    external_gateway_ip: &platform_globals_external_gateway_ip "{{ facts_platform_environment.external_server.production.ip }}"
     internal_gateway: &platform_globals_internal_gateway "int-gw.collabsuite.lan"
     identity_provider: &platform_globals_identity_provider "identity.collabsuite.lan"
     domain_name_provider: &platform_globals_dns "dns.collabsuite.lan"
@@ -35,12 +33,16 @@ platform_globals:
 
 platform_global_external_gateway:
   production: &platform_global_external_gateway_prod_info
-    server: *platform_globals_external_gateway
-    server_ip: *platform_globals_prod_external_gateway_ip
+    domain: "{{ facts_platform_environment.external_server.production.domain }}"
+    domain_email: "{{ facts_platform_environment.external_server.production.domain_email }}"
+    server: &platform_globals_external_gateway_prod_server "ext-gw.collabsuite.lan"
+    server_ip: &platform_globals_prod_external_gateway_ip "{{ facts_platform_environment.external_server.production.ip }}"
     port: *platform_globals_prod_https_port
   staging: &platform_global_external_gateway_staging_info
-    server: *platform_globals_external_gateway
-    server_ip: *platform_globals_staging_external_gateway_ip
+    domain: "{{ facts_platform_environment.external_server.staging.domain }}"
+    domain_email: "{{ facts_platform_environment.external_server.staging.domain_email }}"
+    server: &platform_globals_external_gateway_staging_server "ext-gw.collabsuite.lan"
+    server_ip: &platform_globals_staging_external_gateway_ip "{{ facts_platform_environment.external_server.staging.ip }}"
     port: *platform_globals_staging_https_port
 
 platform_global_internal_gateway:
@@ -153,10 +155,10 @@ platform_container_images:
   quay_io:
     production:
       image_name: &platform_container_images_quay_io_prod_image_name "quay.io/projectquay/quay"
-      image_tag: &platform_container_images_quay_io_prod_image_tag "v3.13.3"
+      image_tag: &platform_container_images_quay_io_prod_image_tag "3.13.3"
     staging:
       image_name: &platform_container_images_quay_io_staging_image_name "quay.io/projectquay/quay"
-      image_tag: &platform_container_images_quay_io_staging_image_tag "v3.13.3"
+      image_tag: &platform_container_images_quay_io_staging_image_tag "3.13.3"
   redis:
     production:
       external_registry_path: &platform_container_images_redis_prod_external_registry_path "docker.io/bitnami/redis"
@@ -365,6 +367,19 @@ platform_container_images:
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_ckan_solr_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/ckan/ckan-solr"
       image_tag: &platform_container_images_ckan_solr_staging_image_tag "2.11-solr9.7"
+  certbot:
+    production:
+      external_registry_path: &platform_container_images_certbot_prod_external_registry_path "docker.io/certbot/certbot"
+      platform_registry_path: &platform_container_images_certbot_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/certbot/certbot"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_certbot_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/certbot/certbot"
+      image_tag: &platform_container_images_certbot_prod_image_tag "v3.2.0"
+    staging:
+      external_registry_path: &platform_container_images_certbot_staging_external_registry_path "docker.io/certbot/certbot"
+      platform_registry_path: &platform_container_images_certbot_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/certbot/certbot"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_certbot_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/certbot/certbot"
+      image_tag: &platform_container_images_certbot_staging_image_tag "v3.2.0"
 
 platform_container_registry_repositories:
   production:
@@ -388,6 +403,7 @@ platform_container_registry_repositories:
     - *platform_container_images_it_tools_prod_platform_registry_path
     - *platform_container_images_ckan_base_prod_platform_registry_path
     - *platform_container_images_ckan_solr_prod_platform_registry_path
+    - *platform_container_images_certbot_prod_platform_registry_path
   staging:
     - *platform_container_images_openresty_staging_platform_registry_path
     - *platform_container_images_keycloak_staging_platform_registry_path
@@ -409,6 +425,7 @@ platform_container_registry_repositories:
     - *platform_container_images_it_tools_staging_platform_registry_path
     - *platform_container_images_ckan_base_staging_platform_registry_path
     - *platform_container_images_ckan_solr_staging_platform_registry_path
+    - *platform_container_images_certbot_staging_platform_registry_path
 
 platform_container_registry_repository_supported_platform_arches:
   - *platform_registry_globals_linux_arm64
@@ -487,7 +504,7 @@ platform_service_keycloak:
     fqdn_service_external: "keycloak-external-{{ ansible_service_domain }}"
     fqdn_service_external_ip: *platform_globals_prod_external_gateway_ip
     fqdn_server: *platform_globals_identity_provider
-    external_fqdn_server: *platform_globals_external_gateway
+    external_fqdn_server: *platform_globals_external_gateway_prod_server
     external_gateway_ip: *platform_globals_prod_external_gateway_ip
     firewall_port: *platform_globals_prod_https_port
     server_port: *platform_globals_prod_https_redirect_port
@@ -537,7 +554,7 @@ platform_service_keycloak:
     fqdn_service_external: "stagingkeycloak-external-{{ ansible_service_domain }}"
     fqdn_service_external_ip: *platform_globals_staging_external_gateway_ip
     fqdn_server: *platform_globals_identity_provider
-    external_fqdn_server: *platform_globals_external_gateway
+    external_fqdn_server: *platform_globals_external_gateway_staging_server
     external_gateway_ip: *platform_globals_staging_external_gateway_ip
     firewall_port: *platform_globals_staging_https_port
     server_port: *platform_globals_staging_https_redirect_port
@@ -1747,7 +1764,7 @@ platform_service_internal_gateway:
 platform_service_external_gateway:
   production:
     fqdn_service: "ext-gw-{{ ansible_service_domain }}"
-    fqdn_server: *platform_globals_external_gateway
+    fqdn_server: *platform_globals_external_gateway_prod_server
     server_ip: *platform_globals_prod_external_gateway_ip
     firewall_port: *platform_globals_prod_https_port
     server_port: *platform_globals_prod_https_redirect_port
@@ -1770,7 +1787,7 @@ platform_service_external_gateway:
     internal_gateway_firewall_port: *platform_globals_prod_https_port
   staging:
     fqdn_service: "staging-ext-gw-{{ ansible_service_domain }}"
-    fqdn_server: *platform_globals_external_gateway
+    fqdn_server: *platform_globals_external_gateway_staging_server
     server_ip: *platform_globals_staging_external_gateway_ip
     firewall_port: *platform_globals_staging_https_port
     server_port: *platform_globals_staging_https_redirect_port
@@ -1792,6 +1809,40 @@ platform_service_external_gateway:
     auth_gateway_firewall_port: *platform_globals_staging_https_port
     internal_gateway: *platform_globals_internal_gateway
     internal_gateway_firewall_port: *platform_globals_staging_https_port
+
+platform_service_certbot:
+  production:
+    firewall_port: &platform_service_certbot_prod_firewall_port "80"
+    server_port: &platform_service_certbot_prod_server_port "8080"
+    service_image_name: *platform_container_images_certbot_prod_external_registry_path
+    service_image_tag: *platform_container_images_certbot_prod_image_tag
+    service_account: &platform_service_certbot_prod_service_account
+      username: &platform_service_certbot_prod_username "certbot"
+      gecos: "Certbot user"
+    service_forward_port: &platform_service_certbot_prod_forward_port
+      destination_port: *platform_service_certbot_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_certbot_prod_server_port
+      service_name: *platform_service_certbot_prod_username
+      username: *platform_service_certbot_prod_username
+      restricted_to_ipv4_with_cidr: ""
+    http_gateway: *platform_global_external_gateway_prod_info
+  staging:
+    firewall_port: &platform_service_certbot_staging_firewall_port "80"
+    server_port: &platform_service_certbot_staging_server_port "8081"
+    service_image_name: *platform_container_images_certbot_staging_external_registry_path
+    service_image_tag: *platform_container_images_certbot_staging_image_tag
+    service_account: &platform_service_certbot_staging_service_account
+      username: &platform_service_certbot_staging_username "stagingcertbot"
+      gecos: "Certbot user (staging)"
+    service_forward_port: &platform_service_certbot_staging_forward_port
+      destination_port: *platform_service_certbot_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_certbot_staging_server_port
+      service_name: *platform_service_certbot_staging_username
+      username: *platform_service_certbot_staging_username
+      restricted_to_ipv4_with_cidr: ""
+    http_gateway: *platform_global_external_gateway_staging_info
 
 #################################################
 # Platform - Identity Management Configurations #
@@ -1837,13 +1888,17 @@ platform_external_gateway_server_config:
   production:
     services_user_accounts:
       - *platform_service_external_gateway_prod_service_account
+      - *platform_service_certbot_prod_service_account
     services_forward_ports:
       - *platform_service_external_gateway_prod_forward_port
+      - *platform_service_certbot_prod_forward_port
   staging:
     services_user_accounts:
       - *platform_service_external_gateway_staging_service_account
+      - *platform_service_certbot_staging_service_account
     services_forward_ports:
       - *platform_service_external_gateway_staging_forward_port
+      - *platform_service_certbot_staging_forward_port
 
 platform_internal_gateway_server_config:
   production:

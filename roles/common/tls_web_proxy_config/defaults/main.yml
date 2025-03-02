@@ -1,18 +1,6 @@
 ---
-tls_web_proxy_config_user_uid: "{{ ansible_user_uid }}"
-tls_web_proxy_config_user_gid: "{{ ansible_user_gid }}"
-
 tls_web_proxy_config_ssl_ca_certificates_path: "{{ facts_machine_linux_machine_ca_cert_path }}"
 tls_web_proxy_config_secondary_ssl_ca_certificates_path: "{{ facts_machine_linux_machine_ca_cert_path }}"
-
-tls_web_proxy_config_conf_dir: "{{ gv_service_conf_dir }}"
-tls_web_proxy_config_conf_dir_mode: "{{ gv_service_conf_dir_mode }}"
-tls_web_proxy_config_conf_file_mode: "{{ gv_service_conf_file_mode }}"
-
-tls_web_proxy_config_includes_dir: "{{ gv_service_conf_includes_dir }}"
-tls_web_proxy_config_html_dir: "{{ gv_service_conf_html_dir }}"
-tls_web_proxy_config_html_dir_mode: "{{ gv_service_html_dir_mode }}"
-tls_web_proxy_config_html_file_mode: "{{ gv_service_html_file_mode }}"
 
 tls_web_proxy_config_set_deny_root_uri_location: true
 tls_web_proxy_config_set_x_forwarded_host: true

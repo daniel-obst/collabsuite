@@ -1,4 +1,9 @@
 ---
+service_postgresql_init_config_uid: "{{ fact_oci_container_service_directories_uid }}"
+service_postgresql_init_config_gid: "{{ fact_oci_container_service_directories_gid }}"
+service_postgresql_init_conf_file_mode: "{{ fact_oci_container_service_directories_conf_file_mode }}"
+service_postgresql_init_executable_file_mode: "{{ gv_service_conf_executable_file_mode }}"
+
 service_postgresql_init_password_path_prefix:
   "{{ platform_management_passwords_path }}/{{ service_postgresql_init_service_name | ansible.builtin.mandatory }}_"
 

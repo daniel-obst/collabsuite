@@ -2,5 +2,4 @@
 tls_config_user_uid: "{{ ansible_user_uid }}"
 tls_config_user_gid: "{{ ansible_user_gid }}"
 
-tls_config_machine_pki_dir: "{{ gv_service_tls_dir }}"
 tls_config_pki_ca_cert_file_path: "{{ fact_pki_certificate_authority_info_ca_file }}"

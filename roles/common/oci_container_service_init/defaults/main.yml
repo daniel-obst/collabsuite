@@ -1,3 +1,4 @@
 ---
+oci_container_service_init_process_service_cert: true
 oci_container_service_init_fqdn_service: ""
 oci_container_service_init_server_ip: ""
