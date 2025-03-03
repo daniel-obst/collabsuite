@@ -14,3 +14,7 @@ platform_pki_certificate_authority_easyrsa_pki_dir: "{{ facts_platform_vault_pat
 platform_pki_certificate_authority_easyrsa_pki_issued_certificates_dir: "{{ facts_platform_vault_path }}/platform/easyrsa/pki/issued"
 platform_pki_certificate_authority_easyrsa_pki_private_key_dir: "{{ facts_platform_vault_path }}/platform/easyrsa/pki/private"
 platform_pki_certificate_authority_easyrsa_binary: "/usr/share/easy-rsa/easyrsa"
+
+platform_pki_certificate_authority_letsencrypt_live_dir: "{{ facts_platform_vault_path }}/platform/letsencrypt/etc/live"
+platform_pki_certificate_authority_letsencrypt_live_cert_filename: "fullchain.pem"
+platform_pki_certificate_authority_letsencrypt_live_key_filename: "privkey.pem"

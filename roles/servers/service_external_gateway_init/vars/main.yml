@@ -2,6 +2,5 @@
 service_external_gateway_init_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_external_gateway.production, platform_service_external_gateway.staging) }}"
 
+service_external_gateway_init_process_service_cert: false
 service_external_gateway_init_username: "{{ service_external_gateway_init_config.service_account.username }}"
-service_external_gateway_init_fqdn_server: "{{ service_external_gateway_init_config.server_ip }}"
-service_external_gateway_init_server_ip: "{{ service_external_gateway_init_config.server_ip }}"

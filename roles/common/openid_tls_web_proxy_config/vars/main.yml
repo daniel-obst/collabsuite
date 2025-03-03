@@ -14,6 +14,8 @@ openid_tls_web_proxy_config_html_dir: "{{ fact_oci_container_service_directories
 openid_tls_web_proxy_config_html_dir_mode: "{{ fact_oci_container_service_directories_html_dir_mode }}"
 openid_tls_web_proxy_config_html_file_mode: "{{ fact_oci_container_service_directories_html_file_mode }}"
 
+openid_tls_web_proxy_config_machine_ssl_trusted_certificate_path: "{{ facts_machine_linux_machine_ssl_ca_certificates_file }}"
+
 openid_tls_web_proxy_config_container_conf_dir_path: "/etc/nginx/conf.d"
 openid_tls_web_proxy_config_container_includes_dir_path: "/etc/nginx/includes"
 openid_tls_web_proxy_config_container_tls_dir_path: "/etc/nginx/tls"
@@ -138,15 +140,15 @@ openid_tls_web_proxy_config_openid_global_client_info: "{{ ansible_deploy_produc
 openid_tls_web_proxy_config_openid_idp: "{{ openid_tls_web_proxy_config_openid_global_client_info.identity_provider_gateway }}"
 openid_tls_web_proxy_config_base_redirect_uri: "{{ openid_tls_web_proxy_config_base_uri | ansible.builtin.mandatory }}"
 
-openid_tls_web_proxy_config_idp_ip: "{{ openid_tls_web_proxy_config_openid_idp.server_ip }}:{{ openid_tls_web_proxy_config_openid_idp.port }}"
+openid_tls_web_proxy_config_idp: "{{ openid_tls_web_proxy_config_openid_idp.domain }}:{{ openid_tls_web_proxy_config_openid_idp.port }}"
 openid_tls_web_proxy_config_relative_redirect_uri:
   "{{ ((openid_tls_web_proxy_config_base_redirect_uri | length > 0)
   | ansible.builtin.ternary(openid_tls_web_proxy_config_base_redirect_uri + '/', ''))
   + openid_tls_web_proxy_config_openid_global_client_info.client_redirect_uri_suffix }}"
 
-openid_tls_web_proxy_config_redirect_uri: "https://{{ openid_tls_web_proxy_config_idp_ip }}/{{ openid_tls_web_proxy_config_relative_redirect_uri }}"
-openid_tls_web_proxy_config_discovery_uri: "https://{{ openid_tls_web_proxy_config_idp_ip }}/{{ openid_tls_web_proxy_config_openid_global_client_info.discovery_uri }}"
-openid_tls_web_proxy_config_redirect_after_logout_uri: "https://{{ openid_tls_web_proxy_config_idp_ip }}/{{ openid_tls_web_proxy_config_openid_global_client_info.redirect_after_logout_uri }}"
+openid_tls_web_proxy_config_redirect_uri: "https://{{ openid_tls_web_proxy_config_idp }}/{{ openid_tls_web_proxy_config_relative_redirect_uri }}"
+openid_tls_web_proxy_config_discovery_uri: "https://{{ openid_tls_web_proxy_config_idp }}/{{ openid_tls_web_proxy_config_openid_global_client_info.discovery_uri }}"
+openid_tls_web_proxy_config_redirect_after_logout_uri: "https://{{ openid_tls_web_proxy_config_idp }}/{{ openid_tls_web_proxy_config_openid_global_client_info.redirect_after_logout_uri }}"
 openid_tls_web_proxy_config_http_header_email: "{{ gv_openid_http_header_email }}"
 openid_tls_web_proxy_config_header_authorization: "{{ gv_openid_http_header_authorization }}"
-openid_tls_web_proxy_config_client_secret_file_path: "{{ openid_tls_web_proxy_config_openid_global_client_info.base_secret_file_path + openid_tls_web_proxy_config_client_id}}"
+openid_tls_web_proxy_config_client_secret_file_path: "{{ openid_tls_web_proxy_config_openid_global_client_info.base_secret_file_path + openid_tls_web_proxy_config_client_id }}"

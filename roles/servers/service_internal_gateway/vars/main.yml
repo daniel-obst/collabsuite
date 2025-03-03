@@ -20,7 +20,6 @@ service_internal_gateway_config_key_file_path: "{{ fact_oci_container_service_in
 service_internal_gateway_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
 service_internal_gateway_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca_cert_file }}"
 
-service_internal_gateway_config_x_host: "{{ service_internal_gateway_config.external_gateway_ip }}"
 service_internal_gateway_config_reverse_proxy_additional_headers: []
 service_internal_gateway_config_reverse_proxy_enable_web_socket: true
 service_internal_gateway_config_set_deny_root_uri_location: false

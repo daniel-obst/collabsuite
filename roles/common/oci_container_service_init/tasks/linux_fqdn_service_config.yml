@@ -19,8 +19,6 @@
       ansible.builtin.set_fact:
         fact_oci_container_service_init_cert_file: "{{ fact_pki_service_certificate_info_cert_file }}"
         fact_oci_container_service_init_key_file: "{{ fact_pki_service_certificate_info_key_file }}"
-        fact_oci_container_service_init_dh_file: "{{ fact_pki_service_certificate_info_dh_file }}"
-        fact_oci_container_service_init_ca_cert_file: "{{ fact_pki_certificate_authority_info_ca_file }}"
         fact_oci_container_service_init_fqdn_server: "{{ oci_container_service_init_fqdn_server }}"
 
 - name: OCI container service init - server
@@ -43,6 +41,4 @@
       ansible.builtin.set_fact:
         fact_oci_container_service_init_cert_file: "{{ fact_pki_server_certificate_info_cert_file }}"
         fact_oci_container_service_init_key_file: "{{ fact_pki_server_certificate_info_key_file }}"
-        fact_oci_container_service_init_dh_file: "{{ fact_pki_server_certificate_info_dh_file }}"
-        fact_oci_container_service_init_ca_cert_file: "{{ fact_pki_certificate_authority_info_ca_file }}"
         fact_oci_container_service_init_fqdn_server: "{{ oci_container_service_init_fqdn_server }}"

@@ -10,7 +10,7 @@ map $http_upgrade $connection_upgrade {
 
 lua_shared_dict discovery {{ openid_cache_shared_memory_zone_mb }}m;
 lua_ssl_verify_depth {{ openid_ssl_verify_depth }};
-lua_ssl_trusted_certificate {{ openid_ssl_trusted_certificate }};
+lua_ssl_trusted_certificate {{ ssl_ca_certificates_path }};
 
 #{% if openid_enable_session_cache %}
 # See https://github.com/bungle/lua-resty-session?tab=readme-ov-file#configuration

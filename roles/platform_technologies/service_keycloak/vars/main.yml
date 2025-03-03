@@ -1,12 +1,12 @@
 ---
-service_keycloak_platform_registry_globals: "{{ ansible_deploy_production
-  | ansible.builtin.ternary(platform_registry_globals.production, platform_registry_globals.staging) }}"
+service_keycloak_clients_config: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_service_keycloak_clients.production, platform_service_keycloak_clients.staging) }}"
 
 service_keycloak_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_keycloak.production, platform_service_keycloak.staging) }}"
 
-service_keycloak_clients_config: "{{ ansible_deploy_production
-  | ansible.builtin.ternary(platform_service_keycloak_clients.production, platform_service_keycloak_clients.staging) }}"
+service_keycloak_http_gateway: "{{ service_keycloak_config.http_gateway }}"
+service_keycloak_http_gateway_with_port: "{{ service_keycloak_http_gateway.domain }}:{{ service_keycloak_http_gateway.port }}"
 
 service_keycloak_openid_client_info: "{{ service_keycloak_config.openid_client_info }}"
 
@@ -16,7 +16,7 @@ service_keycloak_password_path_prefix: "{{ platform_management_passwords_path }}
 service_keycloak_worker: "keycloak_worker"
 service_keycloak_config_http_port: "8080"
 service_keycloak_server_url: "http://{{ service_keycloak_worker }}:{{ service_keycloak_config_http_port }}"
-service_keycloak_ext_gw_ip: "{{ service_keycloak_config.external_gateway_ip }}"
+service_keycloak_ext_gw_ip: "{{ service_keycloak_http_gateway.server_ip }}"
 
 # locations.conf (internal site)
 service_keycloak_server_firewall_port: "{{ service_keycloak_config.firewall_port }}"
@@ -34,7 +34,7 @@ service_keycloak_config_set_deny_root_uri_location: false
 
 # locations.conf (external site)
 service_keycloak_secondary_server_firewall_port: "{{ service_keycloak_config.firewall_port }}"
-service_keycloak_secondary_fqdn_server: "{{ service_keycloak_config.external_gateway_ip }}"
+service_keycloak_secondary_fqdn_server: "{{ service_keycloak_http_gateway.domain }}"
 service_keycloak_secondary_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
 service_keycloak_secondary_config_cert_file_path: "{{ fact_service_keycloak_init_external_cert_file }}"
 service_keycloak_secondary_config_key_file_path: "{{ fact_service_keycloak_init_external_key_file }}"
@@ -62,7 +62,7 @@ service_keycloak_config_admin_password_file:
   "{{ service_keycloak_password_path_prefix }}{{ service_keycloak_config.admin_username }}"
 service_keycloak_config_https_port: "{{ service_keycloak_config.firewall_port }}"
 service_keycloak_config_external_uri:
-  "https://{{ service_keycloak_config.external_gateway_ip }}:{{ service_keycloak_config.firewall_port }}/{{ service_keycloak_config.service_uri }}"
+  "https://{{ service_keycloak_http_gateway_with_port }}/{{ service_keycloak_config.service_uri }}"
 service_keycloak_config_internal_uri:
   "https://{{ service_keycloak_config.fqdn_server }}:{{ service_keycloak_config.firewall_port }}/{{ service_keycloak_config.service_uri }}"
 service_keycloak_config_max_queued_requests: "{{ service_keycloak_config.max_queued_requests }}"
@@ -75,7 +75,7 @@ service_keycloak_config_admin_email: "{{ service_keycloak_config.admin_user_emai
 service_keycloak_admin_init_lock_file_path: "{{ platform_management_init_lock_path }}/{{ service_keycloak_service_name }}_{{ service_keycloak_config.admin_username }}"
 
 service_keycloak_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
-service_keycloak_config_external_root_uri: "https://{{ service_keycloak_config.external_gateway_ip }}:{{ service_keycloak_config.firewall_port }}"
+service_keycloak_config_external_root_uri: "https://{{ service_keycloak_http_gateway_with_port }}"
 service_keycloak_service_uri: "{{ service_keycloak_config.service_uri }}"
 
 service_keycloak_config_auth_realm: "{{ service_keycloak_config.auth_realm }}"

@@ -14,7 +14,6 @@
         openid_tls_web_proxy_config_dh_file_path: "{{ service_internal_gateway_config_dh_file_path }}"
         openid_tls_web_proxy_config_ca_cert_file_path: "{{ service_internal_gateway_config_ca_cert_file_path }}"
         openid_tls_web_proxy_config_service_network_dns: "{{ service_internal_gateway_service_network_dns }}"
-        openid_tls_web_proxy_config_x_host: "{{ service_internal_gateway_config_x_host }}"
         openid_tls_web_proxy_config_reverse_proxy_additional_headers: "{{ service_internal_gateway_config_reverse_proxy_additional_headers }}"
         openid_tls_web_proxy_config_reverse_proxy_enable_web_socket: "{{ service_internal_gateway_config_reverse_proxy_enable_web_socket }}"
         openid_tls_web_proxy_config_set_deny_root_uri_location: "{{ service_internal_gateway_config_set_deny_root_uri_location }}"

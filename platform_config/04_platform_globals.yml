@@ -24,8 +24,6 @@ platform_globals:
     - *platform_globals_rfc1918_class_b
     - *platform_globals_rfc1918_class_c
   servers:
-    internal_gateway: &platform_globals_internal_gateway "int-gw.collabsuite.lan"
-    identity_provider: &platform_globals_identity_provider "identity.collabsuite.lan"
     domain_name_provider: &platform_globals_dns "dns.collabsuite.lan"
     platform_server_1: &platform_globals_server_1 "server-1.collabsuite.lan"
     platform_server_2: &platform_globals_server_2 "server-2.collabsuite.lan"
@@ -33,13 +31,13 @@ platform_globals:
 
 platform_global_external_gateway:
   production: &platform_global_external_gateway_prod_info
-    domain: "{{ facts_platform_environment.external_server.production.domain }}"
+    domain: &platform_global_external_gateway_prod_domain "{{ facts_platform_environment.external_server.production.domain }}"
     domain_email: "{{ facts_platform_environment.external_server.production.domain_email }}"
     server: &platform_globals_external_gateway_prod_server "ext-gw.collabsuite.lan"
     server_ip: &platform_globals_prod_external_gateway_ip "{{ facts_platform_environment.external_server.production.ip }}"
     port: *platform_globals_prod_https_port
   staging: &platform_global_external_gateway_staging_info
-    domain: "{{ facts_platform_environment.external_server.staging.domain }}"
+    domain: &platform_global_external_gateway_staging_domain "{{ facts_platform_environment.external_server.staging.domain }}"
     domain_email: "{{ facts_platform_environment.external_server.staging.domain_email }}"
     server: &platform_globals_external_gateway_staging_server "ext-gw.collabsuite.lan"
     server_ip: &platform_globals_staging_external_gateway_ip "{{ facts_platform_environment.external_server.staging.ip }}"
@@ -47,11 +45,21 @@ platform_global_external_gateway:
 
 platform_global_internal_gateway:
   production: &platform_global_internal_gateway_prod_info
-    server: *platform_globals_internal_gateway
+    server: &platform_global_internal_gateway_prod_server "int-gw.collabsuite.lan"
     port: *platform_globals_prod_https_port
   staging: &platform_global_internal_gateway_staging_info
-    server: *platform_globals_internal_gateway
+    server: &platform_global_internal_gateway_staging_server "int-gw.collabsuite.lan"
     port: *platform_globals_staging_https_port
+
+platform_global_identity_provider:
+  production: &platform_global_identity_provider_prod_info
+    fqdn_server: &platform_global_identity_provider_prod_server "identity.collabsuite.lan"
+    firewall_port: *platform_globals_prod_https_port
+    service_uri: &platform_identity_provider_prod_service_uri "auth"
+  staging: &platform_global_identity_provider_staging_info
+    fqdn_server: &platform_global_identity_provider_staging_server "identity.collabsuite.lan"
+    firewall_port: *platform_globals_staging_https_port
+    service_uri: &platform_identity_provider_staging_service_uri "auth"
 
 ########################################
 # Platform - Container Service Globals #
@@ -502,8 +510,7 @@ platform_service_keycloak:
   production:
     fqdn_service: "keycloak-{{ ansible_service_domain }}"
     fqdn_service_external: "keycloak-external-{{ ansible_service_domain }}"
-    fqdn_service_external_ip: *platform_globals_prod_external_gateway_ip
-    fqdn_server: *platform_globals_identity_provider
+    fqdn_server: *platform_global_identity_provider_prod_server
     external_fqdn_server: *platform_globals_external_gateway_prod_server
     external_gateway_ip: *platform_globals_prod_external_gateway_ip
     firewall_port: *platform_globals_prod_https_port
@@ -514,7 +521,7 @@ platform_service_keycloak:
     worker_pgsql_image_tag: *platform_container_images_postgresql_16_prod_image_tag
     worker_keycloak_image_name: *platform_container_images_keycloak_prod_image_name
     worker_keycloak_image_tag: *platform_container_images_keycloak_prod_image_tag
-    service_uri: &platform_service_keycloak_prod_service_uri "auth"
+    service_uri: *platform_identity_provider_prod_service_uri
     auth_realm: "master"
     user_realm: "master"
     bootstrap_admin_username: "bootstrapadmin"
@@ -549,11 +556,11 @@ platform_service_keycloak:
       service_name: *platform_service_keycloak_prod_username
       username: *platform_service_keycloak_prod_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_prod_info
   staging:
     fqdn_service: "stagingkeycloak-{{ ansible_service_domain }}"
     fqdn_service_external: "stagingkeycloak-external-{{ ansible_service_domain }}"
-    fqdn_service_external_ip: *platform_globals_staging_external_gateway_ip
-    fqdn_server: *platform_globals_identity_provider
+    fqdn_server: *platform_global_identity_provider_staging_server
     external_fqdn_server: *platform_globals_external_gateway_staging_server
     external_gateway_ip: *platform_globals_staging_external_gateway_ip
     firewall_port: *platform_globals_staging_https_port
@@ -564,7 +571,7 @@ platform_service_keycloak:
     worker_pgsql_image_tag: *platform_container_images_postgresql_16_staging_image_tag
     worker_keycloak_image_name: *platform_container_images_keycloak_staging_image_name
     worker_keycloak_image_tag: *platform_container_images_keycloak_staging_image_tag
-    service_uri: &platform_service_keycloak_staging_service_uri "auth"
+    service_uri: *platform_identity_provider_staging_service_uri
     auth_realm: "master"
     user_realm: "master"
     bootstrap_admin_username: "stagingbootstrapadmin"
@@ -599,6 +606,7 @@ platform_service_keycloak:
       service_name: *platform_service_keycloak_staging_username
       username: *platform_service_keycloak_staging_username
       restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+    http_gateway: *platform_global_external_gateway_staging_info
 
 platform_service_node_red:
   production:
@@ -1675,8 +1683,7 @@ platform_service_ckan:
 platform_service_internal_gateway:
   production:
     fqdn_service: "int-gw-{{ ansible_service_domain }}"
-    fqdn_server: *platform_globals_internal_gateway
-    external_gateway_ip: *platform_globals_prod_external_gateway_ip
+    fqdn_server: *platform_global_internal_gateway_prod_server
     internal_network_dns_ip: *platform_globals_prod_internal_network_dns_ip
     firewall_port: *platform_globals_prod_https_port
     server_port: *platform_globals_prod_https_redirect_port
@@ -1718,8 +1725,7 @@ platform_service_internal_gateway:
       # - *platform_service_ckan_prod_upstream_service
   staging:
     fqdn_service: "staging-int-gw-{{ ansible_service_domain }}"
-    fqdn_server: *platform_globals_internal_gateway
-    external_gateway_ip: *platform_globals_staging_external_gateway_ip
+    fqdn_server: *platform_global_internal_gateway_staging_server
     internal_network_dns_ip: *platform_globals_staging_internal_network_dns_ip
     firewall_port: *platform_globals_staging_https_port
     server_port: *platform_globals_staging_https_redirect_port
@@ -1763,9 +1769,7 @@ platform_service_internal_gateway:
 
 platform_service_external_gateway:
   production:
-    fqdn_service: "ext-gw-{{ ansible_service_domain }}"
-    fqdn_server: *platform_globals_external_gateway_prod_server
-    server_ip: *platform_globals_prod_external_gateway_ip
+    fqdn_server: *platform_global_external_gateway_prod_domain
     firewall_port: *platform_globals_prod_https_port
     server_port: *platform_globals_prod_https_redirect_port
     service_image_name: *platform_container_images_nginx_prod_image_name
@@ -1780,15 +1784,11 @@ platform_service_external_gateway:
       service_name: *platform_service_external_gateway_prod_username
       username: *platform_service_external_gateway_prod_username
       restricted_to_ipv4_with_cidr: ""
-    auth_service_uri: *platform_service_keycloak_prod_service_uri
-    auth_gateway: *platform_globals_identity_provider
-    auth_gateway_firewall_port: *platform_globals_prod_https_port
-    internal_gateway: *platform_globals_internal_gateway
-    internal_gateway_firewall_port: *platform_globals_prod_https_port
+    internal_network_dns_ip: *platform_globals_prod_internal_network_dns_ip
+    auth_gateway: *platform_global_identity_provider_prod_info
+    http_gateway: *platform_global_internal_gateway_prod_info
   staging:
-    fqdn_service: "staging-ext-gw-{{ ansible_service_domain }}"
-    fqdn_server: *platform_globals_external_gateway_staging_server
-    server_ip: *platform_globals_staging_external_gateway_ip
+    fqdn_server: *platform_global_external_gateway_staging_domain
     firewall_port: *platform_globals_staging_https_port
     server_port: *platform_globals_staging_https_redirect_port
     service_image_name: *platform_container_images_nginx_staging_image_name
@@ -1804,11 +1804,9 @@ platform_service_external_gateway:
       service_name: *platform_service_external_gateway_staging_username
       username: *platform_service_external_gateway_staging_username
       restricted_to_ipv4_with_cidr: ""
-    auth_service_uri: *platform_service_keycloak_staging_service_uri
-    auth_gateway: *platform_globals_identity_provider
-    auth_gateway_firewall_port: *platform_globals_staging_https_port
-    internal_gateway: *platform_globals_internal_gateway
-    internal_gateway_firewall_port: *platform_globals_staging_https_port
+    internal_network_dns_ip: *platform_globals_staging_internal_network_dns_ip
+    auth_gateway: *platform_global_identity_provider_staging_info
+    http_gateway: *platform_global_internal_gateway_staging_info
 
 platform_service_certbot:
   production:
