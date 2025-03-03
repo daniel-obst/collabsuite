@@ -1135,7 +1135,7 @@ platform_service_nextcloud:
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "nextcloud"
       base_uri: *platform_service_nextcloud_prod_service_uri
-      redirect_uri_suffix: 
+      redirect_uri_suffix: "apps/user_oidc/code"
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1175,6 +1175,7 @@ platform_service_nextcloud:
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-nextcloud"
       base_uri: *platform_service_nextcloud_staging_service_uri
+      redirect_uri_suffix: "apps/user_oidc/code"
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600

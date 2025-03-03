@@ -38,14 +38,12 @@
       'client_secret_file': service_keycloak_config_client_base_secret_file_path + item.client_id,
       'base_url': service_keycloak_config_external_root_uri
         + ((item.base_uri | length > 0) | ansible.builtin.ternary('/' + item.base_uri, '')),
-      'redirect_uris': [service_keycloak_config_external_root_uri
-        + ((item.base_uri | length > 0) | ansible.builtin.ternary('/' + item.base_uri, ''))
-        + service_keycloak_config_client_redirect_uri_suffix]
+      'redirect_uris':
+        [service_keycloak_config_external_root_uri + ((item.base_uri | length > 0) | ansible.builtin.ternary('/' + item.base_uri, ''))
+          + '/' + (item.redirect_uri_suffix | default(service_keycloak_config_client_redirect_uri_suffix))]
+          + ((item.redirect_uri_suffix | default(False)) | ansible.builtin.ternary([service_keycloak_config_client_default_redirect_uri], []))
       }]}}"
   loop: "{{ service_keycloak_clients_config }}"
-
-- debug:
-    msg: "{{ service_keycloak_clients_init }}"
 
 - name: Service (keycloak) - clients (init)
   community.general.keycloak_client:
