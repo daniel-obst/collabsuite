@@ -39,11 +39,11 @@ serivce_nextcloud_config_max_body_size_in_megabytes: "{{ service_nextcloud_confi
 service_nextcloud_admin_username: "{{ service_nextcloud_config.admin_username }}"
 service_nextcloud_password_file_path: "{{ service_nextcloud_password_path_prefix }}{{ service_nextcloud_admin_username }}"
 service_nextcloud_db_host_with_port: "{{ service_nextcloud_pgsql_worker }}:5432"
-service_nextcloud_trusted_domains: "{{ service_nextcloud_config_http_gateway.domain }}"
-service_nextcloud_trusted_proxies: "{{ service_nextcloud_config_http_gateway.domain }}"
-service_nextcloud_overwrite_host: "{{ service_nextcloud_config_http_gateway.domain }}:{{ service_nextcloud_config_http_gateway.port }}"
+service_nextcloud_trusted_domains: "{{ service_nextcloud_config_http_gateway.domain_web }}"
+service_nextcloud_trusted_proxies: "{{ service_nextcloud_config_http_gateway.domain_web }}"
+service_nextcloud_overwrite_host: "{{ service_nextcloud_config_http_gateway.domain_web }}:{{ service_nextcloud_config_http_gateway.port }}"
 service_nextcloud_overwrite_cli_url:
-  "https://{{ service_nextcloud_config_http_gateway.domain }}:{{ service_nextcloud_config_http_gateway.port }}/{{ service_nextcloud_config.service_uri }}"
+  "https://{{ service_nextcloud_config_http_gateway.domain_web }}:{{ service_nextcloud_config_http_gateway.port }}/{{ service_nextcloud_config.service_uri }}"
 service_nextcloud_overwrite_webroot: "/{{ service_nextcloud_config.service_uri }}"
 service_nextcloud_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/podman_environment"
 

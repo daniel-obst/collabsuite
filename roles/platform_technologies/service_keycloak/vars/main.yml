@@ -6,7 +6,7 @@ service_keycloak_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_keycloak.production, platform_service_keycloak.staging) }}"
 
 service_keycloak_http_gateway: "{{ service_keycloak_config.http_gateway }}"
-service_keycloak_http_gateway_with_port: "{{ service_keycloak_http_gateway.domain }}:{{ service_keycloak_http_gateway.port }}"
+service_keycloak_http_gateway_with_port: "{{ service_keycloak_http_gateway.domain_web }}:{{ service_keycloak_http_gateway.port }}"
 
 service_keycloak_openid_client_info: "{{ service_keycloak_config.openid_client_info }}"
 
@@ -34,7 +34,7 @@ service_keycloak_config_set_deny_root_uri_location: false
 
 # locations.conf (external site)
 service_keycloak_secondary_server_firewall_port: "{{ service_keycloak_config.firewall_port }}"
-service_keycloak_secondary_fqdn_server: "{{ service_keycloak_http_gateway.domain }}"
+service_keycloak_secondary_fqdn_server: "{{ service_keycloak_http_gateway.domain_web }}"
 service_keycloak_secondary_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
 service_keycloak_secondary_config_cert_file_path: "{{ fact_service_keycloak_init_external_cert_file }}"
 service_keycloak_secondary_config_key_file_path: "{{ fact_service_keycloak_init_external_key_file }}"

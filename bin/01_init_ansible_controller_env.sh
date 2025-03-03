@@ -8,12 +8,14 @@ readonly PLATFORM_ENVIRONMENT_FILE_PATH="${PLATFORM_DATA_DIR}/platform/platform_
 readonly PLATFORM_ENVIRONMENT_FILE_CONTENTS='''---
 external_server:
   production:
-    domain: "www.<domain name>"
+    domain: "<domain name>"
+    domain_web: "www.<domain name>"
     domain_email: "<email address>"
     ip: "<external IP address>"
     platform_internal_network_dns: "<platform internal network DNS IP>"
   staging:
-    domain: "www.<domain name>"
+    domain: "<domain name>"
+    domain_web: "www.<domain name>"
     domain_email: "<email address>"
     ip: "<external IP address>"
     platform_internal_network_dns: "<platform internal network DNS IP>"

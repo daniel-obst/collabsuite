@@ -32,12 +32,14 @@ platform_globals:
 platform_global_external_gateway:
   production: &platform_global_external_gateway_prod_info
     domain: &platform_global_external_gateway_prod_domain "{{ facts_platform_environment.external_server.production.domain }}"
+    domain_web: &platform_global_external_gateway_prod_domain_web "{{ facts_platform_environment.external_server.production.domain_web }}"
     domain_email: "{{ facts_platform_environment.external_server.production.domain_email }}"
     server: &platform_globals_external_gateway_prod_server "ext-gw.collabsuite.lan"
     server_ip: &platform_globals_prod_external_gateway_ip "{{ facts_platform_environment.external_server.production.ip }}"
     port: *platform_globals_prod_https_port
   staging: &platform_global_external_gateway_staging_info
     domain: &platform_global_external_gateway_staging_domain "{{ facts_platform_environment.external_server.staging.domain }}"
+    domain_web: &platform_global_external_gateway_staging_domain_web "{{ facts_platform_environment.external_server.staging.domain_web }}"
     domain_email: "{{ facts_platform_environment.external_server.staging.domain_email }}"
     server: &platform_globals_external_gateway_staging_server "ext-gw.collabsuite.lan"
     server_ip: &platform_globals_staging_external_gateway_ip "{{ facts_platform_environment.external_server.staging.ip }}"
@@ -535,7 +537,7 @@ platform_service_keycloak:
       discovery_uri: "auth/realms/collab-suite-v2.0/.well-known/openid-configuration"
       redirect_after_logout_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/logout"
       client_redirect_uri_suffix: "redirect_uri"
-      web_origins: &platform_service_keycloak_prod_client_domain "{{ ansible_host_domain }}"
+      web_origins: &platform_service_keycloak_prod_client_domain "{{ facts_platform_environment.external_server.production.domain }}"
       base_secret_file_path: "{{ platform_management_openid_path }}/openid_client_secret_"
       identity_provider_gateway: *platform_global_external_gateway_prod_info
       internationalization_enabled: true
@@ -585,7 +587,7 @@ platform_service_keycloak:
       discovery_uri: "auth/realms/staging-collab-suite-v2.0/.well-known/openid-configuration"
       redirect_after_logout_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/logout"
       client_redirect_uri_suffix: "redirect_uri"
-      web_origins: &platform_service_keycloak_staging_client_domain "{{ ansible_host_domain }}"
+      web_origins: &platform_service_keycloak_staging_client_domain "{{ facts_platform_environment.external_server.staging.domain }}"
       base_secret_file_path: "{{ platform_management_openid_path }}/openid_client_secret_"
       identity_provider_gateway: *platform_global_external_gateway_staging_info
       internationalization_enabled: true
@@ -1133,6 +1135,7 @@ platform_service_nextcloud:
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "nextcloud"
       base_uri: *platform_service_nextcloud_prod_service_uri
+      redirect_uri_suffix: 
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1769,7 +1772,7 @@ platform_service_internal_gateway:
 
 platform_service_external_gateway:
   production:
-    fqdn_server: *platform_global_external_gateway_prod_domain
+    fqdn_server: *platform_global_external_gateway_prod_domain_web
     firewall_port: *platform_globals_prod_https_port
     server_port: *platform_globals_prod_https_redirect_port
     service_image_name: *platform_container_images_nginx_prod_image_name
@@ -1788,7 +1791,7 @@ platform_service_external_gateway:
     auth_gateway: *platform_global_identity_provider_prod_info
     http_gateway: *platform_global_internal_gateway_prod_info
   staging:
-    fqdn_server: *platform_global_external_gateway_staging_domain
+    fqdn_server: *platform_global_external_gateway_staging_domain_web
     firewall_port: *platform_globals_staging_https_port
     server_port: *platform_globals_staging_https_redirect_port
     service_image_name: *platform_container_images_nginx_staging_image_name

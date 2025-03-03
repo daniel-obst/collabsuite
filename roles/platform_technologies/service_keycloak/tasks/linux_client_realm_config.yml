@@ -44,6 +44,9 @@
       }]}}"
   loop: "{{ service_keycloak_clients_config }}"
 
+- debug:
+    msg: "{{ service_keycloak_clients_init }}"
+
 - name: Service (keycloak) - clients (init)
   community.general.keycloak_client:
     auth_keycloak_url: "{{ service_keycloak_config_internal_uri }}"

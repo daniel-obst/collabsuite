@@ -140,7 +140,7 @@ openid_tls_web_proxy_config_openid_global_client_info: "{{ ansible_deploy_produc
 openid_tls_web_proxy_config_openid_idp: "{{ openid_tls_web_proxy_config_openid_global_client_info.identity_provider_gateway }}"
 openid_tls_web_proxy_config_base_redirect_uri: "{{ openid_tls_web_proxy_config_base_uri | ansible.builtin.mandatory }}"
 
-openid_tls_web_proxy_config_idp: "{{ openid_tls_web_proxy_config_openid_idp.domain }}:{{ openid_tls_web_proxy_config_openid_idp.port }}"
+openid_tls_web_proxy_config_idp: "{{ openid_tls_web_proxy_config_openid_idp.domain_web }}:{{ openid_tls_web_proxy_config_openid_idp.port }}"
 openid_tls_web_proxy_config_relative_redirect_uri:
   "{{ ((openid_tls_web_proxy_config_base_redirect_uri | length > 0)
   | ansible.builtin.ternary(openid_tls_web_proxy_config_base_redirect_uri + '/', ''))
