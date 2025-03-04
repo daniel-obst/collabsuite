@@ -62,7 +62,7 @@
     bearer_only: false
     client_authenticator_type: client-secret
     secret: "{{ lookup('openid_client_password', item.client_secret_file) }}"
-    root_url: "{{ service_keycloak_config_external_root_uri }}"
+    root_url: "{{ item.base_url }}"
     base_url: "{{ item.base_url }}"
     redirect_uris: "{{ item.redirect_uris }}"
     web_origins: "{{ service_keycloak_config_client_security_web_origins }}"

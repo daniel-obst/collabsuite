@@ -6,5 +6,8 @@
       ansible.builtin.set_fact:
         fact_openid_service_init_redirect_uri: "{{ openid_service_init_redirect_uri }}"
         fact_openid_service_init_discovery_uri: "{{ openid_service_init_discovery_uri }}"
+        fact_openid_service_init_auth_uri: "{{ openid_service_init_auth_uri }}"
+        fact_openid_service_init_token_uri: "{{ openid_service_init_token_uri }}"
+        fact_openid_service_init_api_uri: "{{ openid_service_init_api_uri }}"
         fact_openid_service_init_redirect_after_logout_uri: "{{ openid_service_init_redirect_after_logout_uri }}"
         fact_openid_service_init_client_secret_file_path: "{{ openid_service_init_client_secret_file_path }}"

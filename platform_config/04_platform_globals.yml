@@ -535,6 +535,9 @@ platform_service_keycloak:
       security_realm: "collab-suite-v2.0"
       security_realm_id: "collab-suite-v2.0"
       discovery_uri: "auth/realms/collab-suite-v2.0/.well-known/openid-configuration"
+      auth_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/auth"
+      token_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/token"
+      api_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/userinfo"
       redirect_after_logout_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/logout"
       client_redirect_uri_suffix: "redirect_uri"
       web_origins: &platform_service_keycloak_prod_client_domain "{{ facts_platform_environment.external_server.production.domain }}"
@@ -585,7 +588,10 @@ platform_service_keycloak:
       security_realm: "staging-collab-suite-v2.0"
       security_realm_id: "staging-collab-suite-v2.0"
       discovery_uri: "auth/realms/staging-collab-suite-v2.0/.well-known/openid-configuration"
-      redirect_after_logout_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/logout"
+      auth_uri: "auth/realms/staging-ccollab-suite-v2.0/protocol/openid-connect/auth"
+      token_uri: "auth/realms/staging-ccollab-suite-v2.0/protocol/openid-connect/token"
+      api_uri: "auth/realms/staging-ccollab-suite-v2.0/protocol/openid-connect/userinfo"
+      redirect_after_logout_uri: "auth/realms/staging-collab-suite-v2.0/protocol/openid-connect/logout"
       client_redirect_uri_suffix: "redirect_uri"
       web_origins: &platform_service_keycloak_staging_client_domain "{{ facts_platform_environment.external_server.staging.domain }}"
       base_secret_file_path: "{{ platform_management_openid_path }}/openid_client_secret_"
@@ -1217,6 +1223,7 @@ platform_service_grafana:
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "grafana"
       base_uri: *platform_service_grafana_prod_service_uri
+      redirect_uri_suffix: "login/generic_oauth"
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1256,6 +1263,7 @@ platform_service_grafana:
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-grafana"
       base_uri: *platform_service_grafana_staging_service_uri
+      redirect_uri_suffix: "login/generic_oauth"
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600

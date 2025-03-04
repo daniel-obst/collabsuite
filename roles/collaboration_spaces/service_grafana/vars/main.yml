@@ -3,6 +3,7 @@ service_grafana_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_grafana.production, platform_service_grafana.staging) }}"
 
 service_grafana_config_http_gateway: "{{ service_grafana_config.http_gateway }}"
+service_grafana_config_openid_client: "{{ service_grafana_config.openid_client }}"
 
 service_grafana_service_name: "grafana"
 service_grafana_password_path_prefix: "{{ platform_management_passwords_path }}/{{ service_grafana_service_name }}_"
@@ -35,13 +36,29 @@ service_grafana_config_locations_server_path: "{{ fact_tls_web_proxy_service_con
 service_grafana_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
 
 # grafana_podman_environment"
-service_grafana_server_domain: "{{ ansible_host_domain }}"
+service_grafana_server_domain: "{{ service_grafana_config.http_gateway.domain }}"
 service_grafana_https_root_url:
-  "https://{{ service_grafana_config.http_gateway.server }}:{{ service_grafana_config.http_gateway.port }}/{{ service_grafana_config.service_uri }}/"
+  "https://{{ service_grafana_config.http_gateway.domain_web }}:{{ service_grafana_config.http_gateway.port }}/{{ service_grafana_config.service_uri }}/"
 service_grafana_host_with_port: "{{ service_grafana_pgsql_worker }}:5432"
 service_grafana_admin_user: "{{ service_grafana_config.admin_username }}"
 service_grafana_admin_user_password_file_path: "{{ service_grafana_password_path_prefix }}{{ service_grafana_admin_user }}"
 service_grafana_admin_email: "{{ service_grafana_config.admin_email }}"
+
+# See for further information
+#   - https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/generic-oauth/
+#   - https://grafana.com/docs/grafana/latest/setup-grafana/configure-security/configure-authentication/keycloak/
+#
+# Set the following in the podman_environment file for single logout
+#   - GF_AUTH_GENERIC_OAUTH_SIGNOUT_REDIRECT_URL="{{ openid_service_init_redirect_after_logout_uri }}"
+service_grafana_openid_client_id: "{{ service_grafana_config_openid_client.client_id }}"
+service_grafana_openid_base_uri: "{{ service_grafana_config_openid_client.base_uri }}"
+
+service_grafana_openid_client_secret_file_path: "{{ fact_openid_service_init_client_secret_file_path }}"
+service_grafana_openid_discovery_uri: "{{ fact_openid_service_init_discovery_uri }}"
+service_grafana_openid_auth_uri: "{{ fact_openid_service_init_auth_uri }}"
+service_grafana_openid_token_uri: "{{ fact_openid_service_init_token_uri }}"
+service_grafana_openid_api_uri: "{{ fact_openid_service_init_api_uri }}"
+
 service_grafana_grafana_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/grafana_podman_environment"
 
 # service
