@@ -1,0 +1,18 @@
+---
+openid_service_init_client_identifier: "{{ openid_service_init_client_id | ansible.builtin.mandatory }}"
+openid_service_init_base_redirect_uri: "{{ openid_service_init_base_uri | ansible.builtin.mandatory }}"
+
+openid_service_init_global_client_info: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_openid_global_client_info.production, platform_openid_global_client_info.staging) }}"
+openid_service_init_identity_provider_gateway: "{{ openid_service_init_global_client_info.identity_provider_gateway }}"
+
+openid_service_init_idp_server: "{{ openid_service_init_identity_provider_gateway.domain_web }}:{{ openid_service_init_identity_provider_gateway.port }}"
+openid_service_init_relative_redirect_uri:
+  "{{ ((openid_service_init_base_redirect_uri | length > 0)
+  | ansible.builtin.ternary(openid_service_init_base_redirect_uri + '/', ''))
+  + openid_service_init_global_client_info.client_redirect_uri_suffix }}"
+
+openid_service_init_redirect_uri: "https://{{ openid_service_init_idp_server }}/{{ openid_service_init_relative_redirect_uri }}"
+openid_service_init_discovery_uri: "https://{{ openid_service_init_idp_server }}/{{ openid_service_init_global_client_info.discovery_uri }}"
+openid_service_init_redirect_after_logout_uri: "https://{{ openid_service_init_idp_server }}/{{ openid_service_init_global_client_info.redirect_after_logout_uri }}"
+openid_service_init_client_secret_file_path: "{{ openid_service_init_global_client_info.base_secret_file_path + openid_service_init_client_identifier }}"

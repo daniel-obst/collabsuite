@@ -26,6 +26,13 @@
         group: "{{ openid_tls_web_proxy_config_user_gid }}"
         mode: "{{ openid_tls_web_proxy_config_html_dir_mode }}"
 
+    - name: OpenID - TLS (web proxy config) - openid facts
+      ansible.builtin.include_role:
+        name: openid_service_init
+      vars:
+        openid_service_init_client_id: "{{ openid_tls_web_proxy_config_client_id }}"
+        openid_service_init_base_uri: "{{ openid_tls_web_proxy_config_base_uri }}"
+
     - name: OpenID - TLS (web proxy config) - default.conf
       ansible.builtin.template:
         src: "openid_tls_web_proxy_config_default.conf.j2"

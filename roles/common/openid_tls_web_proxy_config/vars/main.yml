@@ -135,20 +135,9 @@ openid_tls_web_proxy_config_includes_locations_config_path: "{{ openid_tls_web_p
 openid_tls_web_proxy_config_includes_html_error_pages_conf_path: "{{ openid_tls_web_proxy_config_container_includes_dir_path }}/{{ openid_tls_web_proxy_config_html_error_pages_conf }}"
 
 # OpenID configuration
-openid_tls_web_proxy_config_openid_global_client_info: "{{ ansible_deploy_production
-  | ansible.builtin.ternary(platform_openid_global_client_info.production, platform_openid_global_client_info.staging) }}"
-openid_tls_web_proxy_config_openid_idp: "{{ openid_tls_web_proxy_config_openid_global_client_info.identity_provider_gateway }}"
-openid_tls_web_proxy_config_base_redirect_uri: "{{ openid_tls_web_proxy_config_base_uri | ansible.builtin.mandatory }}"
-
-openid_tls_web_proxy_config_idp: "{{ openid_tls_web_proxy_config_openid_idp.domain_web }}:{{ openid_tls_web_proxy_config_openid_idp.port }}"
-openid_tls_web_proxy_config_relative_redirect_uri:
-  "{{ ((openid_tls_web_proxy_config_base_redirect_uri | length > 0)
-  | ansible.builtin.ternary(openid_tls_web_proxy_config_base_redirect_uri + '/', ''))
-  + openid_tls_web_proxy_config_openid_global_client_info.client_redirect_uri_suffix }}"
-
-openid_tls_web_proxy_config_redirect_uri: "https://{{ openid_tls_web_proxy_config_idp }}/{{ openid_tls_web_proxy_config_relative_redirect_uri }}"
-openid_tls_web_proxy_config_discovery_uri: "https://{{ openid_tls_web_proxy_config_idp }}/{{ openid_tls_web_proxy_config_openid_global_client_info.discovery_uri }}"
-openid_tls_web_proxy_config_redirect_after_logout_uri: "https://{{ openid_tls_web_proxy_config_idp }}/{{ openid_tls_web_proxy_config_openid_global_client_info.redirect_after_logout_uri }}"
+openid_tls_web_proxy_config_redirect_uri: "{{ fact_openid_service_init_redirect_uri }}"
+openid_tls_web_proxy_config_discovery_uri: "{{ fact_openid_service_init_discovery_uri }}"
+openid_tls_web_proxy_config_redirect_after_logout_uri: "{{ fact_openid_service_init_redirect_after_logout_uri }}"
+openid_tls_web_proxy_config_client_secret_file_path: "{{ fact_openid_service_init_client_secret_file_path }}"
 openid_tls_web_proxy_config_http_header_email: "{{ gv_openid_http_header_email }}"
 openid_tls_web_proxy_config_header_authorization: "{{ gv_openid_http_header_authorization }}"
-openid_tls_web_proxy_config_client_secret_file_path: "{{ openid_tls_web_proxy_config_openid_global_client_info.base_secret_file_path + openid_tls_web_proxy_config_client_id }}"

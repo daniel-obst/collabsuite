@@ -17,6 +17,13 @@
         tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_nextcloud_config_reverse_proxy_enable_web_socket }}"
         tls_web_proxy_service_config_http_gateway: "{{ service_nextcloud_config_http_gateway }}"
 
+    - name: Service (nextcloud) - openid facts
+      ansible.builtin.include_role:
+        name: openid_service_init
+      vars:
+        openid_service_init_client_id: "{{ service_nextcloud_openid_client_id }}"
+        openid_service_init_base_uri: "{{ service_nextcloud_openid_base_uri }}"
+
     - name: Service (nextcloud) - database configuration
       ansible.builtin.include_role:
         name: service_postgresql_init
@@ -71,7 +78,9 @@
         mode: "0755"
         force: true
       vars:
-        root_ca_path: "{{ service_nextcloud_container_root_ca_path }}"
+        openid_client_id: "{{ service_nextcloud_openid_client_id }}"
+        openid_client_secret_file_path: "{{ service_nextcloud_openid_client_secret_file_path }}"
+        openid_discovery_uri: "{{ service_nextcloud_openid_discovery_uri }}"
 
     - name: Service (nextcloud) - deploy service
       ansible.builtin.include_role:

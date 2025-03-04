@@ -2,3 +2,9 @@
 
 php occ app:enable richdocuments
 php occ app:enable user_oidc
+php occ user_oidc:provider Collabsuite \
+  --clientid="{{ openid_client_id }}" \
+  --clientsecret="{{ lookup('openid_client_password', openid_client_secret_file_path) }}" \
+  --discoveryuri="{{ openid_discovery_uri }}" \
+  --unique-uid=0
+php occ config:app:set --value=0 user_oidc allow_multiple_user_backends

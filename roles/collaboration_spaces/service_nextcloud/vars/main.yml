@@ -1,8 +1,13 @@
 ---
+service_nextcloud_config_openid_global_client_info: "{{ ansible_deploy_production
+  | ansible.builtin.ternary(platform_openid_global_client_info.production, platform_openid_global_client_info.staging) }}"
+service_nextcloud_config_openid_idp: "{{ service_nextcloud_config_openid_global_client_info.identity_provider_gateway }}"
+
 service_nextcloud_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_nextcloud.production, platform_service_nextcloud.staging) }}"
 
 service_nextcloud_config_http_gateway: "{{ service_nextcloud_config.http_gateway }}"
+service_nextcloud_config_openid_client: "{{ service_nextcloud_config.openid_client }}"
 
 service_nextcloud_service_name: "nextcloud"
 service_nextcloud_password_path_prefix: "{{ platform_management_passwords_path }}/{{ service_nextcloud_service_name }}_"
@@ -47,9 +52,15 @@ service_nextcloud_overwrite_cli_url:
 service_nextcloud_overwrite_webroot: "/{{ service_nextcloud_config.service_uri }}"
 service_nextcloud_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/podman_environment"
 
-service_nextcloud_container_root_ca_path: ""
+# post_installation.sh
+service_nextcloud_openid_client_id: "{{ service_nextcloud_config_openid_client.client_id }}"
+service_nextcloud_openid_base_uri: "{{ service_nextcloud_config_openid_client.base_uri }}"
+
+service_nextcloud_openid_client_secret_file_path: "{{ fact_openid_service_init_client_secret_file_path }}"
+service_nextcloud_openid_discovery_uri: "{{ fact_openid_service_init_discovery_uri }}"
 service_nextcloud_post_installation_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/post_installation.sh"
 
+# service
 service_nextcloud_oci_service:
   image_name: "{{ service_nextcloud_config.service_image_name }}"
   image_tag: "{{ service_nextcloud_config.service_image_tag }}"
@@ -77,6 +88,9 @@ service_nextcloud_oci_service_workers:
     added_capabilities: []
     containers:
       - container_name: "{{ service_nextcloud_worker }}"
-        volumes: []
+        volumes:
+          - "{{ service_nextcloud_worker }}_html:/var/www/html"
+          - "{{ service_nextcloud_worker }}_data:/var/www/html/data"
+          - "{{ service_nextcloud_worker }}_config:/var/www/html/config"
         readonly_volumes:
           - "./{{ service_nextcloud_post_installation_server_path }}:/docker-entrypoint-hooks.d/post-installation/post_installation.sh"
