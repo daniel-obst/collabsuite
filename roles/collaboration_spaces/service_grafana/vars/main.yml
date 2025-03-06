@@ -58,6 +58,7 @@ service_grafana_openid_discovery_uri: "{{ fact_openid_service_init_discovery_uri
 service_grafana_openid_auth_uri: "{{ fact_openid_service_init_auth_uri }}"
 service_grafana_openid_token_uri: "{{ fact_openid_service_init_token_uri }}"
 service_grafana_openid_api_uri: "{{ fact_openid_service_init_api_uri }}"
+service_grafana_openid_scopes: "{{ fact_openid_service_init_scopes }}"
 
 service_grafana_grafana_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/grafana_podman_environment"
 

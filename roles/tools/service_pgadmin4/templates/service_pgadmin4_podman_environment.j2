@@ -1,2 +1,13 @@
 PGADMIN_DEFAULT_EMAIL={{ pgadmin_default_email | ansible.builtin.mandatory }}
 PGADMIN_DEFAULT_PASSWORD={{ lookup('admin_account_password', pgadmin_default_password_file_path ) }}
+PGADMIN_DISABLE_POSTFIX=True
+PGADMIN_CONFIG_CONFIG_DATABASE_URI='{{ pgsql_prefix }}:{{ lookup('user_account_password', pgsql_password_file_path) }}@{{ pgsql_suffix }}'
+
+PGADMIN_CONFIG_PROXY_X_FOR_COUNT=1
+PGADMIN_CONFIG_PROXY_X_PROTO_COUNT=1
+PGADMIN_CONFIG_PROXY_X_HOST_COUNT=1
+PGADMIN_CONFIG_PROXY_X_PORT_COUNT=1
+PGADMIN_CONFIG_PROXY_X_PREFIX_COUNT=0
+
+PGADMIN_CONFIG_AUTHENTICATION_SOURCES=['oauth2']
+PGADMIN_CONFIG_OAUTH2_CONFIG={{ openid_config_prefix }}, 'OAUTH2_CLIENT_SECRET': '{{ lookup('openid_client_password', openid_client_secret_file_path) }}', {{ openid_config_suffix }}

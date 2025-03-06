@@ -4,6 +4,7 @@
   block:
     - name: OpenID (service init) - set facts
       ansible.builtin.set_fact:
+        fact_openid_service_init_idp_base_uri: "{{ openid_service_init_idp_base_uri }}"
         fact_openid_service_init_redirect_uri: "{{ openid_service_init_redirect_uri }}"
         fact_openid_service_init_discovery_uri: "{{ openid_service_init_discovery_uri }}"
         fact_openid_service_init_auth_uri: "{{ openid_service_init_auth_uri }}"
@@ -11,3 +12,4 @@
         fact_openid_service_init_api_uri: "{{ openid_service_init_api_uri }}"
         fact_openid_service_init_redirect_after_logout_uri: "{{ openid_service_init_redirect_after_logout_uri }}"
         fact_openid_service_init_client_secret_file_path: "{{ openid_service_init_client_secret_file_path }}"
+        fact_openid_service_init_scopes: "{{ openid_service_init_scopes }}"

@@ -15,9 +15,12 @@ openid_service_init_relative_redirect_uri:
 openid_service_init_post_logout_redirect: "?post_logout_redirect_uri={{ openid_service_init_idp_server }}"
 
 openid_service_init_redirect_uri: "{{ openid_service_init_idp_server }}/{{ openid_service_init_relative_redirect_uri }}"
-openid_service_init_discovery_uri: "{{ openid_service_init_idp_server }}/{{ openid_service_init_global_client_info.discovery_uri }}"
-openid_service_init_auth_uri: "{{ openid_service_init_idp_server }}/{{ openid_service_init_global_client_info.auth_uri }}"
-openid_service_init_token_uri: "{{ openid_service_init_idp_server }}/{{ openid_service_init_global_client_info.token_uri }}"
-openid_service_init_api_uri: "{{ openid_service_init_idp_server }}/{{ openid_service_init_global_client_info.api_uri }}"
-openid_service_init_redirect_after_logout_uri: "{{ openid_service_init_idp_server }}/{{ openid_service_init_global_client_info.redirect_after_logout_uri }}{{ openid_service_init_post_logout_redirect }}"
+
+openid_service_init_idp_base_uri: "{{ openid_service_init_idp_server }}/{{ openid_service_init_global_client_info.base_uri }}"
+openid_service_init_discovery_uri: "{{ openid_service_init_idp_base_uri }}/{{ openid_service_init_global_client_info.discovery_uri }}"
+openid_service_init_auth_uri: "{{ openid_service_init_idp_base_uri }}/{{ openid_service_init_global_client_info.auth_uri }}"
+openid_service_init_token_uri: "{{ openid_service_init_idp_base_uri }}/{{ openid_service_init_global_client_info.token_uri }}"
+openid_service_init_api_uri: "{{ openid_service_init_idp_base_uri }}/{{ openid_service_init_global_client_info.api_uri }}"
+openid_service_init_redirect_after_logout_uri: "{{ openid_service_init_idp_base_uri }}/{{ openid_service_init_global_client_info.redirect_after_logout_uri }}{{ openid_service_init_post_logout_redirect }}"
 openid_service_init_client_secret_file_path: "{{ openid_service_init_global_client_info.base_secret_file_path + openid_service_init_client_identifier }}"
+openid_service_init_scopes: "openid email profile"

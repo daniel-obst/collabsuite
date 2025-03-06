@@ -70,6 +70,7 @@
         openid_auth_url: "{{ service_grafana_openid_auth_uri }}"
         openid_token_url: "{{ service_grafana_openid_token_uri }}"
         openid_api_url: "{{ service_grafana_openid_api_uri }}"
+        openid_scopes: "{{ service_grafana_openid_scopes }}"
 
     - name: Service (grafana) - deploy service
       ansible.builtin.include_role:

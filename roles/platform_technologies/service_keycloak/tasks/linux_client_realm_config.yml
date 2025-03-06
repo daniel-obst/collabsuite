@@ -39,10 +39,11 @@
       'base_url': service_keycloak_config_external_root_uri
         + ((item.base_uri | length > 0) | ansible.builtin.ternary('/' + item.base_uri, '')),
       'redirect_uris':
-        [service_keycloak_config_external_root_uri + ((item.base_uri | length > 0) | ansible.builtin.ternary('/' + item.base_uri, ''))
-          + '/' + (item.redirect_uri_suffix | default(service_keycloak_config_client_redirect_uri_suffix))]
-          + ((item.redirect_uri_suffix | default(False)) | ansible.builtin.ternary([service_keycloak_config_client_default_redirect_uri], []))
-      }]}}"
+        [(item.redirect_uri_override_exclude_port | default(False))
+            | ansible.builtin.ternary(service_keycloak_config_external_root_uri_no_port, service_keycloak_config_external_root_uri)
+          + ((item.base_uri | length > 0) | ansible.builtin.ternary('/' + item.base_uri, ''))
+          + '/' + (item.redirect_uri_override_suffix | default(service_keycloak_config_client_redirect_uri_suffix))]
+      }] }}"
   loop: "{{ service_keycloak_clients_config }}"
 
 - name: Service (keycloak) - clients (init)

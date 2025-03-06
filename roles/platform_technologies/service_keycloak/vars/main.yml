@@ -76,6 +76,7 @@ service_keycloak_admin_init_lock_file_path: "{{ platform_management_init_lock_pa
 
 service_keycloak_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
 service_keycloak_config_external_root_uri: "https://{{ service_keycloak_http_gateway_with_port }}"
+service_keycloak_config_external_root_uri_no_port: "https://{{ service_keycloak_http_gateway.domain_web }}"
 service_keycloak_service_uri: "{{ service_keycloak_config.service_uri }}"
 
 service_keycloak_config_auth_realm: "{{ service_keycloak_config.auth_realm }}"

@@ -2,6 +2,11 @@
 - name: TLS web proxy service config
   when: facts_machine_linux_distro
   block:
+    - name: TLS (web proxy service config) - set forwarded port (conditional)
+      when: tls_web_proxy_service_config_set_x_forwarded_port
+      set_fact:
+        tls_web_proxy_service_config_x_forwarded_port: "{{ tls_web_proxy_service_config_gateway.port }}"
+
     - name: TLS (web proxy service config) - TLS web proxy configuration
       ansible.builtin.include_role:
         name: tls_web_proxy_config

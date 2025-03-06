@@ -19,6 +19,23 @@
         tls_web_proxy_service_config_http_gateway: "{{ service_pgadmin4_config_http_gateway }}"
         tls_web_proxy_service_config_set_x_forwarded_host: "{{ service_pgadmin4_config_set_x_forwarded_host }}"
 
+    - name: Service (pgadmin4) - openid facts
+      ansible.builtin.include_role:
+        name: openid_service_init
+      vars:
+        openid_service_init_client_id: "{{ service_pgadmin4_openid_client_id }}"
+        openid_service_init_base_uri: "{{ service_pgadmin4_openid_base_uri }}"
+
+    - name: Service (pgadmin4) - database configuration
+      ansible.builtin.include_role:
+        name: service_postgresql_init
+      vars:
+        service_postgresql_init_service_name: "{{ service_pgadmin4_service_name }}"
+        service_postgresql_init_service_config_dir: "{{ service_pgadmin4_service_config_dir }}"
+        service_postgresql_init_pgsql_db: "{{ service_pgadmin4_pgsql_db }}"
+        service_postgresql_init_pgsql_user: "{{ service_pgadmin4_pgsql_user }}"
+        service_postgresql_init_enable_pg_trgm_extension: "{{ service_pgadmin4_pgsql_enable_pg_trgm_extension }}"
+
     - name: Service (pgadmin4) - locations.conf
       ansible.builtin.template:
         src: "service_pgadmin4_locations.conf.j2"
@@ -43,6 +60,30 @@
       vars:
         pgadmin_default_email: "{{ service_pgadmin4_default_email }}"
         pgadmin_default_password_file_path: "{{ service_pgadmin4_default_password_file_path }}"
+        pgsql_prefix: "{{ service_pgadmin4_init_database_uri_prefix }}"
+        pgsql_password_file_path: "{{ service_pgadmin4_init_pgsql_postgres_password_file_path }}"
+        pgsql_suffix: "{{ service_pgadmin4_init_database_uri_suffix }}"
+        openid_config_prefix: "{{ service_pgadmin4_init_openid_config_prefix }}"
+        openid_client_secret_file_path: "{{ service_pgadmin4_openid_client_secret_file_path }}"
+        openid_config_suffix: "{{ service_pgadmin4_init_openid_config_suffix }}"
+
+    # - name: Service (pgadmin4) - config_distro.py
+    #   ansible.builtin.template:
+    #     src: "service_pgadmin4_config_distro.py.j2"
+    #     dest: "{{ service_pgadmin4_config_config_distro_server_path }}"
+    #     owner: "{{ fact_tls_web_proxy_service_config_uid }}"
+    #     group: "{{ fact_tls_web_proxy_service_config_gid }}"
+    #     mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
+    #     force: true
+    #   vars:
+    #     openid_client_id: "{{ service_pgadmin4_openid_client_id }}"
+    #     openid_client_secret_file_path: "{{ service_pgadmin4_openid_client_secret_file_path }}"
+    #     openid_token_url: "{{ service_pgadmin4_openid_token_url }}"
+    #     openid_auth_url: "{{ service_pgadmin4_openid_auth_url }}"
+    #     openid_meta_data_url: "{{ service_pgadmin4_openid_meta_data_url }}"
+    #     openid_api_base_url: "{{ service_pgadmin4_openid_api_base_url }}"
+    #     openid_user_info_url: "{{ service_pgadmin4_openid_user_info_url }}"
+    #     openid_scopes: "{{ service_pgadmin4_openid_scopes }}"
 
     - name: Service (pgadmin4) - deploy service
       ansible.builtin.include_role:

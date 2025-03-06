@@ -534,11 +534,12 @@ platform_service_keycloak:
       security_realm_display_name: "CollabSuite v2.0"
       security_realm: "collab-suite-v2.0"
       security_realm_id: "collab-suite-v2.0"
-      discovery_uri: "auth/realms/collab-suite-v2.0/.well-known/openid-configuration"
-      auth_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/auth"
-      token_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/token"
-      api_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/userinfo"
-      redirect_after_logout_uri: "auth/realms/collab-suite-v2.0/protocol/openid-connect/logout"
+      base_uri: "auth/realms/collab-suite-v2.0"
+      discovery_uri: ".well-known/openid-configuration"
+      auth_uri: "protocol/openid-connect/auth"
+      token_uri: "protocol/openid-connect/token"
+      api_uri: "protocol/openid-connect/userinfo"
+      redirect_after_logout_uri: "protocol/openid-connect/logout"
       client_redirect_uri_suffix: "redirect_uri"
       web_origins: &platform_service_keycloak_prod_client_domain "{{ facts_platform_environment.external_server.production.domain }}"
       base_secret_file_path: "{{ platform_management_openid_path }}/openid_client_secret_"
@@ -587,11 +588,12 @@ platform_service_keycloak:
       security_realm_display_name: "CollabSuite v2.0 (staging)"
       security_realm: "staging-collab-suite-v2.0"
       security_realm_id: "staging-collab-suite-v2.0"
-      discovery_uri: "auth/realms/staging-collab-suite-v2.0/.well-known/openid-configuration"
-      auth_uri: "auth/realms/staging-ccollab-suite-v2.0/protocol/openid-connect/auth"
-      token_uri: "auth/realms/staging-ccollab-suite-v2.0/protocol/openid-connect/token"
-      api_uri: "auth/realms/staging-ccollab-suite-v2.0/protocol/openid-connect/userinfo"
-      redirect_after_logout_uri: "auth/realms/staging-collab-suite-v2.0/protocol/openid-connect/logout"
+      base_uri: "auth/realms/staging-collab-suite-v2.0"
+      discovery_uri: ".well-known/openid-configuration"
+      auth_uri: "protocol/openid-connect/auth"
+      token_uri: "protocol/openid-connect/token"
+      api_uri: "protocol/openid-connect/userinfo"
+      redirect_after_logout_uri: "protocol/openid-connect/logout"
       client_redirect_uri_suffix: "redirect_uri"
       web_origins: &platform_service_keycloak_staging_client_domain "{{ facts_platform_environment.external_server.staging.domain }}"
       base_secret_file_path: "{{ platform_management_openid_path }}/openid_client_secret_"
@@ -764,8 +766,10 @@ platform_service_pgadmin4:
     server_port: &platform_service_pgadmin4_prod_server_port "4432"
     service_image_name: *platform_container_images_nginx_prod_image_name
     service_image_tag: *platform_container_images_nginx_prod_image_tag
-    worker_image_name: *platform_container_images_pgadmin4_prod_image_name
-    worker_image_tag: *platform_container_images_pgadmin4_prod_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_prod_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    worker_pgadmin4_image_name: *platform_container_images_pgadmin4_prod_image_name
+    worker_pgadmin4_image_tag: *platform_container_images_pgadmin4_prod_image_tag
     service_uri: &platform_service_pgadmin4_prod_service_uri "pgadmin4"
     admin_username: &platform_service_pgadmin4_prod_username "pgadmin4"
     admin_email: "pgadmin4@{{ ansible_service_domain }}"
@@ -790,6 +794,9 @@ platform_service_pgadmin4:
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "pgadmin4"
       base_uri: *platform_service_pgadmin4_prod_service_uri
+      redirect_uri_override_suffix: "oauth2/authorize"
+      redirect_uri_override_exclude_port: true
+      redirect_uri_exclude_port: true
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -800,8 +807,10 @@ platform_service_pgadmin4:
     server_port: &platform_service_pgadmin4_staging_server_port "5432"
     service_image_name: *platform_container_images_nginx_staging_image_name
     service_image_tag: *platform_container_images_nginx_staging_image_tag
-    worker_image_name: *platform_container_images_pgadmin4_staging_image_name
-    worker_image_tag: *platform_container_images_pgadmin4_staging_image_tag
+    worker_pgsql_image_name: *platform_container_images_postgresql_16_staging_image_name
+    worker_pgsql_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    worker_pgadmin4_image_name: *platform_container_images_pgadmin4_staging_image_name
+    worker_pgadmin4_image_tag: *platform_container_images_pgadmin4_staging_image_tag
     service_uri: &platform_service_pgadmin4_staging_service_uri "pgadmin4"
     admin_username: &platform_service_pgadmin4_staging_username "stagingpgadmin4"
     admin_email: "pgadmin4@{{ ansible_service_domain }}"
@@ -826,6 +835,8 @@ platform_service_pgadmin4:
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-pgadmin4"
       base_uri: *platform_service_pgadmin4_staging_service_uri
+      redirect_uri_override_suffix: "oauth2/authorize"
+      redirect_uri_override_exclude_port: true
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1141,7 +1152,8 @@ platform_service_nextcloud:
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "nextcloud"
       base_uri: *platform_service_nextcloud_prod_service_uri
-      redirect_uri_suffix: "apps/user_oidc/code"
+      redirect_uri_override_suffix: "apps/user_oidc/code"
+      redirect_uri_override_exclude_port: false
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1181,7 +1193,8 @@ platform_service_nextcloud:
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-nextcloud"
       base_uri: *platform_service_nextcloud_staging_service_uri
-      redirect_uri_suffix: "apps/user_oidc/code"
+      redirect_uri_override_suffix: "apps/user_oidc/code"
+      redirect_uri_override_exclude_port: false
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1223,7 +1236,8 @@ platform_service_grafana:
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "grafana"
       base_uri: *platform_service_grafana_prod_service_uri
-      redirect_uri_suffix: "login/generic_oauth"
+      redirect_uri_override_suffix: "login/generic_oauth"
+      redirect_uri_override_exclude_port: false
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1263,7 +1277,8 @@ platform_service_grafana:
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-grafana"
       base_uri: *platform_service_grafana_staging_service_uri
-      redirect_uri_suffix: "login/generic_oauth"
+      redirect_uri_override_suffix: "login/generic_oauth"
+      redirect_uri_override_exclude_port: false
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600

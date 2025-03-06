@@ -41,6 +41,7 @@
     - name: Service (postgresql) - set facts
       set_fact:
         fact_service_postgresql_init_pgsql_podman_environment_server_path: "{{ service_postgresql_init_pgsql_podman_environment_server_path }}"
+        fact_service_postgresql_init_pgsql_postgres_password_file_path: "{{ service_postgresql_init_pgsql_postgres_password_file_path }}"
         fact_service_postgresql_init_pgsql_user_password_file_path: "{{ service_postgresql_init_pgsql_user_password_file_path }}"
         fact_service_postgresql_init_volumes: "{{ service_postgresql_init_volumes }}"
         fact_service_postgresql_init_readonly_volumes: "{{ service_postgresql_init_readonly_volumes }}"

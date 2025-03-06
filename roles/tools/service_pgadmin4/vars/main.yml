@@ -3,8 +3,10 @@ service_pgadmin4_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_pgadmin4.production, platform_service_pgadmin4.staging) }}"
 
 service_pgadmin4_config_http_gateway: "{{ service_pgadmin4_config.http_gateway }}"
+service_pgadmin4_config_openid_client: "{{ service_pgadmin4_config.openid_client }}"
 
-service_pgadmin4_env_prefix: "pgadmin4_"
+service_pgadmin4_service_name: "pgadmin4"
+service_pgadmin4_password_path_prefix: "{{ platform_management_passwords_path }}/{{ service_pgadmin4_service_name }}_"
 
 # web proxy config
 service_pgadmin4_server_firewall_port: "{{ service_pgadmin4_config.firewall_port }}"
@@ -29,10 +31,48 @@ service_pgadmin4_server_url: "http://{{ service_pgadmin4_worker }}:80"
 service_pgadmin4_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
 service_pgadmin4_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
 
+# service_postgresql_init
+service_pgadmin4_pgsql_worker: "pgsql_worker"
+service_pgadmin4_service_config_dir: "{{ fact_tls_web_proxy_service_config_dir }}"
+service_pgadmin4_pgsql_db: "{{ ansible_deploy_production | ansible.builtin.ternary('pgadmin4_production', 'pgadmin4_staging') }}"
+service_pgadmin4_pgsql_user: "{{ service_pgadmin4_config.admin_username }}"
+service_pgadmin4_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
+service_pgadmin4_pgsql_enable_pg_trgm_extension: false
+
 # podman_environment
 service_pgadmin4_default_email: "{{ service_pgadmin4_config.admin_email }}"
-service_pgadmin4_default_password_file_path: "{{ platform_management_passwords_path }}/{{ service_pgadmin4_env_prefix }}{{ service_pgadmin4_config.admin_username }}"
+service_pgadmin4_default_password_file_path: "{{ service_pgadmin4_password_path_prefix }}{{ service_pgadmin4_config.admin_username }}"
 service_pgadmin4_config_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/podman_environment"
+
+# config.py
+#
+# See for further information
+#   - https://www.pgadmin.org/docs/pgadmin4/latest/oauth2.html
+#   - https://www.pgadmin.org/docs/pgadmin4/9.1/container_deployment.html
+service_pgadmin4_openid_client_id: "{{ service_pgadmin4_config_openid_client.client_id }}"
+service_pgadmin4_openid_base_uri: "{{ service_pgadmin4_config_openid_client.base_uri }}"
+
+service_pgadmin4_init_database_uri_prefix: "postgresql+psycopg://{{ service_pgadmin4_pgsql_user }}"
+service_pgadmin4_init_database_uri_suffix: "{{ service_pgadmin4_pgsql_worker }}:{{ fact_service_postgresql_init_port }}/{{ service_pgadmin4_pgsql_db }}"
+service_pgadmin4_init_pgsql_postgres_password_file_path: "{{ service_pgadmin4_pgsql_user_password_file_path }}"
+
+service_pgadmin4_openid_client_secret_file_path: "{{ fact_openid_service_init_client_secret_file_path }}"
+
+service_pgadmin4_init_openid_config_prefix: "[{
+    'OAUTH2_NAME': 'oidc',
+    'OAUTH2_DISPLAY_NAME': 'Collabsuite',
+    'OAUTH2_CLIENT_ID': '{{ service_pgadmin4_config_openid_client.client_id }}'"
+
+service_pgadmin4_init_openid_config_suffix: "
+    'OAUTH2_TOKEN_URL': '{{ fact_openid_service_init_token_uri }}',
+    'OAUTH2_AUTHORIZATION_URL': '{{ fact_openid_service_init_auth_uri }}',
+    'OAUTH2_API_BASE_URL': '{{ fact_openid_service_init_idp_base_uri }}',
+    'OAUTH2_USERINFO_ENDPOINT': '{{ fact_openid_service_init_api_uri }}',
+    'OAUTH2_SCOPE': '{{ fact_openid_service_init_scopes }}',
+    'OAUTH2_AUTO_CREATE_USER': True,
+    'OAUTH2_BUTTON_COLOR': '#51c65b;',
+    'OAUTH2_SERVER_METADATA_URL': '{{ fact_openid_service_init_discovery_uri }}'
+  }]"
 
 # service
 service_pgadmin4_oci_service:
@@ -47,13 +87,22 @@ service_pgadmin4_oci_service:
   added_capabilities: []
 
 service_pgadmin4_oci_service_workers:
-  - image_name: "{{ service_pgadmin4_config.worker_image_name }}"
-    image_tag: "{{ service_pgadmin4_config.worker_image_tag }}"
+  - image_name: "{{ service_pgadmin4_config.worker_pgsql_image_name }}"
+    image_tag: "{{ service_pgadmin4_config.worker_pgsql_image_tag }}"
+    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_pgadmin4_pgsql_worker }}"
+        volumes: "{{ fact_service_postgresql_init_volumes }}"
+        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
+
+  - image_name: "{{ service_pgadmin4_config.worker_pgadmin4_image_name }}"
+    image_tag: "{{ service_pgadmin4_config.worker_pgadmin4_image_tag }}"
     env_file: "{{ service_pgadmin4_config_podman_environment_server_path }}"
     added_capabilities: []
     containers:
       - container_name: "{{ service_pgadmin4_worker }}"
         volumes:
-          - "pg_data:/var/lib/pgadmin"
           - "pgadmin4_data:/pgadmin4"
         readonly_volumes: []
+          # - "./{{ service_pgadmin4_config_config_distro_server_path }}:/pgadmin4/config_distro.py"
