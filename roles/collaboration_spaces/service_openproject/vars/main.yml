@@ -43,7 +43,7 @@ service_openproject_pgsql_db_hostname_with_port: "{{ service_openproject_pgsql_w
 # - https://www.openproject.org/docs/installation-and-operations/configuration/database/
 service_openproject_web_worker: "web_worker"
 service_openproject_worker: "worker"
-service_openproject_hostname: "{{ service_openproject_config_http_gateway.domain }}"
+service_openproject_hostname: "{{ service_openproject_config_http_gateway.domain_web }}"
 service_openproject_admin_user: "{{ service_openproject_config_admin_username }}"
 service_openproject_admin_user_password_file_path: "{{ service_openproject_passwords_path }}{{ service_openproject_config_admin_username }}"
 service_openproject_admin_user_email: "{{ service_openproject_config.admin_email }}"
