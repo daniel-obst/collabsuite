@@ -3,62 +3,7 @@
   when: facts_machine_linux_distro
   block:
     - name: TLS (web proxy config) - HTML error pages
-      ansible.builtin.copy:
-        src: "{{ item.path }}"
-        dest: "{{ item.dest }}"
-        owner: "{{ tls_web_proxy_config_user_uid }}"
-        group: "{{ tls_web_proxy_config_user_gid }}"
-        mode: "{{ tls_web_proxy_config_html_file_mode }}"
-        force: true
-      loop: "{{ tls_web_proxy_config_dest_html_error_pages }}"
-
-    - name: TLS (web proxy config) - 40x.html
-      ansible.builtin.template:
-        src: "{{ tls_web_proxy_config_base_error_html }}"
-        dest: "{{ tls_web_proxy_config_dest_html_40x_error_page_dest }}"
-        owner: "{{ tls_web_proxy_config_user_uid }}"
-        group: "{{ tls_web_proxy_config_user_gid }}"
-        mode: "{{ tls_web_proxy_config_html_file_mode }}"
-        force: true
-      vars:
-        platform_title: "{{ tls_web_proxy_config_platform_title }}"
-        page_contents: "{{ tls_web_proxy_config_dest_html_40x_error_page_contents }}"
-
-    - name: TLS (web proxy config) - 404.html
-      ansible.builtin.template:
-        src: "{{ tls_web_proxy_config_base_error_html }}"
-        dest: "{{ tls_web_proxy_config_dest_html_404_error_page_dest }}"
-        owner: "{{ tls_web_proxy_config_user_uid }}"
-        group: "{{ tls_web_proxy_config_user_gid }}"
-        mode: "{{ tls_web_proxy_config_html_file_mode }}"
-        force: true
-      vars:
-        platform_title: "{{ tls_web_proxy_config_platform_title }}"
-        page_contents: "{{ tls_web_proxy_config_dest_html_404_error_page_contents }}"
-
-    - name: TLS (web proxy config) - 500.html
-      ansible.builtin.template:
-        src: "{{ tls_web_proxy_config_base_error_html }}"
-        dest: "{{ tls_web_proxy_config_dest_html_500_error_page_dest }}"
-        owner: "{{ tls_web_proxy_config_user_uid }}"
-        group: "{{ tls_web_proxy_config_user_gid }}"
-        mode: "{{ tls_web_proxy_config_html_file_mode }}"
-        force: true
-      vars:
-        platform_title: "{{ tls_web_proxy_config_platform_title }}"
-        page_contents: "{{ tls_web_proxy_config_dest_html_500_error_page_contents }}"
-
-    - name: TLS (web proxy config) - 50x.html
-      ansible.builtin.template:
-        src: "{{ tls_web_proxy_config_base_error_html }}"
-        dest: "{{ tls_web_proxy_config_dest_html_50x_error_page_dest }}"
-        owner: "{{ tls_web_proxy_config_user_uid }}"
-        group: "{{ tls_web_proxy_config_user_gid }}"
-        mode: "{{ tls_web_proxy_config_html_file_mode }}"
-        force: true
-      vars:
-        platform_title: "{{ tls_web_proxy_config_platform_title }}"
-        page_contents: "{{ tls_web_proxy_config_dest_html_50x_error_page_contents }}"
+      ansible.builtin.import_tasks: linux_error_pages.yml
 
     - name: TLS (web proxy config) - TLS configuration
       ansible.builtin.include_role:
@@ -69,85 +14,13 @@
         tls_config_pki_dh_file_path: "{{ tls_web_proxy_config_dh_file_path | default(None) }}"
         tls_config_pki_ca_cert_file_path: "{{ tls_web_proxy_config_ca_cert_file_path }}"
 
-    - name: TLS (web proxy config) - default.conf
-      ansible.builtin.template:
-        src: "{{ tls_web_proxy_config_default_conf_filename }}"
-        dest: "{{ tls_web_proxy_config_dest_default_conf_path }}"
-        owner: "{{ tls_web_proxy_config_user_uid }}"
-        group: "{{ tls_web_proxy_config_user_gid }}"
-        mode: "{{ tls_web_proxy_config_conf_file_mode }}"
-        force: true
-      vars:
-        reverse_proxy_enable_web_socket: "{{ tls_web_proxy_config_reverse_proxy_enable_web_socket }}"
-        server_firewall_port: "{{ tls_web_proxy_config_server_firewall_port }}"
-        fqdn_server: "{{ tls_web_proxy_config_fqdn_server }}"
-        server_cert_file_path: "{{ tls_web_proxy_config_server_cert_file_path }}"
-        server_key_file_path: "{{ tls_web_proxy_config_server_key_file_path }}"
-        server_dh_file_path: "{{ tls_web_proxy_config_server_dh_file_path }}"
-        server_ca_cert_file_path: "{{ tls_web_proxy_config_server_ca_cert_file_path }}"
-        service_network_dns: "{{ tls_web_proxy_config_service_network_dns }}"
-        ssl_ca_certificates_path: "{{ tls_web_proxy_config_ssl_ca_certificates_path }}"
-        includes_locations_config_path: "{{ tls_web_proxy_config_includes_locations_config_path }}"
-        includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_includes_html_error_pages_conf_path }}"
-        deny_root_uri_location: "{{ tls_web_proxy_config_set_deny_root_uri_location }}"
-
-    - name: TLS (web proxy config) - nginx_reverse_proxy.conf
-      ansible.builtin.template:
-        src: "{{ tls_web_proxy_config_reverse_proxy_conf }}.j2"
-        dest: "{{ tls_web_proxy_config_dest_reverse_proxy_conf_path }}"
-        owner: "{{ tls_web_proxy_config_user_uid }}"
-        group: "{{ tls_web_proxy_config_user_gid }}"
-        mode: "{{ tls_web_proxy_config_includes_file_mode }}"
-        force: true
-      vars:
-        reverse_proxy_header_set_x_forwarded_host: "{{ tls_web_proxy_config_set_x_forwarded_host }}"
-        reverse_proxy_header_x_host_with_port: "{{ tls_web_proxy_config_x_host_with_port }}"
-        reverse_proxy_header_x_forwarded_host: "{{ tls_web_proxy_config_x_forwarded_host }}"
-        reverse_proxy_header_x_forwarded_port: "{{ tls_web_proxy_config_x_forwarded_port }}"
-        reverse_proxy_additional_headers: "{{ tls_web_proxy_config_reverse_proxy_additional_headers }}"
-        reverse_proxy_enable_web_socket: "{{ tls_web_proxy_config_reverse_proxy_enable_web_socket }}"
+    - name: TLS (web proxy config) - configuration files (primary)
+      when: tls_web_proxy_config_set_config_files
+      ansible.builtin.import_tasks: linux_primary_configuration_files.yml
 
     - name: TLS (web proxy config) - secondary configuration (optional)
       when: tls_web_proxy_config_enable_secondary
       block:
-        - name: TLS (web proxy config) - default.conf (secondary)
-          ansible.builtin.template:
-            src: "{{ tls_web_proxy_config_default_conf_filename }}"
-            dest: "{{ tls_web_proxy_config_dest_secondary_default_conf_path }}"
-            owner: "{{ tls_web_proxy_config_user_uid }}"
-            group: "{{ tls_web_proxy_config_user_gid }}"
-            mode: "{{ tls_web_proxy_config_conf_file_mode }}"
-            force: true
-          vars:
-            reverse_proxy_enable_web_socket: "{{ tls_web_proxy_config_secondary_reverse_proxy_enable_web_socket }}"
-            server_firewall_port: "{{ tls_web_proxy_config_secondary_server_firewall_port }}"
-            fqdn_server: "{{ tls_web_proxy_config_secondary_fqdn_server }}"
-            server_cert_file_path: "{{ tls_web_proxy_config_secondary_server_cert_file_path }}"
-            server_key_file_path: "{{ tls_web_proxy_config_secondary_server_key_file_path }}"
-            server_dh_file_path: "{{ tls_web_proxy_config_secondary_server_dh_file_path }}"
-            server_ca_cert_file_path: "{{ tls_web_proxy_config_secondary_server_ca_cert_file_path }}"
-            service_network_dns: "{{ tls_web_proxy_config_secondary_service_network_dns }}"
-            ssl_ca_certificates_path: "{{ tls_web_proxy_config_secondary_ssl_ca_certificates_path }}"
-            includes_locations_config_path: "{{ tls_web_proxy_config_secondary_includes_locations_config_path }}"
-            includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_secondary_includes_html_error_pages_conf_path }}"
-            deny_root_uri_location: "{{ tls_web_proxy_config_secondary_set_deny_root_uri_location }}"
-
-        - name: TLS (web proxy config) - reverse_proxy.conf (secondary)
-          ansible.builtin.template:
-            src: "{{ tls_web_proxy_config_reverse_proxy_conf }}.j2"
-            dest: "{{ tls_web_proxy_config_dest_secondary_reverse_proxy_conf_path }}"
-            owner: "{{ tls_web_proxy_config_user_uid }}"
-            group: "{{ tls_web_proxy_config_user_gid }}"
-            mode: "{{ tls_web_proxy_config_includes_file_mode }}"
-            force: true
-          vars:
-            reverse_proxy_header_set_x_forwarded_host: "{{ tls_web_proxy_config_secondary_set_x_forwarded_host }}"
-            reverse_proxy_header_x_host_with_port: "{{ tls_web_proxy_config_secondary_x_host_with_port }}"
-            reverse_proxy_header_x_forwarded_host: "{{ tls_web_proxy_config_secondary_x_forwarded_host }}"
-            reverse_proxy_header_x_forwarded_port: "{{ tls_web_proxy_config_secondary_x_forwarded_port }}"
-            reverse_proxy_additional_headers: "{{ tls_web_proxy_config_secondary_reverse_proxy_additional_headers }}"
-            reverse_proxy_enable_web_socket: "{{ tls_web_proxy_config_secondary_reverse_proxy_enable_web_socket }}"
-
         - name: TLS (web proxy config) - TLS configuration (secondary)
           ansible.builtin.include_role:
             name: tls_config
@@ -156,6 +29,9 @@
             tls_config_pki_key_file_path: "{{ tls_web_proxy_config_secondary_key_file_path }}"
             tls_config_pki_dh_file_path: "{{ tls_web_proxy_config_secondary_dh_file_path | default(None) }}"
             tls_config_pki_ca_cert_file_path: "{{ tls_web_proxy_config_secondary_ca_cert_file_path }}"
+
+        - name: TLS (web proxy config) - configuration files (secondary)
+          ansible.builtin.import_tasks: linux_secondary_configuration_files.yml
 
     - name: TLS (web proxy config) - set facts
       ansible.builtin.set_fact:
@@ -174,6 +50,15 @@
         fact_tls_web_proxy_config_html_dir_mode: "{{ tls_web_proxy_config_html_dir_mode }}"
         fact_tls_web_proxy_config_html_file_mode: "{{ tls_web_proxy_config_html_file_mode }}"
 
-        fact_tls_web_proxy_config_tls_dir: "{{ fact_tls_config_tls_dir }}"
+        fact_tls_web_proxy_config_includes_locations_config_path: "{{ tls_web_proxy_config_includes_locations_config_path }}"
+        fact_tls_web_proxy_config_includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_includes_html_error_pages_conf_path }}"
+        fact_tls_web_proxy_config_secondary_includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_secondary_includes_html_error_pages_conf_path }}"
+
+        fact_tls_web_proxy_config_tls_dir: "{{ tls_web_proxy_config_tls_dir }}"
+        fact_tls_web_proxy_config_server_cert_file_path: "{{ tls_web_proxy_config_server_cert_file_path }}"
+        fact_tls_web_proxy_config_server_key_file_path: "{{ tls_web_proxy_config_server_key_file_path }}"
+        fact_tls_web_proxy_config_server_dh_file_path: "{{ tls_web_proxy_config_server_dh_file_path }}"
+        fact_tls_web_proxy_config_server_ca_cert_file_path: "{{ tls_web_proxy_config_server_ca_cert_file_path }}"
+
         fact_tls_web_proxy_config_reverse_proxy_conf_container_path: "{{ tls_web_proxy_config_reverse_proxy_conf_container_path }}"
         fact_tls_web_proxy_config_readonly_volumes: "{{ tls_web_proxy_config_readonly_volumes + fact_tls_config_readonly_volumes }}"

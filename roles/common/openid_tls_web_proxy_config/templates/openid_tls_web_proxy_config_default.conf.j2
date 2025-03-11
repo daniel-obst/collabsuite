@@ -9,6 +9,7 @@ map $http_upgrade $connection_upgrade {
 {% endif %}
 
 lua_shared_dict discovery {{ openid_cache_shared_memory_zone_mb }}m;
+lua_shared_dict introspection {{ openid_cache_shared_memory_zone_mb }}m;
 lua_ssl_verify_depth {{ openid_ssl_verify_depth }};
 lua_ssl_trusted_certificate {{ ssl_ca_certificates_path }};
 
@@ -92,10 +93,9 @@ server {
       access_token_expires_in = 3660,
       accept_unsupported_alg = false,
       accept_none_alg = false,
-      session_contents = { id_token = true }
+      session_contents = { id_token = true, access_token = true }
     }
 
-    -- call introspect for OAuth 2.0 Bearer Access Token validation
 {% if openid_client_enable_login %}
     -- decision: redirect any unauthenticated requests to openid login
     local res, err = require("resty.openidc").authenticate(opts)
@@ -108,6 +108,20 @@ server {
 
     ngx.req.set_header("{{ openid_http_header_email }}", res.id_token.email)
     ngx.req.set_header("{{ openid_http_header_authorization }}", res.id_token.sub)
+    ngx.req.set_header("Authorization", "Bearer " .. res.access_token)
+{% else %}
+    -- decision: call introspect for OAuth 2.0 Bearer Access Token validation
+    local res, err = require("resty.openidc").introspect(opts)
+
+    if err then
+      ngx.status = ngx.HTTP_FORBIDDEN
+      ngx.log(ngx.ERR, err)
+      ngx.exit(ngx.HTTP_FORBIDDEN)
+    end
+
+    ngx.req.set_header("{{ openid_http_header_email }}", res.email)
+    ngx.req.set_header("{{ openid_http_header_authorization }}", res.sub)
+    ngx.log(ngx.INFO, "Client: " .. res.email .. " (" .. res.sub .. ")")
 {% endif %}
   }
 

@@ -1,0 +1,38 @@
+---
+- name: TLS (web proxy config) - default.conf (secondary)
+  ansible.builtin.template:
+    src: "{{ tls_web_proxy_config_default_conf_filename }}"
+    dest: "{{ tls_web_proxy_config_dest_secondary_default_conf_path }}"
+    owner: "{{ tls_web_proxy_config_user_uid }}"
+    group: "{{ tls_web_proxy_config_user_gid }}"
+    mode: "{{ tls_web_proxy_config_conf_file_mode }}"
+    force: true
+  vars:
+    reverse_proxy_enable_web_socket: "{{ tls_web_proxy_config_secondary_reverse_proxy_enable_web_socket }}"
+    server_firewall_port: "{{ tls_web_proxy_config_secondary_server_firewall_port }}"
+    fqdn_server: "{{ tls_web_proxy_config_secondary_fqdn_server }}"
+    server_cert_file_path: "{{ tls_web_proxy_config_secondary_server_cert_file_path }}"
+    server_key_file_path: "{{ tls_web_proxy_config_secondary_server_key_file_path }}"
+    server_dh_file_path: "{{ tls_web_proxy_config_secondary_server_dh_file_path }}"
+    server_ca_cert_file_path: "{{ tls_web_proxy_config_secondary_server_ca_cert_file_path }}"
+    service_network_dns: "{{ tls_web_proxy_config_secondary_service_network_dns }}"
+    ssl_ca_certificates_path: "{{ tls_web_proxy_config_secondary_ssl_ca_certificates_path }}"
+    includes_locations_config_path: "{{ tls_web_proxy_config_secondary_includes_locations_config_path }}"
+    includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_secondary_includes_html_error_pages_conf_path }}"
+    deny_root_uri_location: "{{ tls_web_proxy_config_secondary_set_deny_root_uri_location }}"
+
+- name: TLS (web proxy config) - reverse_proxy.conf (secondary)
+  ansible.builtin.template:
+    src: "{{ tls_web_proxy_config_reverse_proxy_conf }}.j2"
+    dest: "{{ tls_web_proxy_config_dest_secondary_reverse_proxy_conf_path }}"
+    owner: "{{ tls_web_proxy_config_user_uid }}"
+    group: "{{ tls_web_proxy_config_user_gid }}"
+    mode: "{{ tls_web_proxy_config_includes_file_mode }}"
+    force: true
+  vars:
+    reverse_proxy_header_set_x_forwarded_host: "{{ tls_web_proxy_config_secondary_set_x_forwarded_host }}"
+    reverse_proxy_header_x_host_with_port: "{{ tls_web_proxy_config_secondary_x_host_with_port }}"
+    reverse_proxy_header_x_forwarded_host: "{{ tls_web_proxy_config_secondary_x_forwarded_host }}"
+    reverse_proxy_header_x_forwarded_port: "{{ tls_web_proxy_config_secondary_x_forwarded_port }}"
+    reverse_proxy_additional_headers: "{{ tls_web_proxy_config_secondary_reverse_proxy_additional_headers }}"
+    reverse_proxy_enable_web_socket: "{{ tls_web_proxy_config_secondary_reverse_proxy_enable_web_socket }}"

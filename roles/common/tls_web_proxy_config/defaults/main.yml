@@ -2,6 +2,7 @@
 tls_web_proxy_config_ssl_ca_certificates_path: "{{ facts_machine_linux_machine_ca_cert_path }}"
 tls_web_proxy_config_secondary_ssl_ca_certificates_path: "{{ facts_machine_linux_machine_ca_cert_path }}"
 
+tls_web_proxy_config_set_config_files: true
 tls_web_proxy_config_set_deny_root_uri_location: true
 tls_web_proxy_config_set_x_forwarded_host: true
 

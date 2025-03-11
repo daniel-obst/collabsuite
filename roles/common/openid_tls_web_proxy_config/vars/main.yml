@@ -1,138 +1,41 @@
 ---
-openid_tls_web_proxy_config_user_uid: "{{ fact_oci_container_service_directories_uid }}"
-openid_tls_web_proxy_config_user_gid: "{{ fact_oci_container_service_directories_gid }}"
+openid_tls_web_proxy_config_user_uid: "{{ fact_tls_web_proxy_config_uid }}"
+openid_tls_web_proxy_config_user_gid: "{{ fact_tls_web_proxy_config_gid }}"
 
-openid_tls_web_proxy_config_conf_dir: "{{ fact_oci_container_service_directories_conf_dir }}"
-openid_tls_web_proxy_config_conf_dir_mode: "{{ fact_oci_container_service_directories_conf_dir_mode }}"
-openid_tls_web_proxy_config_conf_file_mode: "{{ fact_oci_container_service_directories_conf_file_mode }}"
+openid_tls_web_proxy_config_conf_dir: "{{ fact_tls_web_proxy_config_dir }}"
+openid_tls_web_proxy_config_conf_dir_mode: "{{ fact_tls_web_proxy_config_conf_dir_mode }}"
+openid_tls_web_proxy_config_conf_file_mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
 
-openid_tls_web_proxy_config_includes_dir: "{{ fact_oci_container_service_directories_includes_dir }}"
-openid_tls_web_proxy_config_includes_dir_mode: "{{ fact_oci_container_service_directories_includes_dir_mode }}"
-openid_tls_web_proxy_config_includes_file_mode: "{{ fact_oci_container_service_directories_includes_file_mode }}"
+openid_tls_web_proxy_config_includes_dir: "{{ fact_tls_web_proxy_config_includes_dir }}"
+openid_tls_web_proxy_config_includes_dir_mode: "{{ fact_tls_web_proxy_config_includes_dir_mode }}"
+openid_tls_web_proxy_config_includes_file_mode: "{{ fact_tls_web_proxy_config_includes_file_mode }}"
 
-openid_tls_web_proxy_config_html_dir: "{{ fact_oci_container_service_directories_html_dir }}"
-openid_tls_web_proxy_config_html_dir_mode: "{{ fact_oci_container_service_directories_html_dir_mode }}"
-openid_tls_web_proxy_config_html_file_mode: "{{ fact_oci_container_service_directories_html_file_mode }}"
+openid_tls_web_proxy_config_html_dir: "{{ fact_tls_web_proxy_config_html_dir }}"
+openid_tls_web_proxy_config_html_dir_mode: "{{ fact_tls_web_proxy_config_html_dir_mode }}"
+openid_tls_web_proxy_config_html_file_mode: "{{ fact_tls_web_proxy_config_html_file_mode }}"
+
+openid_tls_web_proxy_config_tls_dir: "{{ fact_tls_web_proxy_config_tls_dir }}"
+openid_tls_web_proxy_config_server_cert_file_path: "{{ fact_tls_web_proxy_config_server_cert_file_path }}"
+openid_tls_web_proxy_config_server_key_file_path: "{{ fact_tls_web_proxy_config_server_key_file_path }}"
+openid_tls_web_proxy_config_server_dh_file_path: "{{ fact_tls_web_proxy_config_server_dh_file_path }}"
+openid_tls_web_proxy_config_server_ca_cert_file_path: "{{ fact_tls_web_proxy_config_server_ca_cert_file_path }}"
 
 openid_tls_web_proxy_config_machine_ssl_trusted_certificate_path: "{{ facts_machine_linux_machine_ssl_ca_certificates_file }}"
 
-openid_tls_web_proxy_config_container_conf_dir_path: "/etc/nginx/conf.d"
-openid_tls_web_proxy_config_container_includes_dir_path: "/etc/nginx/includes"
-openid_tls_web_proxy_config_container_tls_dir_path: "/etc/nginx/tls"
-
-openid_tls_web_proxy_config_reverse_proxy_conf: "playbooks_templates_nginx_reverse_proxy.conf"
-openid_tls_web_proxy_config_playbooks_files_html_error_pages_conf: "playbooks_files_nginx_html_error_pages.conf"
-openid_tls_web_proxy_config_html_error_pages_conf: "nginx_html_error_pages.conf"
-
+openid_tls_web_proxy_config_set_config_files: false
 openid_tls_web_proxy_config_dest_default_conf_path: "{{ openid_tls_web_proxy_config_conf_dir }}/default.conf"
-openid_tls_web_proxy_config_dest_reverse_proxy_conf_path: "{{ openid_tls_web_proxy_config_includes_dir }}/reverse_proxy.conf"
-openid_tls_web_proxy_config_reverse_proxy_conf_container_path: "{{ openid_tls_web_proxy_config_container_includes_dir_path }}/reverse_proxy.conf"
 openid_tls_web_proxy_config_dest_nginx_conf_path: "{{ openid_tls_web_proxy_config_conf_dir }}/nginx.conf"
 
-openid_tls_web_proxy_config_dest_html_error_pages:
-  - path: "{{ openid_tls_web_proxy_config_playbooks_files_html_error_pages_conf }}"
-    dest: "{{ openid_tls_web_proxy_config_includes_dir }}/{{ openid_tls_web_proxy_config_html_error_pages_conf }}"
-
-openid_tls_web_proxy_config_base_error_html: "playbooks_templates_base_error.html.j2"
-
-openid_tls_web_proxy_config_dest_html_40x_error_page_dest: "{{ openid_tls_web_proxy_config_html_dir }}/40x.html"
-openid_tls_web_proxy_config_dest_html_40x_error_page_contents: |
-    '<div class="content">
-      <h1>Unauthorized</h1>
-      <div class="row">
-        <div class="column">
-          <div class="card">
-            <h2>Page Currently Off-Limits</h2>
-            <div class="readonly">
-              <p>Please contact support if you have any questions.
-            </div>
-            <p>
-              <a href="/">
-                <button>Back to Home Page</button>
-              </a>
-            </p>
-            </div>
-          </div>
-      </div>
-    </div>'
-
-openid_tls_web_proxy_config_dest_html_404_error_page_dest: "{{ openid_tls_web_proxy_config_html_dir }}/404.html"
-openid_tls_web_proxy_config_dest_html_404_error_page_contents: |
-    '<div class="content">
-      <h1>Page Not Found</h1>
-      <div class="row">
-        <div class="column">
-          <div class="card">
-            <h2>Page Temporarily Unavailable</h2>
-            <div class="readonly">
-              <p>Please contact support if you have any questions.
-            </div>
-            <p>
-              <a href="/">
-                <button>Back to Home Page</button>
-              </a>
-            </p>
-            </div>
-          </div>
-      </div>
-    </div>'
-
-openid_tls_web_proxy_config_dest_html_500_error_page_dest: "{{ openid_tls_web_proxy_config_html_dir }}/500.html"
-openid_tls_web_proxy_config_dest_html_500_error_page_contents: |
-    '<div class="content">
-      <h1>Something Went Wrong</h1>
-      <div class="row">
-        <div class="column">
-          <div class="card">
-            <h2>Working To Fix The Issue</h2>
-            <div class="readonly">
-              <p>We expect to have things back up and running soon.</p>
-              <p>Please contact support if you have any questions.
-            </div>
-            <p>
-              <a href="/">
-                <button>Back to Home Page</button>
-              </a>
-            </p>
-            </div>
-          </div>
-      </div>
-    </div>'
-
-openid_tls_web_proxy_config_dest_html_50x_error_page_dest: "{{ openid_tls_web_proxy_config_html_dir }}/50x.html"
-openid_tls_web_proxy_config_dest_html_50x_error_page_contents: |
-    '<div class="content">
-      <h1>Something Went Wrong</h1>
-      <div class="row">
-        <div class="column">
-          <div class="card">
-            <h2>Working To Fix The Issue</h2>
-            <div class="readonly">
-              <p>We expect to have things back up and running soon.</p>
-              <p>Please contact support if you have any questions.
-            </div>
-            <p>
-              <a href="/">
-                <button>Back to Home Page</button>
-              </a>
-            </p>
-            </div>
-          </div>
-      </div>
-    </div>'
+openid_tls_web_proxy_config_reverse_proxy_conf: "playbooks_templates_nginx_reverse_proxy.conf"
+openid_tls_web_proxy_config_dest_reverse_proxy_conf_path: "{{ openid_tls_web_proxy_config_includes_dir }}/reverse_proxy.conf"
+openid_tls_web_proxy_config_reverse_proxy_conf_container_path: "/etc/nginx/includes/reverse_proxy.conf"
 
 openid_tls_web_proxy_config_readonly_volumes:
-  - "./{{ openid_tls_web_proxy_config_dest_default_conf_path }}:{{ openid_tls_web_proxy_config_container_conf_dir_path }}/default.conf"
-  - "./{{ openid_tls_web_proxy_config_includes_dir }}/:{{ openid_tls_web_proxy_config_container_includes_dir_path }}"
   - "./{{ openid_tls_web_proxy_config_html_dir }}:/usr/local/openresty/nginx/html"
   - "./{{ openid_tls_web_proxy_config_dest_nginx_conf_path }}:/usr/local/openresty/nginx/conf/nginx.conf"
 
-openid_tls_web_proxy_config_server_cert_file_path: "{{ openid_tls_web_proxy_config_container_tls_dir_path }}/{{ openid_tls_web_proxy_config_cert_file_path | basename }}"
-openid_tls_web_proxy_config_server_key_file_path: "{{ openid_tls_web_proxy_config_container_tls_dir_path }}/{{ openid_tls_web_proxy_config_key_file_path | basename }}"
-openid_tls_web_proxy_config_server_dh_file_path: "{{ openid_tls_web_proxy_config_container_tls_dir_path }}/{{ openid_tls_web_proxy_config_dh_file_path | basename }}"
-openid_tls_web_proxy_config_server_ca_cert_file_path: "{{ openid_tls_web_proxy_config_container_tls_dir_path }}/{{ openid_tls_web_proxy_config_ca_cert_file_path | basename }}"
-openid_tls_web_proxy_config_includes_locations_config_path: "{{ openid_tls_web_proxy_config_container_includes_dir_path }}/locations.conf"
-openid_tls_web_proxy_config_includes_html_error_pages_conf_path: "{{ openid_tls_web_proxy_config_container_includes_dir_path }}/{{ openid_tls_web_proxy_config_html_error_pages_conf }}"
+openid_tls_web_proxy_config_includes_locations_config_path: "{{ fact_tls_web_proxy_config_includes_locations_config_path }}"
+openid_tls_web_proxy_config_includes_html_error_pages_conf_path: "{{ fact_tls_web_proxy_config_includes_html_error_pages_conf_path }}"
 
 # OpenID configuration
 openid_tls_web_proxy_config_redirect_uri: "{{ fact_openid_service_init_redirect_uri }}"

@@ -14,6 +14,8 @@ tls_web_proxy_config_html_dir: "{{ fact_oci_container_service_directories_html_d
 tls_web_proxy_config_html_dir_mode: "{{ fact_oci_container_service_directories_html_dir_mode }}"
 tls_web_proxy_config_html_file_mode: "{{ fact_oci_container_service_directories_html_file_mode }}"
 
+tls_web_proxy_config_tls_dir: "{{ fact_tls_config_tls_dir }}"
+
 tls_web_proxy_config_container_conf_dir_path: "/etc/nginx/conf.d"
 tls_web_proxy_config_container_includes_dir_path: "/etc/nginx/includes"
 tls_web_proxy_config_container_tls_dir_path: "/etc/nginx/tls"

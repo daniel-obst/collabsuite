@@ -1,0 +1,58 @@
+---
+- name: TLS (web proxy config) - HTML error pages
+  ansible.builtin.copy:
+    src: "{{ item.path }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ tls_web_proxy_config_user_uid }}"
+    group: "{{ tls_web_proxy_config_user_gid }}"
+    mode: "{{ tls_web_proxy_config_html_file_mode }}"
+    force: true
+  loop: "{{ tls_web_proxy_config_dest_html_error_pages }}"
+
+- name: TLS (web proxy config) - 40x.html
+  ansible.builtin.template:
+    src: "{{ tls_web_proxy_config_base_error_html }}"
+    dest: "{{ tls_web_proxy_config_dest_html_40x_error_page_dest }}"
+    owner: "{{ tls_web_proxy_config_user_uid }}"
+    group: "{{ tls_web_proxy_config_user_gid }}"
+    mode: "{{ tls_web_proxy_config_html_file_mode }}"
+    force: true
+  vars:
+    platform_title: "{{ tls_web_proxy_config_platform_title }}"
+    page_contents: "{{ tls_web_proxy_config_dest_html_40x_error_page_contents }}"
+
+- name: TLS (web proxy config) - 404.html
+  ansible.builtin.template:
+    src: "{{ tls_web_proxy_config_base_error_html }}"
+    dest: "{{ tls_web_proxy_config_dest_html_404_error_page_dest }}"
+    owner: "{{ tls_web_proxy_config_user_uid }}"
+    group: "{{ tls_web_proxy_config_user_gid }}"
+    mode: "{{ tls_web_proxy_config_html_file_mode }}"
+    force: true
+  vars:
+    platform_title: "{{ tls_web_proxy_config_platform_title }}"
+    page_contents: "{{ tls_web_proxy_config_dest_html_404_error_page_contents }}"
+
+- name: TLS (web proxy config) - 500.html
+  ansible.builtin.template:
+    src: "{{ tls_web_proxy_config_base_error_html }}"
+    dest: "{{ tls_web_proxy_config_dest_html_500_error_page_dest }}"
+    owner: "{{ tls_web_proxy_config_user_uid }}"
+    group: "{{ tls_web_proxy_config_user_gid }}"
+    mode: "{{ tls_web_proxy_config_html_file_mode }}"
+    force: true
+  vars:
+    platform_title: "{{ tls_web_proxy_config_platform_title }}"
+    page_contents: "{{ tls_web_proxy_config_dest_html_500_error_page_contents }}"
+
+- name: TLS (web proxy config) - 50x.html
+  ansible.builtin.template:
+    src: "{{ tls_web_proxy_config_base_error_html }}"
+    dest: "{{ tls_web_proxy_config_dest_html_50x_error_page_dest }}"
+    owner: "{{ tls_web_proxy_config_user_uid }}"
+    group: "{{ tls_web_proxy_config_user_gid }}"
+    mode: "{{ tls_web_proxy_config_html_file_mode }}"
+    force: true
+  vars:
+    platform_title: "{{ tls_web_proxy_config_platform_title }}"
+    page_contents: "{{ tls_web_proxy_config_dest_html_50x_error_page_contents }}"
