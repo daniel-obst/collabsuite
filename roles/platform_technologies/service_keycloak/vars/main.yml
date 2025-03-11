@@ -99,6 +99,21 @@ service_keycloak_config_offline_session_idle_timeout_days: "{{ service_keycloak_
 service_keycloak_config_offline_session_max_lifespan_days: "{{ service_keycloak_openid_client_info.offline_session_max_lifespan_days * 86400 }}"
 service_keycloak_config_offline_session_max_lifespan_enabled: "{{ service_keycloak_openid_client_info.offline_session_max_lifespan_enabled }}"
 
+# Service account only (i.e. back channel access)
+service_keycloak_config_service:
+  front_channel_logout: true
+  standard_flow_enabled: true
+  implicit_flow_enabled: false
+  direct_access_grants_enabled: true
+  service_accounts_enabled: false
+
+service_keycloak_config_service_account_only:
+  front_channel_logout: false
+  standard_flow_enabled: false
+  implicit_flow_enabled: false
+  direct_access_grants_enabled: false
+  service_accounts_enabled: true
+
 # users (init)
 service_keycloak_users_init_lock_file_path: "{{ platform_management_init_lock_path }}/{{ service_keycloak_service_name }}_seed_users"
 service_keycloak_users_seed_file_path: "{{ platform_management_seed_users_file_path }}"

@@ -43,7 +43,8 @@
             | ansible.builtin.ternary(service_keycloak_config_external_root_uri_no_port, service_keycloak_config_external_root_uri)
           + ((item.base_uri | length > 0) | ansible.builtin.ternary('/' + item.base_uri, ''))
           + '/' + (item.redirect_uri_override_suffix | default(service_keycloak_config_client_redirect_uri_suffix))]
-      }] }}"
+      } | ansible.builtin.combine(item.back_channel_service_access_only | ansible.builtin.ternary(service_keycloak_config_service_account_only, service_keycloak_config_service))
+      ] }}"
   loop: "{{ service_keycloak_clients_config }}"
 
 - name: Service (keycloak) - clients (init)
@@ -57,8 +58,11 @@
     client_id: "{{ item.client_id }}"
     enabled: true
     public_client: false
-    frontchannel_logout: true
-    standard_flow_enabled: true
+    frontchannel_logout: "{{ item.front_channel_logout }}"
+    standard_flow_enabled: "{{ item.standard_flow_enabled }}"
+    direct_access_grants_enabled: "{{ item.direct_access_grants_enabled }}"
+    implicit_flow_enabled: "{{ item.implicit_flow_enabled }}"
+    service_accounts_enabled: "{{ item.service_accounts_enabled }}"
     protocol: openid-connect
     bearer_only: false
     client_authenticator_type: client-secret
