@@ -1,13 +1,24 @@
 ---
+service_code_server_config_user_uid: "{{ fact_openid_tls_web_proxy_service_config_uid }}"
+service_code_server_config_user_gid: "{{ fact_openid_tls_web_proxy_service_config_gid }}"
+
+service_code_server_config_conf_dir: "{{ fact_openid_tls_web_proxy_service_config_dir }}"
+service_code_server_config_conf_file_mode: "{{ fact_openid_tls_web_proxy_service_config_conf_file_mode }}"
+
+service_code_server_config_includes_dir: "{{ fact_openid_tls_web_proxy_service_config_includes_dir }}"
+service_code_server_config_includes_file_mode: "{{ fact_openid_tls_web_proxy_service_config_includes_file_mode }}"
+
 service_code_server_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_code_server.production, platform_service_code_server.staging) }}"
 
 service_code_server_config_http_gateway: "{{ service_code_server_config.http_gateway }}"
+service_code_server_config_openid_client: "{{ service_code_server_config.openid_client }}"
 
 # web proxy config
 service_code_server_server_firewall_port: "{{ service_code_server_config.firewall_port }}"
 service_code_server_fqdn_server: "{{ service_code_server_config.fqdn_server }}"
-service_code_server_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+service_code_server_config_service_network_dns: "{{ service_code_server_config.service_network_dns }}"
+
 service_code_server_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
 service_code_server_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
 service_code_server_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
@@ -16,15 +27,18 @@ service_code_server_config_ca_cert_file_path: "{{ fact_oci_container_service_ini
 service_code_server_config_reverse_proxy_additional_headers: []
 service_code_server_config_reverse_proxy_enable_web_socket: true
 
+service_code_server_config_set_x_forwarded_host: false
+service_code_server_config_set_x_forwarded_port: false
+
 # locations.conf
 service_code_server_service_uri: "{{ service_code_server_config.service_uri }}"
 service_code_server_worker: "codeserver_worker"
 service_code_server_url: "http://${{ gv_openid_http_header_authorization_value }}:8443"
-service_code_server_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_code_server_locations_conf_server_path: "{{ fact_tls_web_proxy_config_includes_dir }}/locations.conf"
+service_code_server_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
+service_code_server_locations_conf_server_path: "{{ service_code_server_config_includes_dir }}/locations.conf"
 
 # podman environment
-service_code_server_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/podman_environment"
+service_code_server_podman_environment_server_path: "{{ service_code_server_config_conf_dir }}/podman_environment"
 
 # seed users
 service_code_server_users_seed_file_path: "{{ platform_management_seed_users_file_path }}"
@@ -37,7 +51,7 @@ service_code_server_oci_service:
   server_dest_port: "{{ service_code_server_config.server_port }}"
   container_dest_port: "{{ service_code_server_config.firewall_port }}"
   volumes: []
-  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  readonly_volumes: "{{ fact_openid_tls_web_proxy_service_config_readonly_volumes }}"
   env_file: ""
   added_capabilities: []
 

@@ -1,10 +1,21 @@
 ---
+service_collabora_config_user_uid: "{{ fact_openid_tls_web_proxy_config_uid }}"
+service_collabora_config_user_gid: "{{ fact_openid_tls_web_proxy_config_gid }}"
+
+service_collabora_config_conf_dir: "{{ fact_openid_tls_web_proxy_config_dir }}"
+service_collabora_config_conf_file_mode: "{{ fact_openid_tls_web_proxy_config_conf_file_mode }}"
+
+service_collabora_config_includes_dir: "{{ fact_openid_tls_web_proxy_config_includes_dir }}"
+service_collabora_config_includes_file_mode: "{{ fact_openid_tls_web_proxy_config_includes_file_mode }}"
+
 service_collabora_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_collabora.production, platform_service_collabora.staging) }}"
 
 service_collabora_config_http_gateway: "{{ service_collabora_config.http_gateway }}"
+service_collabora_config_openid_client: "{{ service_collabora_config.openid_client }}"
 
-service_collabora_env_prefix: "collabora_"
+service_collabora_service_name: "collabora"
+service_collabora_password_path_prefix: "{{ platform_management_passwords_path }}/{{ service_collabora_service_name }}_"
 
 # web proxy config
 service_collabora_server_firewall_port: "{{ service_collabora_config.firewall_port }}"
@@ -17,23 +28,23 @@ service_collabora_config_ca_cert_file_path: "{{ fact_oci_container_service_init_
 
 service_collabora_config_reverse_proxy_additional_headers: []
 service_collabora_config_reverse_proxy_enable_web_socket: true
+service_collabora_config_set_deny_root_uri_location: true
 
 # locations.conf
 service_collabora_service_uri: "{{ service_collabora_config.service_uri }}"
 service_collabora_worker: "collabora_worker"
 service_collabora_server_url: "https://{{ service_collabora_worker }}:9980"
-service_collabora_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
-service_collabora_locations_conf_server_path: "{{ fact_tls_web_proxy_config_includes_dir }}/locations.conf"
+service_collabora_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
+service_collabora_locations_conf_server_path: "{{ service_collabora_config_includes_dir }}/locations.conf"
 
 # podman environment
 service_collabora_admin_username: "{{ service_collabora_config.admin_username }}"
-service_collabora_password_file_path:
-  "{{ platform_management_passwords_path }}/{{ service_collabora_env_prefix }}{{ service_collabora_config.username }}"
-service_collabora_server_name_with_port: "{{ service_collabora_config_http_gateway.domain }}:{{ service_collabora_config_http_gateway.port }}"
-service_collabora_alias_group_1: "https://{{ service_collabora_config_http_gateway.domain }}:{{ service_collabora_config_http_gateway.port }}"
+service_collabora_password_file_path: "{{ service_collabora_password_path_prefix }}{{ service_collabora_config.username }}"
+service_collabora_server_name_with_port: "{{ service_collabora_config_http_gateway.domain_web }}:{{ service_collabora_config_http_gateway.port }}"
+service_collabora_alias_group_1: "https://{{ service_collabora_server_name_with_port }}"
 service_collabora_domain: "{{ service_collabora_config_http_gateway.domain }}"
 service_collabora_service_root: "/{{ service_collabora_config.service_uri }}"
-service_collabora_podman_environment_server_path: "{{ fact_tls_web_proxy_config_dir }}/podman_environment"
+service_collabora_podman_environment_server_path: "{{ service_collabora_config_conf_dir }}/podman_environment"
 
 # service
 service_collabora_oci_service:
@@ -43,7 +54,7 @@ service_collabora_oci_service:
   server_dest_port: "{{ service_collabora_config.server_port }}"
   container_dest_port: "{{ service_collabora_config.firewall_port }}"
   volumes: []
-  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  readonly_volumes: "{{ fact_openid_tls_web_proxy_config_readonly_volumes }}"
   env_file: ""
   added_capabilities: []
 

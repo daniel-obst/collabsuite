@@ -1,15 +1,8 @@
 ---
-service_internal_gateway_platform_registry_globals:
-  "{{ ansible_deploy_production
-  | ansible.builtin.ternary(platform_registry_globals.production, platform_registry_globals.staging) }}"
-
 service_internal_gateway_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_internal_gateway.production, platform_service_internal_gateway.staging) }}"
 
-service_internal_gateway_openid_config: "{{ service_internal_gateway_config.openid_client }}"
-
-service_internal_gateway_service_name: "internal_gateway"
-service_internal_gateway_password_path_prefix: "{{ platform_management_passwords_path }}/{{ service_internal_gateway_service_name }}_"
+service_internal_gateway_config_openid_client: "{{ service_internal_gateway_config.openid_client }}"
 
 # web proxy config
 service_internal_gateway_server_firewall_port: "{{ service_internal_gateway_config.firewall_port }}"
@@ -23,18 +16,6 @@ service_internal_gateway_config_ca_cert_file_path: "{{ fact_oci_container_servic
 service_internal_gateway_config_reverse_proxy_additional_headers: []
 service_internal_gateway_config_reverse_proxy_enable_web_socket: true
 service_internal_gateway_config_set_deny_root_uri_location: false
-
-service_internal_gateway_config_enable_session_cache: "{{ service_internal_gateway_openid_config.enable_session_cache }}"
-service_internal_gateway_config_session_cache_domain: "{{ service_internal_gateway_openid_config.domain }}"
-service_internal_gateway_config_cache_session_secret_file_path: "{{ service_internal_gateway_password_path_prefix }}session_cache"
-
-service_internal_gateway_config_client_id: "{{ service_internal_gateway_openid_config.client_id }}"
-service_internal_gateway_config_client_secret_file_path: "{{ service_internal_gateway_openid_config.secret_file_path }}"
-service_internal_gateway_config_base_uri: "{{ service_internal_gateway_openid_config.base_uri }}"
-service_internal_gateway_config_client_enable_login: true
-service_internal_gateway_config_cache_shared_memory_zone_mb: "{{ service_internal_gateway_openid_config.shared_memory_zone_mb }}"
-service_internal_gateway_config_cache_idling_timeout_seconds: "{{ service_internal_gateway_openid_config.idling_timeout_seconds }}"
-service_internal_gateway_config_cache_rolling_timeout_seconds: "{{ service_internal_gateway_openid_config.rolling_timeout_seconds }}"
 
 # locations.conf
 service_internal_gateway_config_upstream_services: "{{ service_internal_gateway_config.upstream_services }}"

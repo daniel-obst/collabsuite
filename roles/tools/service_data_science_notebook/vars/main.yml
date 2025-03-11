@@ -1,15 +1,24 @@
 ---
+service_data_science_notebook_config_user_uid: "{{ fact_openid_tls_web_proxy_service_config_uid }}"
+service_data_science_notebook_config_user_gid: "{{ fact_openid_tls_web_proxy_service_config_gid }}"
+
+service_data_science_notebook_config_conf_dir: "{{ fact_openid_tls_web_proxy_service_config_dir }}"
+service_data_science_notebook_config_conf_file_mode: "{{ fact_openid_tls_web_proxy_service_config_conf_file_mode }}"
+
+service_data_science_notebook_config_includes_dir: "{{ fact_openid_tls_web_proxy_service_config_includes_dir }}"
+service_data_science_notebook_config_includes_file_mode: "{{ fact_openid_tls_web_proxy_service_config_includes_file_mode }}"
+
 service_data_science_notebook_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_data_science_notebook.production, platform_service_data_science_notebook.staging) }}"
 
-service_data_science_notebook_openid_config: "{{ service_data_science_notebook_config.openid_client }}"
-
 service_data_science_notebook_config_http_gateway: "{{ service_data_science_notebook_config.http_gateway }}"
+service_data_science_notebook_config_openid_client: "{{ service_data_science_notebook_config.openid_client }}"
 
 # web proxy config
 service_data_science_notebook_server_firewall_port: "{{ service_data_science_notebook_config.firewall_port }}"
 service_data_science_notebook_fqdn_server: "{{ service_data_science_notebook_config.fqdn_server }}"
-service_data_science_notebook_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+service_data_science_notebook_config_service_network_dns: "{{ service_data_science_notebook_config.service_network_dns }}"
+
 service_data_science_notebook_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
 service_data_science_notebook_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
 service_data_science_notebook_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
@@ -20,12 +29,12 @@ service_data_science_notebook_config_reverse_proxy_enable_web_socket: true
 # locations.conf
 service_data_science_notebook_service_uri: "{{ service_data_science_notebook_config.service_uri }}"
 service_data_science_notebook_server_url: "http://${{ gv_openid_http_header_authorization_value }}:8888"
-service_data_science_notebook_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_data_science_notebook_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_data_science_notebook_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
+service_data_science_notebook_config_locations_server_path: "{{ service_data_science_notebook_config_includes_dir }}/locations.conf"
 
 # podman_environment
 service_data_science_notebook_config_podman_environment_file_name: "service_data_science_notebook_podman_environment"
-service_data_science_notebook_config_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/podman_environment"
+service_data_science_notebook_config_podman_environment_server_path: "{{ service_data_science_notebook_config_conf_dir }}/podman_environment"
 
 # seed users
 service_data_science_notebook_users_seed_file_path: "{{ platform_management_seed_users_file_path }}"
@@ -42,7 +51,7 @@ service_data_science_notebook_oci_service:
   server_dest_port: "{{ service_data_science_notebook_config.server_port }}"
   container_dest_port: "{{ service_data_science_notebook_config.firewall_port }}"
   volumes: []
-  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  readonly_volumes: "{{ fact_openid_tls_web_proxy_service_config_readonly_volumes }}"
   command: ""
   env_file: ""
   added_capabilities: []

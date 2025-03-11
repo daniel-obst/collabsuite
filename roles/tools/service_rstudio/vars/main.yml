@@ -1,15 +1,26 @@
 ---
+service_rstudio_config_user_uid: "{{ fact_openid_tls_web_proxy_service_config_uid }}"
+service_rstudio_config_user_gid: "{{ fact_openid_tls_web_proxy_service_config_gid }}"
+
+service_rstudio_config_conf_dir: "{{ fact_openid_tls_web_proxy_service_config_dir }}"
+service_rstudio_config_conf_file_mode: "{{ fact_openid_tls_web_proxy_service_config_conf_file_mode }}"
+
+service_rstudio_config_includes_dir: "{{ fact_openid_tls_web_proxy_service_config_includes_dir }}"
+service_rstudio_config_includes_file_mode: "{{ fact_openid_tls_web_proxy_service_config_includes_file_mode }}"
+
 service_rstudio_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_rstudio.production, platform_service_rstudio.staging) }}"
 
 service_rstudio_config_http_gateway: "{{ service_rstudio_config.http_gateway }}"
+service_rstudio_config_openid_client: "{{ service_rstudio_config.openid_client }}"
 
 service_rstudio_env_prefix: "rstudio_"
 
 # web proxy config
 service_rstudio_server_firewall_port: "{{ service_rstudio_config.firewall_port }}"
 service_rstudio_fqdn_server: "{{ service_rstudio_config.fqdn_server }}"
-service_rstudio_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+service_rstudio_config_service_network_dns: "{{ platform_oci_container_service_globals.network_dns }}"
+
 service_rstudio_config_cert_file_path: "{{ fact_oci_container_service_init_cert_file }}"
 service_rstudio_config_key_file_path: "{{ fact_oci_container_service_init_key_file }}"
 service_rstudio_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
@@ -23,12 +34,12 @@ service_rstudio_config_reverse_proxy_enable_web_socket: true
 # locations.conf
 service_rstudio_service_uri: "{{ service_rstudio_config.service_uri }}"
 service_rstudio_server_url: "http://${{ gv_openid_http_header_authorization_value }}:8787"
-service_rstudio_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_rstudio_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_rstudio_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
+service_rstudio_config_locations_server_path: "{{ service_rstudio_config_includes_dir }}/locations.conf"
 
 # podman_environment
 service_rstudio_default_password_file_path: "{{ platform_management_passwords_path }}/{{ service_rstudio_env_prefix }}{{ service_rstudio_config.username }}"
-service_rstudio_config_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/podman_environment"
+service_rstudio_config_podman_environment_server_path: "{{ service_rstudio_config_conf_dir }}/podman_environment"
 
 # seed users
 service_rstudio_users_seed_file_path: "{{ platform_management_seed_users_file_path }}"
@@ -41,7 +52,7 @@ service_rstudio_oci_service:
   server_dest_port: "{{ service_rstudio_config.server_port }}"
   container_dest_port: "{{ service_rstudio_config.firewall_port }}"
   volumes: []
-  readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"
+  readonly_volumes: "{{ fact_openid_tls_web_proxy_service_config_readonly_volumes }}"
   env_file: ""
   added_capabilities: []
 

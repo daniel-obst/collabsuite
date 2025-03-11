@@ -17,15 +17,7 @@
         openid_tls_web_proxy_config_reverse_proxy_additional_headers: "{{ service_internal_gateway_config_reverse_proxy_additional_headers }}"
         openid_tls_web_proxy_config_reverse_proxy_enable_web_socket: "{{ service_internal_gateway_config_reverse_proxy_enable_web_socket }}"
         openid_tls_web_proxy_config_set_deny_root_uri_location: "{{ service_internal_gateway_config_set_deny_root_uri_location }}"
-        openid_tls_web_proxy_config_enable_session_cache: "{{ service_internal_gateway_config_enable_session_cache }}"
-        openid_tls_web_proxy_config_session_cache_domain: "{{ service_internal_gateway_config_session_cache_domain }}"
-        openid_tls_web_proxy_config_cache_session_secret_file_path: "{{ service_internal_gateway_config_cache_session_secret_file_path }}"
-        openid_tls_web_proxy_config_client_id: "{{ service_internal_gateway_config_client_id }}"
-        openid_tls_web_proxy_config_base_uri: "{{ service_internal_gateway_config_base_uri }}"
-        openid_tls_web_proxy_config_client_enable_login: "{{ service_internal_gateway_config_client_enable_login }}"
-        openid_tls_web_proxy_config_cache_shared_memory_zone_mb: "{{ service_internal_gateway_config_cache_shared_memory_zone_mb }}"
-        openid_tls_web_proxy_config_cache_idling_timeout_seconds: "{{ service_internal_gateway_config_cache_idling_timeout_seconds }}"
-        openid_tls_web_proxy_config_cache_rolling_timeout_seconds: "{{ service_internal_gateway_config_cache_rolling_timeout_seconds }}"
+        openid_tls_web_proxy_config_openid_client: "{{ service_internal_gateway_config_openid_client }}"
 
     - name: Service (internal gateway) - reset facts
       tags: [services_internal_gateway_deploy]

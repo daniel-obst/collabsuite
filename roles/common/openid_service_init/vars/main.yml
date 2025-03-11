@@ -23,4 +23,5 @@ openid_service_init_token_uri: "{{ openid_service_init_idp_base_uri }}/{{ openid
 openid_service_init_api_uri: "{{ openid_service_init_idp_base_uri }}/{{ openid_service_init_global_client_info.api_uri }}"
 openid_service_init_redirect_after_logout_uri: "{{ openid_service_init_idp_base_uri }}/{{ openid_service_init_global_client_info.redirect_after_logout_uri }}{{ openid_service_init_post_logout_redirect }}"
 openid_service_init_client_secret_file_path: "{{ openid_service_init_global_client_info.base_secret_file_path + openid_service_init_client_identifier }}"
+openid_service_init_client_session_cache_secret_file_path: "{{ platform_management_openid_path + '/openid_client_session_secret_' + openid_service_init_client_identifier }}"
 openid_service_init_scopes: "openid email profile"

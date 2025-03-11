@@ -12,4 +12,5 @@
         fact_openid_service_init_api_uri: "{{ openid_service_init_api_uri }}"
         fact_openid_service_init_redirect_after_logout_uri: "{{ openid_service_init_redirect_after_logout_uri }}"
         fact_openid_service_init_client_secret_file_path: "{{ openid_service_init_client_secret_file_path }}"
+        fact_openid_service_init_client_session_cache_secret_file_path: "{{ openid_service_init_client_session_cache_secret_file_path }}"
         fact_openid_service_init_scopes: "{{ openid_service_init_scopes }}"

@@ -42,5 +42,16 @@ openid_tls_web_proxy_config_redirect_uri: "{{ fact_openid_service_init_redirect_
 openid_tls_web_proxy_config_discovery_uri: "{{ fact_openid_service_init_discovery_uri }}"
 openid_tls_web_proxy_config_redirect_after_logout_uri: "{{ fact_openid_service_init_redirect_after_logout_uri }}"
 openid_tls_web_proxy_config_client_secret_file_path: "{{ fact_openid_service_init_client_secret_file_path }}"
+openid_tls_web_proxy_config_client_session_cache_secret_file_path: "{{ fact_openid_service_init_client_session_cache_secret_file_path }}"
 openid_tls_web_proxy_config_http_header_email: "{{ gv_openid_http_header_email }}"
 openid_tls_web_proxy_config_header_authorization: "{{ gv_openid_http_header_authorization }}"
+
+# OpenID client configuration
+openid_tls_web_proxy_config_enable_session_cache: "{{ openid_tls_web_proxy_config_openid_client.enable_session_cache }}"
+openid_tls_web_proxy_config_session_cache_domain: "{{ openid_tls_web_proxy_config_openid_client.domain }}"
+openid_tls_web_proxy_config_client_id: "{{ openid_tls_web_proxy_config_openid_client.client_id }}"
+openid_tls_web_proxy_config_base_uri: "{{ openid_tls_web_proxy_config_openid_client.base_uri }}"
+openid_tls_web_proxy_config_client_enable_login: "{{ openid_tls_web_proxy_config_openid_client.enable_login }}"
+openid_tls_web_proxy_config_cache_shared_memory_zone_mb: "{{ openid_tls_web_proxy_config_openid_client.shared_memory_zone_mb }}"
+openid_tls_web_proxy_config_cache_idling_timeout_seconds: "{{ openid_tls_web_proxy_config_openid_client.idling_timeout_seconds }}"
+openid_tls_web_proxy_config_cache_rolling_timeout_seconds: "{{ openid_tls_web_proxy_config_openid_client.rolling_timeout_seconds }}"

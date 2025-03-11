@@ -36,7 +36,7 @@
     openid_cache_shared_memory_zone_mb: "{{ openid_tls_web_proxy_config_cache_shared_memory_zone_mb }}"
     openid_cache_idling_timeout_seconds: "{{ openid_tls_web_proxy_config_cache_idling_timeout_seconds }}"
     openid_cache_rolling_timeout_seconds: "{{ openid_tls_web_proxy_config_cache_rolling_timeout_seconds }}"
-    openid_cache_session_secret_file_path: "{{ openid_tls_web_proxy_config_cache_session_secret_file_path
+    openid_cache_session_secret_file_path: "{{ openid_tls_web_proxy_config_client_session_cache_secret_file_path
       | ansible.builtin.mandatory }}"
     openid_client_enable_login: "{{ openid_tls_web_proxy_config_client_enable_login }}"
     openid_client_id: "{{ openid_tls_web_proxy_config_client_id | ansible.builtin.mandatory }}"

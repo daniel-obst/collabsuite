@@ -70,7 +70,7 @@ platform_oci_container_service_globals:
   network_name: "service_network"
   network_subnet: "10.89.0.0/24"
   network_gateway: "10.89.0.1"
-  network_dns: "10.89.0.1"
+  network_dns: &platform_oci_container_service_globals_network_dns "10.89.0.1"
 
 #########################################
 # Platform - Container Registry Globals #
@@ -624,11 +624,12 @@ platform_service_node_red:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_node_red_prod_firewall_port "4430"
     server_port: &platform_service_node_red_prod_server_port "4430"
-    service_image_name: *platform_container_images_nginx_prod_image_name
-    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    service_image_name: *platform_container_images_openresty_prod_image_name
+    service_image_tag: *platform_container_images_openresty_prod_image_tag
     worker_image_name: *platform_container_images_node_red_prod_image_name
     worker_image_tag: *platform_container_images_node_red_prod_image_tag
     service_uri: &platform_service_node_red_prod_service_uri "nodered"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     upstream_service: &platform_service_node_red_prod_upstream_service
       upstream_server: *platform_globals_server_2
       upstream_server_firewall_port: *platform_service_node_red_prod_firewall_port
@@ -647,6 +648,7 @@ platform_service_node_red:
     http_gateway: *platform_global_internal_gateway_prod_info
     openid_client: &platform_service_node_red_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "node-red"
       back_channel_service_access_only: false
@@ -659,11 +661,12 @@ platform_service_node_red:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_node_red_staging_firewall_port "5430"
     server_port: &platform_service_node_red_staging_server_port "5430"
-    service_image_name: *platform_container_images_nginx_staging_image_name
-    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    service_image_name: *platform_container_images_openresty_staging_image_name
+    service_image_tag: *platform_container_images_openresty_staging_image_tag
     worker_image_name: *platform_container_images_node_red_staging_image_name
     worker_image_tag: *platform_container_images_node_red_staging_image_tag
     service_uri: &platform_service_node_red_staging_service_uri "nodered"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     upstream_service: &platform_service_node_red_staging_upstream_service
       upstream_server: *platform_globals_server_2
       upstream_server_firewall_port: *platform_service_node_red_staging_firewall_port
@@ -682,6 +685,7 @@ platform_service_node_red:
     http_gateway: *platform_global_internal_gateway_staging_info
     openid_client: &platform_service_node_red_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-node-red"
       back_channel_service_access_only: false
@@ -696,11 +700,12 @@ platform_service_drawio:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_drawio_prod_firewall_port "4431"
     server_port: &platform_service_drawio_prod_server_port "4431"
-    service_image_name: *platform_container_images_nginx_prod_image_name
-    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    service_image_name: *platform_container_images_openresty_prod_image_name
+    service_image_tag: *platform_container_images_openresty_prod_image_tag
     worker_image_name: *platform_container_images_drawio_prod_image_name
     worker_image_tag: *platform_container_images_drawio_prod_image_tag
     service_uri: &platform_service_drawio_prod_service_uri "drawio"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     upstream_service: &platform_service_drawio_prod_upstream_service
       upstream_server: *platform_globals_server_2
       upstream_server_firewall_port: *platform_service_drawio_prod_firewall_port
@@ -719,6 +724,7 @@ platform_service_drawio:
     http_gateway: *platform_global_internal_gateway_prod_info
     openid_client: &platform_service_drawio_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "drawio"
       back_channel_service_access_only: false
@@ -731,11 +737,12 @@ platform_service_drawio:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_drawio_staging_firewall_port "5431"
     server_port: &platform_service_drawio_staging_server_port "5431"
-    service_image_name: *platform_container_images_nginx_staging_image_name
-    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    service_image_name: *platform_container_images_openresty_staging_image_name
+    service_image_tag: *platform_container_images_openresty_staging_image_tag
     worker_image_name: *platform_container_images_drawio_staging_image_name
     worker_image_tag: *platform_container_images_drawio_staging_image_tag
     service_uri: &platform_service_drawio_staging_service_uri "drawio"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     upstream_service: &platform_service_drawio_staging_upstream_service
       upstream_server: *platform_globals_server_2
       upstream_server_firewall_port: *platform_service_drawio_staging_firewall_port
@@ -754,6 +761,7 @@ platform_service_drawio:
     http_gateway: *platform_global_internal_gateway_staging_info
     openid_client: &platform_service_drawio_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-drawio"
       back_channel_service_access_only: false
@@ -795,6 +803,7 @@ platform_service_pgadmin4:
     http_gateway: *platform_global_external_gateway_prod_info
     openid_client: &platform_service_pgadmin4_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "pgadmin4"
       back_channel_service_access_only: false
@@ -837,6 +846,7 @@ platform_service_pgadmin4:
     http_gateway: *platform_global_external_gateway_staging_info
     openid_client: &platform_service_pgadmin4_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-pgadmin4"
       back_channel_service_access_only: false
@@ -853,11 +863,12 @@ platform_service_rstudio:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_rstudio_prod_firewall_port "4433"
     server_port: &platform_service_rstudio_prod_server_port "4433"
-    service_image_name: *platform_container_images_nginx_prod_image_name
-    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    service_image_name: *platform_container_images_openresty_prod_image_name
+    service_image_tag: *platform_container_images_openresty_prod_image_tag
     worker_image_name: *platform_container_images_rstudio_prod_image_name
     worker_image_tag: *platform_container_images_rstudio_prod_image_tag
     service_uri: &platform_service_rstudio_prod_service_uri "rstudio"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     username: &platform_service_rstudio_prod_username "rstudio"
     upstream_service: &platform_service_rstudio_prod_upstream_service
       upstream_server: *platform_globals_server_2
@@ -877,6 +888,7 @@ platform_service_rstudio:
     http_gateway: *platform_global_internal_gateway_prod_info
     openid_client: &platform_service_rstudio_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "rstudio"
       back_channel_service_access_only: false
@@ -889,11 +901,12 @@ platform_service_rstudio:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_rstudio_staging_firewall_port "5433"
     server_port: &platform_service_rstudio_staging_server_port "5433"
-    service_image_name: *platform_container_images_nginx_staging_image_name
-    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    service_image_name: *platform_container_images_openresty_staging_image_name
+    service_image_tag: *platform_container_images_openresty_staging_image_tag
     worker_image_name: *platform_container_images_rstudio_staging_image_name
     worker_image_tag: *platform_container_images_rstudio_staging_image_tag
     service_uri: &platform_service_rstudio_staging_service_uri "rstudio"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     username: &platform_service_rstudio_staging_username "stagingrstudio"
     upstream_service: &platform_service_rstudio_staging_upstream_service
       upstream_server: *platform_globals_server_2
@@ -913,6 +926,7 @@ platform_service_rstudio:
     http_gateway: *platform_global_internal_gateway_staging_info
     openid_client: &platform_service_rstudio_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-rstudio"
       back_channel_service_access_only: false
@@ -927,11 +941,12 @@ platform_service_code_server:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_code_server_prod_firewall_port "4434"
     server_port: &platform_service_code_server_prod_server_port "4434"
-    service_image_name: *platform_container_images_nginx_prod_image_name
-    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    service_image_name: *platform_container_images_openresty_prod_image_name
+    service_image_tag: *platform_container_images_openresty_prod_image_tag
     worker_image_name: *platform_container_images_code_server_prod_image_name
     worker_image_tag: *platform_container_images_code_server_prod_image_tag
     service_uri: &platform_service_code_server_prod_service_uri "codeserver"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     username: &platform_service_code_server_prod_username "codeserver"
     upstream_service: &platform_service_code_server_prod_upstream_service
       upstream_server: *platform_globals_server_2
@@ -951,6 +966,7 @@ platform_service_code_server:
     http_gateway: *platform_global_internal_gateway_prod_info
     openid_client: &platform_service_code_server_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "code-server"
       back_channel_service_access_only: false
@@ -963,11 +979,12 @@ platform_service_code_server:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_code_server_staging_firewall_port "5434"
     server_port: &platform_service_code_server_staging_server_port "5434"
-    service_image_name: *platform_container_images_nginx_staging_image_name
-    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    service_image_name: *platform_container_images_openresty_staging_image_name
+    service_image_tag: *platform_container_images_openresty_staging_image_tag
     worker_image_name: *platform_container_images_code_server_staging_image_name
     worker_image_tag: *platform_container_images_code_server_staging_image_tag
     service_uri: &platform_service_code_server_staging_service_uri "codeserver"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     username: &platform_service_code_server_staging_username "stagingcodeserver"
     upstream_service: &platform_service_code_server_staging_upstream_service
       upstream_server: *platform_globals_server_2
@@ -987,6 +1004,7 @@ platform_service_code_server:
     http_gateway: *platform_global_internal_gateway_staging_info
     openid_client: &platform_service_code_server_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-code-server"
       back_channel_service_access_only: false
@@ -1026,6 +1044,7 @@ platform_service_collabora:
     http_gateway: *platform_global_external_gateway_prod_info
     openid_client: &platform_service_collabora_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "collabora"
       back_channel_service_access_only: true
@@ -1063,6 +1082,7 @@ platform_service_collabora:
     http_gateway: *platform_global_external_gateway_staging_info
     openid_client: &platform_service_collabora_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-collabora"
       back_channel_service_access_only: true
@@ -1101,6 +1121,7 @@ platform_service_gitlab_ce:
     http_gateway: *platform_global_internal_gateway_prod_info
     openid_client: &platform_service_gitlab_ce_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "gitlab-ce"
       back_channel_service_access_only: false
@@ -1137,6 +1158,7 @@ platform_service_gitlab_ce:
     http_gateway: *platform_global_internal_gateway_staging_info
     openid_client: &platform_service_gitlab_ce_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-gitlab-ce"
       back_channel_service_access_only: false
@@ -1179,6 +1201,7 @@ platform_service_nextcloud:
     http_gateway: *platform_global_external_gateway_prod_info
     openid_client: &platform_service_nextcloud_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "nextcloud"
       back_channel_service_access_only: false
@@ -1221,6 +1244,7 @@ platform_service_nextcloud:
     http_gateway: *platform_global_external_gateway_staging_info
     openid_client: &platform_service_nextcloud_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-nextcloud"
       back_channel_service_access_only: false
@@ -1265,6 +1289,7 @@ platform_service_grafana:
     http_gateway: *platform_global_external_gateway_prod_info
     openid_client: &platform_service_grafana_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "grafana"
       back_channel_service_access_only: false
@@ -1307,6 +1332,7 @@ platform_service_grafana:
     http_gateway: *platform_global_external_gateway_staging_info
     openid_client: &platform_service_grafana_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-grafana"
       back_channel_service_access_only: false
@@ -1351,6 +1377,7 @@ platform_service_redmine:
     http_gateway: *platform_global_external_gateway_prod_info
     openid_client: &platform_service_redmine_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "redmine"
       back_channel_service_access_only: false
@@ -1391,6 +1418,7 @@ platform_service_redmine:
     http_gateway: *platform_global_external_gateway_staging_info
     openid_client: &platform_service_redmine_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-redmine"
       back_channel_service_access_only: false
@@ -1449,11 +1477,12 @@ platform_service_data_science_notebook:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_data_science_notebook_prod_firewall_port "4439"
     server_port: &platform_service_data_science_notebook_prod_server_port "4439"
-    service_image_name: *platform_container_images_nginx_prod_image_name
-    service_image_tag: *platform_container_images_nginx_prod_image_tag
+    service_image_name: *platform_container_images_openresty_prod_image_name
+    service_image_tag: *platform_container_images_openresty_prod_image_tag
     worker_image_name: *platform_container_images_data_science_notebook_prod_image_name
     worker_image_tag: *platform_container_images_data_science_notebook_prod_image_tag
     service_uri: &platform_service_data_science_notebook_prod_service_uri "datasciencenotebook"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     username: &platform_service_data_science_notebook_prod_username "datasciencenotebook"
     upstream_service: &platform_service_data_science_notebook_prod_upstream_service
       upstream_server: *platform_globals_server_2
@@ -1473,6 +1502,7 @@ platform_service_data_science_notebook:
     http_gateway: *platform_global_internal_gateway_prod_info
     openid_client: &platform_service_data_science_notebook_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "data-science-notebook"
       back_channel_service_access_only: false
@@ -1485,11 +1515,12 @@ platform_service_data_science_notebook:
     fqdn_server: *platform_globals_server_2
     firewall_port: &platform_service_data_science_notebook_staging_firewall_port "5439"
     server_port: &platform_service_data_science_notebook_staging_server_port "5439"
-    service_image_name: *platform_container_images_nginx_staging_image_name
-    service_image_tag: *platform_container_images_nginx_staging_image_tag
+    service_image_name: *platform_container_images_openresty_staging_image_name
+    service_image_tag: *platform_container_images_openresty_staging_image_tag
     worker_image_name: *platform_container_images_data_science_notebook_staging_image_name
     worker_image_tag: *platform_container_images_data_science_notebook_staging_image_tag
     service_uri: &platform_service_data_science_notebook_staging_service_uri "datasciencenotebook"
+    service_network_dns: *platform_oci_container_service_globals_network_dns
     username: &platform_service_data_science_notebook_staging_username "stagingdatasciencenotebook"
     upstream_service: &platform_service_data_science_notebook_staging_upstream_service
       upstream_server: *platform_globals_server_2
@@ -1509,6 +1540,7 @@ platform_service_data_science_notebook:
     http_gateway: *platform_global_internal_gateway_staging_info
     openid_client: &platform_service_data_science_notebook_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-data-science-notebook"
       back_channel_service_access_only: false
@@ -1553,6 +1585,7 @@ platform_service_openproject:
     http_gateway: *platform_global_external_gateway_prod_info
     openid_client: &platform_service_openproject_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "openproject"
       back_channel_service_access_only: false
@@ -1595,6 +1628,7 @@ platform_service_openproject:
     http_gateway: *platform_global_external_gateway_staging_info
     openid_client: &platform_service_openproject_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-openproject"
       back_channel_service_access_only: false
@@ -1633,6 +1667,7 @@ platform_service_it_tools:
     http_gateway: *platform_global_internal_gateway_prod_info
     openid_client: &platform_service_it_tools_prod_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "it-tools"
       back_channel_service_access_only: false
@@ -1669,6 +1704,7 @@ platform_service_it_tools:
     http_gateway: *platform_global_internal_gateway_staging_info
     openid_client: &platform_service_it_tools_staging_openid_client
       enable_session_cache: false
+      enable_login: false
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-it-tools"
       back_channel_service_access_only: false
@@ -1771,6 +1807,7 @@ platform_service_internal_gateway:
       restricted_to_ipv4_with_cidr: ""
     openid_client: &platform_service_internal_gateway_prod_openid_client
       enable_session_cache: true
+      enable_login: true
       domain: *platform_service_keycloak_prod_client_domain
       client_id: "internal-gateway"
       back_channel_service_access_only: false
@@ -1815,6 +1852,7 @@ platform_service_internal_gateway:
       restricted_to_ipv4_with_cidr: ""
     openid_client: &platform_service_internal_gateway_staging_openid_client
       enable_session_cache: true
+      enable_login: true
       domain: *platform_service_keycloak_staging_client_domain
       client_id: "staging-internal-gateway"
       back_channel_service_access_only: false
