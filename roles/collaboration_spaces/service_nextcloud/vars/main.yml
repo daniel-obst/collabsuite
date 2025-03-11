@@ -53,6 +53,10 @@ service_nextcloud_overwrite_webroot: "/{{ service_nextcloud_config.service_uri }
 service_nextcloud_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/podman_environment"
 
 # post_installation.sh
+#
+# See further information:
+#   - https://github.com/nextcloud/richdocuments/blob/main/docs/install.md
+# php occ config:app:set --value https://www.collabsuite.ca:443/collabora richdocuments wopi_url
 service_nextcloud_openid_client_id: "{{ service_nextcloud_config_openid_client.client_id }}"
 service_nextcloud_openid_base_uri: "{{ service_nextcloud_config_openid_client.base_uri }}"
 
