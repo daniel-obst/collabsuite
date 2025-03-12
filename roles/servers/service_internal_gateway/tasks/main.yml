@@ -41,9 +41,9 @@
       ansible.builtin.template:
         src: "service_internal_gateway_locations.conf.j2"
         dest: "{{ service_internal_gateway_locations_conf_server_path }}"
-        owner: "{{ fact_openid_tls_web_proxy_config_uid }}"
-        group: "{{ fact_openid_tls_web_proxy_config_gid }}"
-        mode: "{{ fact_openid_tls_web_proxy_config_conf_file_mode }}"
+        owner: "{{ service_internal_gateway_config_user_uid }}"
+        group: "{{ service_internal_gateway_config_user_gid }}"
+        mode: "{{ service_internal_gateway_config_includes_file_mode }}"
         force: true
       vars:
         upstream_services: "{{ service_internal_gateway_upstream_urls }}"

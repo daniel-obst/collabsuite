@@ -1,4 +1,10 @@
 ---
+service_internal_gateway_config_user_uid: "{{ fact_openid_tls_web_proxy_config_uid }}"
+service_internal_gateway_config_user_gid: "{{ fact_openid_tls_web_proxy_config_gid }}"
+
+service_internal_gateway_config_includes_dir: "{{ fact_openid_tls_web_proxy_config_includes_dir }}"
+service_internal_gateway_config_includes_file_mode: "{{ fact_openid_tls_web_proxy_config_includes_file_mode }}"
+
 service_internal_gateway_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_internal_gateway.production, platform_service_internal_gateway.staging) }}"
 
@@ -20,7 +26,7 @@ service_internal_gateway_config_set_deny_root_uri_location: false
 # locations.conf
 service_internal_gateway_config_upstream_services: "{{ service_internal_gateway_config.upstream_services }}"
 service_internal_gateway_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
-service_internal_gateway_locations_conf_server_path: "{{ fact_openid_tls_web_proxy_config_includes_dir }}/locations.conf"
+service_internal_gateway_locations_conf_server_path: "{{ service_internal_gateway_config_includes_dir }}/locations.conf"
 service_internal_gateway_http_header_authorization: "{{ gv_openid_http_header_authorization }}"
 service_internal_gateway_http_header_authorization_value: "{{ gv_openid_http_header_authorization_value }}"
 service_internal_gateway_http_header_email: "{{ gv_openid_http_header_email }}"
