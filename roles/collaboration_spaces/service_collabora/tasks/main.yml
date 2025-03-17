@@ -15,8 +15,9 @@
         openid_tls_web_proxy_config_service_network_dns: "{{ service_collabora_service_network_dns }}"
         openid_tls_web_proxy_config_reverse_proxy_additional_headers: "{{ service_collabora_config_reverse_proxy_additional_headers }}"
         openid_tls_web_proxy_config_reverse_proxy_enable_web_socket: "{{ service_collabora_config_reverse_proxy_enable_web_socket }}"
+        openid_tls_web_proxy_config_set_openidc_location_exceptions: "{{ service_collabora_config_set_openidc_location_exceptions }}"
         openid_tls_web_proxy_config_set_deny_root_uri_location: "{{ service_collabora_config_set_deny_root_uri_location }}"
-        openid_tls_web_proxy_config_openid_client: "{{ service_collabora_config_openid_client }}"    
+        openid_tls_web_proxy_config_openid_client: "{{ service_collabora_config_openid_client }}"
 
     - name: Service (collabora) - locations.conf
       ansible.builtin.template:
@@ -28,7 +29,24 @@
         force: true
       vars:
         service_uri: "{{ service_collabora_service_uri }}"
+        openid_user_pod: "{{ service_collabora_openid_user_pod }}"
         server_url: "{{ service_collabora_server_url }}"
+        includes_path_openidc_conf_path: "{{ service_collabora_config_openidc_conf_path }}"
+        includes_path_reverse_proxy_conf: "{{ service_collabora_config_reverse_proxy_conf_container_path }}"
+
+    - name: Service (collabora) - locations_exceptions.conf
+      when: service_collabora_config_set_openidc_location_exceptions
+      ansible.builtin.template:
+        src: "{{ service_collabora_locations_exceptions_conf_filename }}.j2"
+        dest: "{{ service_collabora_config_location_exceptions_conf_server_path }}"
+        owner: "{{ service_collabora_config_user_uid }}"
+        group: "{{ service_collabora_config_user_gid }}"
+        mode: "{{ service_collabora_config_includes_file_mode }}"
+        force: true
+      vars:
+        service_uri: "{{ service_collabora_service_uri }}"
+        server_url: "{{ service_collabora_server_url }}"
+        exception_allow_subnet_with_netmask: "{{ service_collabora_exception_allow_subnet_with_netmask }}"
         includes_path_reverse_proxy_conf: "{{ service_collabora_config_reverse_proxy_conf_container_path }}"
 
     - name: Service (collabora) - podman_environment
@@ -43,8 +61,8 @@
         admin_username: "{{ service_collabora_admin_username }}"
         password_file_path: "{{ service_collabora_password_file_path }}"
         server_name_with_port: "{{ service_collabora_server_name_with_port }}"
-        alias_group_1: "{{ service_collabora_alias_group_1 }}"
-        server_domain: "{{ service_collabora_domain }}"
+        alias_group_nextcloud: "{{ service_collabora_alias_group_nextcloud }}"
+        domain_nextcloud: "{{ service_collabora_domain_nextcloud }}"
         service_root: "{{ service_collabora_service_root }}"
 
     - name: Service (collabora) - deploy service

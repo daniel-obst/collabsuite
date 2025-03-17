@@ -3,7 +3,7 @@
   ansible.builtin.systemd_service:
     name: "ssh.service"
     daemon_reload: true
-    state: reloaded
+    state: restarted
     enabled: true
   listen: "platform_server_reload_sshd_handler"
 

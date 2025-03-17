@@ -27,6 +27,7 @@
         force: true
       vars:
         service_uri: "{{ service_it_tools_service_uri }}"
+        openid_user_pod: "{{ service_it_tools_openid_user_pod }}"
         server_url: "{{ service_it_tools_server_url }}"
         includes_path_reverse_proxy_conf: "{{ service_it_tools_config_reverse_proxy_conf_container_path }}"
 

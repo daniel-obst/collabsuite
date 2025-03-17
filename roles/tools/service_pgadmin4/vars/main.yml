@@ -29,7 +29,7 @@ service_pgadmin4_service_uri: "{{ service_pgadmin4_config.service_uri }}"
 service_pgadmin4_worker: "pgadmin4_worker"
 service_pgadmin4_server_url: "http://{{ service_pgadmin4_worker }}:80"
 service_pgadmin4_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_pgadmin4_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_pgadmin4_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_locations_config_server_path }}"
 
 # service_postgresql_init
 service_pgadmin4_pgsql_worker: "pgsql_worker"

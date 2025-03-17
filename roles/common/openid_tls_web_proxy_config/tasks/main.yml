@@ -40,5 +40,9 @@
         fact_openid_tls_web_proxy_config_html_file_mode: "{{ openid_tls_web_proxy_config_html_file_mode }}"
 
         fact_openid_tls_web_proxy_config_tls_dir: "{{ openid_tls_web_proxy_config_tls_dir }}"
+
+        fact_openid_tls_web_proxy_config_openidc_conf_container_path: "{{ openid_tls_web_proxy_config_openidc_conf_path }}"
+        fact_openid_tls_web_proxy_config_location_conf_server_path: "{{ openid_tls_web_proxy_config_location_conf_server_path }}"
+        fact_openid_tls_web_proxy_config_location_exceptions_conf_server_path: "{{ openid_tls_web_proxy_config_location_exceptions_conf_server_path }}"
         fact_openid_tls_web_proxy_config_reverse_proxy_conf_container_path: "{{ openid_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
         fact_openid_tls_web_proxy_config_readonly_volumes: "{{ openid_tls_web_proxy_config_readonly_volumes + fact_tls_web_proxy_config_readonly_volumes }}"

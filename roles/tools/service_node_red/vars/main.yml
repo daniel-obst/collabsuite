@@ -29,9 +29,10 @@ service_node_red_config_set_deny_root_uri_location: true
 
 # locations.conf
 service_node_red_service_uri: "{{ service_node_red_config.service_uri }}"
-service_node_red_server_url: "http://${{ gv_openid_http_header_authorization_value }}:1880"
+service_node_red_openid_user_pod: "{{ gv_openid_user_pod }}"
+service_node_red_server_url: "http://{{ gv_openid_user_pod }}:1880"
 service_node_red_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_node_red_config_locations_server_path: "{{ service_node_red_config_includes_dir }}/locations.conf"
+service_node_red_config_locations_server_path: "{{ fact_openid_tls_web_proxy_config_location_conf_server_path }}"
 
 # settings.js
 service_node_red_config_settings_js_server_path: "{{ service_node_red_config_conf_dir }}/settings.js"

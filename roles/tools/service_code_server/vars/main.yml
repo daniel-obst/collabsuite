@@ -33,9 +33,10 @@ service_code_server_config_set_x_forwarded_port: false
 # locations.conf
 service_code_server_service_uri: "{{ service_code_server_config.service_uri }}"
 service_code_server_worker: "codeserver_worker"
-service_code_server_url: "http://${{ gv_openid_http_header_authorization_value }}:8443"
+service_code_server_openid_user_pod: "{{ gv_openid_user_pod }}"
+service_code_server_url: "http://{{ gv_openid_user_pod }}:8443"
 service_code_server_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_code_server_locations_conf_server_path: "{{ service_code_server_config_includes_dir }}/locations.conf"
+service_code_server_locations_conf_server_path: "{{ fact_openid_tls_web_proxy_config_location_conf_server_path }}"
 
 # podman environment
 service_code_server_podman_environment_server_path: "{{ service_code_server_config_conf_dir }}/podman_environment"

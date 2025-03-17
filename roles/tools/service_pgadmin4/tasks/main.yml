@@ -67,24 +67,6 @@
         openid_client_secret_file_path: "{{ service_pgadmin4_openid_client_secret_file_path }}"
         openid_config_suffix: "{{ service_pgadmin4_init_openid_config_suffix }}"
 
-    # - name: Service (pgadmin4) - config_distro.py
-    #   ansible.builtin.template:
-    #     src: "service_pgadmin4_config_distro.py.j2"
-    #     dest: "{{ service_pgadmin4_config_config_distro_server_path }}"
-    #     owner: "{{ fact_tls_web_proxy_service_config_uid }}"
-    #     group: "{{ fact_tls_web_proxy_service_config_gid }}"
-    #     mode: "{{ fact_tls_web_proxy_service_config_conf_file_mode }}"
-    #     force: true
-    #   vars:
-    #     openid_client_id: "{{ service_pgadmin4_openid_client_id }}"
-    #     openid_client_secret_file_path: "{{ service_pgadmin4_openid_client_secret_file_path }}"
-    #     openid_token_url: "{{ service_pgadmin4_openid_token_url }}"
-    #     openid_auth_url: "{{ service_pgadmin4_openid_auth_url }}"
-    #     openid_meta_data_url: "{{ service_pgadmin4_openid_meta_data_url }}"
-    #     openid_api_base_url: "{{ service_pgadmin4_openid_api_base_url }}"
-    #     openid_user_info_url: "{{ service_pgadmin4_openid_user_info_url }}"
-    #     openid_scopes: "{{ service_pgadmin4_openid_scopes }}"
-
     - name: Service (pgadmin4) - deploy service
       ansible.builtin.include_role:
         name: oci_container_service

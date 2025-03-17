@@ -1,8 +1,9 @@
 
 location /{{ service_uri }}/ {
-  set        $userPod {{ server_url }};
-  proxy_pass $userPod;
-  include    {{ includes_path_reverse_proxy_conf }};
+  set        {{ openid_user_pod }} "";
+  set        $upstream {{ server_url }};
+  proxy_pass $upstream;
 
-  proxy_set_header Authorization $http_authorization;
+  include {{ includes_path_openidc_conf_path }};
+  include {{ includes_path_reverse_proxy_conf }};
 }

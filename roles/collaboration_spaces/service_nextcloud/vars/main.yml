@@ -8,6 +8,7 @@ service_nextcloud_config: "{{ ansible_deploy_production
 
 service_nextcloud_config_http_gateway: "{{ service_nextcloud_config.http_gateway }}"
 service_nextcloud_config_openid_client: "{{ service_nextcloud_config.openid_client }}"
+service_nextcloud_config_wopi_client: "{{ service_nextcloud_config.wopi_client }}"
 
 service_nextcloud_service_name: "nextcloud"
 service_nextcloud_password_path_prefix: "{{ platform_management_passwords_path }}/{{ service_nextcloud_service_name }}_"
@@ -23,7 +24,7 @@ service_nextcloud_config_ca_cert_file_path: "{{ fact_oci_container_service_init_
 
 service_nextcloud_config_reverse_proxy_additional_headers: []
 service_nextcloud_config_reverse_proxy_enable_web_socket: true
-service_nextcloud_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_nextcloud_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_locations_config_server_path }}"
 
 # service_postgresql_init
 service_nextcloud_pgsql_worker: "pgsql_worker"
@@ -36,6 +37,7 @@ service_nextcloud_pgsql_enable_pg_trgm_extension: false
 # locations.conf
 service_nextcloud_service_uri: "{{ service_nextcloud_config.service_uri }}"
 service_nextcloud_worker: "nextcloud_worker"
+service_nextcloud_openid_user_pod: "{{ gv_openid_user_pod }}"
 service_nextcloud_server_url: "http://{{ service_nextcloud_worker }}:80"
 service_nextcloud_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
 serivce_nextcloud_config_max_body_size_in_megabytes: "{{ service_nextcloud_config.max_body_size_in_megabytes }}"
@@ -59,6 +61,9 @@ service_nextcloud_podman_environment_server_path: "{{ fact_tls_web_proxy_service
 # php occ config:app:set --value https://www.collabsuite.ca:443/collabora richdocuments wopi_url
 service_nextcloud_openid_client_id: "{{ service_nextcloud_config_openid_client.client_id }}"
 service_nextcloud_openid_base_uri: "{{ service_nextcloud_config_openid_client.base_uri }}"
+
+#https://server-2.collabsuite.lan:443/collabora
+service_nextcloud_wopi_client_url: "https://{{ service_nextcloud_config_wopi_client.server }}:{{ service_nextcloud_config_wopi_client.port }}/{{ service_nextcloud_config_wopi_client.uri }}"
 
 service_nextcloud_openid_client_secret_file_path: "{{ fact_openid_service_init_client_secret_file_path }}"
 service_nextcloud_openid_discovery_uri: "{{ fact_openid_service_init_discovery_uri }}"

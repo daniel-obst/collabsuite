@@ -7,3 +7,4 @@ tls_web_proxy_service_config_x_host_with_port:
 tls_web_proxy_service_config_x_forwarded_port:
   "{{ tls_web_proxy_service_config_set_x_forwarded_port 
   | ansible.builtin.ternary(tls_web_proxy_service_config_gateway.port, default(None)) }}"
+tls_web_proxy_service_config_includes_locations_config_server_path: "{{ fact_tls_web_proxy_config_includes_locations_config_server_path }}"

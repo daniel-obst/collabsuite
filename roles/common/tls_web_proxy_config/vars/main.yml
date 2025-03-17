@@ -131,6 +131,7 @@ tls_web_proxy_config_server_cert_file_path: "{{ tls_web_proxy_config_container_t
 tls_web_proxy_config_server_key_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_key_file_path | basename }}"
 tls_web_proxy_config_server_dh_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_dh_file_path | basename }}"
 tls_web_proxy_config_server_ca_cert_file_path: "{{ tls_web_proxy_config_container_tls_dir_path }}/{{ tls_web_proxy_config_ca_cert_file_path | basename }}"
+tls_web_proxy_config_includes_locations_config_server_path: "{{ tls_web_proxy_config_includes_dir }}/locations.conf"
 tls_web_proxy_config_includes_locations_config_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/locations.conf"
 tls_web_proxy_config_includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_container_includes_dir_path }}/{{ tls_web_proxy_config_html_error_pages_conf }}"
 

@@ -30,8 +30,9 @@ service_redmine_pgsql_enable_pg_trgm_extension: false
 # locations.conf
 service_redmine_redmine_worker: "redmine_worker"
 service_redmine_service_uri: "{{ service_redmine_config.service_uri }}"
+service_readmin_openid_user_pod: "{{ gv_openid_user_pod }}"
 service_redmine_server_url: "http://{{ service_redmine_redmine_worker }}:3000"
-service_redmine_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_redmine_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_locations_config_server_path }}"
 service_redmine_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
 
 # redmine_podman_environment"

@@ -1,0 +1,67 @@
+---
+- name: Service (internal gateway) - TLS web proxy configuration
+  ansible.builtin.include_role:
+    name: openid_tls_web_proxy_config
+  vars:
+    openid_tls_web_proxy_config_server_firewall_port: "{{ service_internal_gateway_server_firewall_port }}"
+    openid_tls_web_proxy_config_fqdn_server: "{{ service_internal_gateway_fqdn_server }}"
+    openid_tls_web_proxy_config_cert_file_path: "{{ service_internal_gateway_config_cert_file_path }}"
+    openid_tls_web_proxy_config_key_file_path: "{{ service_internal_gateway_config_key_file_path }}"
+    openid_tls_web_proxy_config_dh_file_path: "{{ service_internal_gateway_config_dh_file_path }}"
+    openid_tls_web_proxy_config_ca_cert_file_path: "{{ service_internal_gateway_config_ca_cert_file_path }}"
+    openid_tls_web_proxy_config_service_network_dns: "{{ service_internal_gateway_service_network_dns }}"
+    openid_tls_web_proxy_config_reverse_proxy_additional_headers: "{{ service_internal_gateway_config_reverse_proxy_additional_headers }}"
+    openid_tls_web_proxy_config_reverse_proxy_enable_web_socket: "{{ service_internal_gateway_config_reverse_proxy_enable_web_socket }}"
+    openid_tls_web_proxy_config_set_openidc_location_exceptions: "{{ service_internal_gateway_config_set_openidc_location_exceptions }}"
+    openid_tls_web_proxy_config_set_deny_root_uri_location: "{{ service_internal_gateway_config_set_deny_root_uri_location }}"
+    openid_tls_web_proxy_config_openid_client: "{{ service_internal_gateway_config_openid_client }}"
+
+- name: Service (internal gateway) - reset facts
+  set_fact:
+    service_internal_gateway_upstream_urls: []
+
+- name: Service (internal gateway) - set facts
+  set_fact:
+    service_internal_gateway_upstream_urls:
+      "{{ (service_internal_gateway_upstream_urls | default([]))
+      + [{
+      'location_uri': item.location_uri,
+      'upstream_url': 'https://' + item.upstream_server + ':' + item.upstream_server_firewall_port,
+      'exception_location_uri': item.regex_exception_location_uri | default(''),
+      'url_rewrite': item.url_rewrite
+      }] }}"
+  loop: "{{ service_internal_gateway_config_upstream_services }}"
+
+- name: Service (internal gateway) - locations.conf
+  ansible.builtin.template:
+    src: "{{ service_internal_gateway_locations_conf_filename }}.j2"
+    dest: "{{ service_internal_gateway_config_location_conf_server_path }}"
+    owner: "{{ service_internal_gateway_config_user_uid }}"
+    group: "{{ service_internal_gateway_config_user_gid }}"
+    mode: "{{ service_internal_gateway_config_includes_file_mode }}"
+    force: true
+  vars:
+    upstream_services: "{{ service_internal_gateway_upstream_urls }}"
+    includes_path_openidc_conf_path: "{{ service_internal_gateway_config_openidc_conf_path }}"
+    includes_path_reverse_proxy_conf: "{{ service_internal_gateway_config_reverse_proxy_conf_container_path }}"
+
+- name: Service (internal gateway) - locations_exceptions.conf
+  when: service_internal_gateway_config_set_openidc_location_exceptions
+  ansible.builtin.template:
+    src: "{{ service_internal_gateway_locations_exceptions_conf_filename }}.j2"
+    dest: "{{ service_internal_gateway_config_location_exceptions_conf_server_path }}"
+    owner: "{{ service_internal_gateway_config_user_uid }}"
+    group: "{{ service_internal_gateway_config_user_gid }}"
+    mode: "{{ service_internal_gateway_config_includes_file_mode }}"
+    force: true
+  vars:
+    upstream_services: "{{ service_internal_gateway_upstream_urls }}"
+    exception_allow_subnet_with_netmask: "{{ service_internal_gateway_exception_allow_subnet_with_netmask }}"
+    includes_path_reverse_proxy_conf: "{{ service_internal_gateway_config_reverse_proxy_conf_container_path }}"
+
+- name: Service (internal gateway) - deploy service
+  ansible.builtin.include_role:
+    name: oci_container_service
+  vars:
+    oci_container_service_config: "{{ service_internal_gateway_oci_service }}"
+    oci_container_service_workers: "{{ service_internal_gateway_oci_service_workers }}"

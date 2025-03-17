@@ -1,19 +1,17 @@
-location / {
-  try_files $uri $uri/index.html =403;
-  include {{ includes_path_openidc_conf_path }};
-}
-
 {% for service in upstream_services %}
-location /{{ service.location_uri }}/ {
+{% if service.exception_location_uri | length > 0 %}
+location ~* ^/{{ service.location_uri }}/{{ service.exception_location_uri }}$ {
+  allow {{ exception_allow_subnet_with_netmask }};
+  deny  all;
+
   set        $upstream {{ service.upstream_url }};
 {% if service.url_rewrite %}
   rewrite ^/{{ service.location_uri }}(/.*)$ $1 break;
 {% else %}
   proxy_pass $upstream;
 
-  include {{ includes_path_openidc_conf_path }};
   include {{ includes_path_reverse_proxy_conf }};
 }
 {% endif %}
-
+{% endif %}
 {% endfor %}

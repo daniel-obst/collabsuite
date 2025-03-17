@@ -31,9 +31,10 @@ service_gitlab_ce_gitlab_rb_server_path: "{{ service_gitlab_ce_gitlab_config_dir
 # locations.conf
 service_gitlab_ce_service_uri: "{{ service_gitlab_ce_config.service_uri }}"
 service_gitlab_ce_worker: "gitlabce_worker"
+service_gitlab_ce_openid_user_pod: "{{ gv_openid_user_pod }}"
 service_gitlab_ce_server_url: "https://{{ service_gitlab_ce_worker }}:{{ service_gitlab_ce_config_http_gateway.port }}"
 service_gitlab_ce_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_gitlab_ce_locations_conf_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_gitlab_ce_locations_conf_server_path: "{{ fact_tls_web_proxy_service_config_includes_locations_config_server_path }}"
 
 # podman_environment
 service_gitlab_ce_conf_dir: "{{ fact_tls_web_proxy_service_config_dir }}"

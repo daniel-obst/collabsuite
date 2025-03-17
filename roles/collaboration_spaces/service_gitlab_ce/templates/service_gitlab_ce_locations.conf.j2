@@ -1,5 +1,6 @@
 location /{{ service_uri }}/ {
-  set        $userPod {{ server_url }};
-  proxy_pass $userPod;
+  set        {{ openid_user_pod }} "";
+  set        $upstream {{ server_url }};
+  proxy_pass $upstream;
   include    {{ includes_path_reverse_proxy_conf }};
 }

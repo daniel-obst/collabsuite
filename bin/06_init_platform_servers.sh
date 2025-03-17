@@ -5,6 +5,8 @@ set -e
 readonly PLATFORM_VAULT_PASSWORDS_DIR="platform_vault/platform/passwords"
 readonly ANSIBLE_KEY="platform_vault/platform/openssh/id_ed25519_ansible-controller.collabsuite.lan"
 
+source ./virtualenv/ansible/bin/activate
+
 # Servers #
 ansible-playbook -i inventories/production \
     --connection-password-file "${PLATFORM_VAULT_PASSWORDS_DIR}/external_gateways_management_user" \
@@ -32,3 +34,5 @@ ansible-playbook -i inventories/production \
 
 # Services #
 ansible-playbook -i inventories/production --tags "services_quay_io" platform.yml
+
+deactivate

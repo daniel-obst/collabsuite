@@ -26,9 +26,10 @@ service_drawio_config_reverse_proxy_enable_web_socket: true
 # locations.conf
 service_drawio_service_uri: "{{ service_drawio_config.service_uri }}"
 service_drawio_worker: "drawio_worker"
+service_drawio_openid_user_pod: "{{ gv_openid_user_pod }}"
 service_drawio_server_url: "http://{{ service_drawio_worker }}:8080"
 service_drawio_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_drawio_locations_conf_server_path: "{{ service_drawio_config_includes_dir }}/locations.conf"
+service_drawio_locations_conf_server_path: "{{ fact_openid_tls_web_proxy_config_location_conf_server_path }}"
 
 # service
 service_drawio_oci_service:

@@ -2,6 +2,8 @@
 
 php occ app:enable richdocuments
 php occ app:enable user_oidc
+php occ config:app:set --value {{ wopi_client_url }} richdocuments wopi_url
+php occ richdocuments:activate-config
 php occ user_oidc:provider Collabsuite \
   --clientid="{{ openid_client_id }}" \
   --clientsecret="{{ lookup('openid_client_password', openid_client_secret_file_path) }}" \

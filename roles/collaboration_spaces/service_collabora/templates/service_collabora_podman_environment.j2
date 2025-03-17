@@ -1,6 +1,6 @@
 username={{ admin_username }}
 password={{ lookup('admin_account_password', password_file_path) }}
 server_name={{ server_name_with_port }}
-aliasgroup1={{ alias_group_1 }}
-domain={{ server_domain }}
+aliasgroup1={{ alias_group_nextcloud }}
+domain={{ domain_nextcloud }}
 extra_params=--o:mount_namespaces=false --o:ssl.enable=true --o:net.service_root={{ service_root }}

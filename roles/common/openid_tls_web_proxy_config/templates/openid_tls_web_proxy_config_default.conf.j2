@@ -74,7 +74,11 @@ server {
 
   root /usr/local/openresty/nginx/html;
 
+{% if set_openidc_location_exceptions %}
+  # Configured to exclude openidc.conf due to location exceptions
+{% else %}
   # openID configuration
+{% if openid_client_enable_login %}
   access_by_lua_block {
     local opts = {
       redirect_uri = "{{ openid_redirect_uri }}",
@@ -96,7 +100,6 @@ server {
       session_contents = { id_token = true, access_token = true }
     }
 
-{% if openid_client_enable_login %}
     -- decision: redirect any unauthenticated requests to openid login
     local res, err = require("resty.openidc").authenticate(opts)
 
@@ -106,10 +109,17 @@ server {
       ngx.exit(ngx.HTTP_FORBIDDEN)
     end
 
-    ngx.req.set_header("{{ openid_http_header_email }}", res.id_token.email)
-    ngx.req.set_header("{{ openid_http_header_authorization }}", res.id_token.sub)
     ngx.req.set_header("Authorization", "Bearer " .. res.access_token)
+    ngx.log(ngx.INFO, "Client login: " .. res.id_token.email .. " (" .. res.id_token.sub .. ")")
 {% else %}
+  access_by_lua_block {
+    local opts = {
+      discovery = "{{ openid_discovery_uri }}",
+      client_id = "{{ openid_client_id }}",
+      client_secret = "{{ lookup('openid_client_password', openid_client_secret_file_path) }}",
+      ssl_verify = "true",
+    }
+
     -- decision: call introspect for OAuth 2.0 Bearer Access Token validation
     local res, err = require("resty.openidc").introspect(opts)
 
@@ -119,11 +129,11 @@ server {
       ngx.exit(ngx.HTTP_FORBIDDEN)
     end
 
-    ngx.req.set_header("{{ openid_http_header_email }}", res.email)
-    ngx.req.set_header("{{ openid_http_header_authorization }}", res.sub)
     ngx.log(ngx.INFO, "Client: " .. res.email .. " (" .. res.sub .. ")")
+    ngx.var.userPod = res.sub
 {% endif %}
   }
+{% endif %}
 
 {% if deny_root_uri_location %}
   location ~* ^/$ {
@@ -132,6 +142,8 @@ server {
 
 {% endif %}
   include {{ includes_locations_config_path }};
-
+{% if set_openidc_location_exceptions %}
+  include {{ openidc_location_exceptions_path }};
+{% endif %}
   include {{ includes_html_error_pages_conf_path }};
 }

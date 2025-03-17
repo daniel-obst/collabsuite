@@ -1,0 +1,9 @@
+location ~* ^/{{ service_uri }}/hosting/discovery$ {
+  allow {{ exception_allow_subnet_with_netmask }};
+  deny  all;
+
+  set        $upstream {{ server_url }};
+  proxy_pass $upstream;
+
+  include {{ includes_path_reverse_proxy_conf }};
+}

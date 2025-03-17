@@ -37,6 +37,7 @@
         force: true
       vars:
         service_uri: "{{ service_redmine_service_uri }}"
+        openid_user_pod: "{{ service_readmin_openid_user_pod }}"
         server_url: "{{ service_redmine_server_url }}"
         includes_path_reverse_proxy_conf: "{{ service_redmine_reverse_proxy_conf_container_path }}"
 

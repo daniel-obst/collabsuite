@@ -25,8 +25,11 @@
     service_network_dns: "{{ openid_tls_web_proxy_config_service_network_dns
       | ansible.builtin.mandatory }}"
     ssl_ca_certificates_path: "{{ openid_tls_web_proxy_config_machine_ssl_trusted_certificate_path }}"
-    includes_locations_config_path: "{{ openid_tls_web_proxy_config_includes_locations_config_path
+    includes_openidc_config_path: "{{ openid_tls_web_proxy_config_openidc_conf_path }}"
+    includes_locations_config_path: "{{ openid_tls_web_proxy_config_location_conf_path
       | ansible.builtin.mandatory }}"
+    set_openidc_location_exceptions: "{{ openid_tls_web_proxy_config_set_openidc_location_exceptions | ansible.builtin.mandatory }}"
+    openidc_location_exceptions_path: "{{ openid_tls_web_proxy_config_location_exceptions_conf_path }}"
     includes_html_error_pages_conf_path: "{{ openid_tls_web_proxy_config_includes_html_error_pages_conf_path
       | ansible.builtin.mandatory }}"
     deny_root_uri_location: "{{ openid_tls_web_proxy_config_set_deny_root_uri_location }}"
@@ -44,7 +47,23 @@
     openid_redirect_uri: "{{ openid_tls_web_proxy_config_redirect_uri }}"
     openid_discovery_uri: "{{ openid_tls_web_proxy_config_discovery_uri }}"
     openid_redirect_after_logout_uri: "{{ openid_tls_web_proxy_config_redirect_after_logout_uri }}"
-    openid_http_header_email: "{{ openid_tls_web_proxy_config_http_header_email }}"
+    openid_http_header_authorization: "{{ openid_tls_web_proxy_config_header_authorization }}"
+
+- name: OpenID - TLS (web proxy config) - openidc.conf (openresty)
+  when: openid_tls_web_proxy_config_set_openidc_location_exceptions
+  ansible.builtin.template:
+    src: "{{ openid_tls_web_proxy_config_openidc_conf }}.j2"
+    dest: "{{ openid_tls_web_proxy_config_openidc_conf_server_path }}"
+    owner: "{{ openid_tls_web_proxy_config_user_uid }}"
+    group: "{{ openid_tls_web_proxy_config_user_gid }}"
+    mode: "{{ openid_tls_web_proxy_config_includes_file_mode }}"
+  vars:
+    openid_client_enable_login: "{{ openid_tls_web_proxy_config_client_enable_login }}"
+    openid_client_id: "{{ openid_tls_web_proxy_config_client_id | ansible.builtin.mandatory }}"
+    openid_client_secret_file_path: "{{ openid_tls_web_proxy_config_client_secret_file_path }}"
+    openid_redirect_uri: "{{ openid_tls_web_proxy_config_redirect_uri }}"
+    openid_discovery_uri: "{{ openid_tls_web_proxy_config_discovery_uri }}"
+    openid_redirect_after_logout_uri: "{{ openid_tls_web_proxy_config_redirect_after_logout_uri }}"
     openid_http_header_authorization: "{{ openid_tls_web_proxy_config_header_authorization }}"
 
 - name: OpenID - TLS (web proxy config) - nginx.conf (openresty)

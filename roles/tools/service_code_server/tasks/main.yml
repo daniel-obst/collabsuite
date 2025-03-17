@@ -30,6 +30,7 @@
         force: true
       vars:
         service_uri: "{{ service_code_server_service_uri }}"
+        openid_user_pod: "{{ service_code_server_openid_user_pod }}"
         server_url: "{{ service_code_server_url }}"
         includes_path_reverse_proxy_conf: "{{ service_code_server_config_reverse_proxy_conf_container_path }}"
 

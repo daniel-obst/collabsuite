@@ -68,7 +68,7 @@ platform_global_identity_provider:
 ########################################
 platform_oci_container_service_globals:
   network_name: "service_network"
-  network_subnet: "10.89.0.0/24"
+  network_subnet: &platform_oci_container_service_globals_network_subnet "10.89.0.0/24"
   network_gateway: "10.89.0.1"
   network_dns: &platform_oci_container_service_globals_network_dns "10.89.0.1"
 
@@ -1052,6 +1052,11 @@ platform_service_collabora:
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
+    upstream_services_exception_allow_subnet_with_netmask: *platform_oci_container_service_globals_network_subnet
+    wopi_client: &platform_service_collabora_prod_wopi_client
+      server: *platform_globals_server_2
+      port: *platform_service_collabora_prod_firewall_port
+      uri: *platform_service_collabora_prod_service_uri
   staging:
     fqdn_service: "stagingcollabora-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_2
@@ -1090,6 +1095,11 @@ platform_service_collabora:
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
+    upstream_services_exception_allow_subnet_with_netmask: *platform_oci_container_service_globals_network_subnet
+    wopi_client: &platform_service_collabora_staging_wopi_client
+      server: *platform_globals_server_2
+      port: *platform_service_collabora_staging_firewall_port
+      uri: *platform_service_collabora_staging_service_uri
 
 platform_service_gitlab_ce:
   production:
@@ -1187,6 +1197,7 @@ platform_service_nextcloud:
       upstream_server: *platform_globals_server_3
       upstream_server_firewall_port: *platform_service_nextcloud_prod_firewall_port
       location_uri: *platform_service_nextcloud_prod_service_uri
+      regex_exception_location_uri: &platform_service_nextcloud_regex_exception_location_uri ".*/apps/richdocuments.*"
       url_rewrite: false
     service_account: &platform_service_nextcloud_prod_service_account
       username: *platform_service_nextcloud_prod_username
@@ -1211,6 +1222,7 @@ platform_service_nextcloud:
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
+    wopi_client: *platform_service_collabora_prod_wopi_client
   staging:
     fqdn_service: "stagingnextcloud-{{ ansible_service_domain }}"
     fqdn_server: *platform_globals_server_3
@@ -1230,6 +1242,7 @@ platform_service_nextcloud:
       upstream_server: *platform_globals_server_3
       upstream_server_firewall_port: *platform_service_nextcloud_staging_firewall_port
       location_uri: *platform_service_nextcloud_staging_service_uri
+      regex_exception_location_uri: *platform_service_nextcloud_regex_exception_location_uri
       url_rewrite: false
     service_account: &platform_service_nextcloud_staging_service_account
       username: *platform_service_nextcloud_staging_username
@@ -1254,6 +1267,7 @@ platform_service_nextcloud:
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
+    wopi_client: *platform_service_collabora_staging_wopi_client
 
 platform_service_grafana:
   production:
@@ -1815,6 +1829,7 @@ platform_service_internal_gateway:
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
+    upstream_services_exception_allow_subnet_with_netmask: *platform_oci_container_service_globals_network_subnet
     upstream_services:
       - *platform_service_node_red_prod_upstream_service
       - *platform_service_drawio_prod_upstream_service
@@ -1860,6 +1875,7 @@ platform_service_internal_gateway:
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
+    upstream_services_exception_allow_subnet_with_netmask: *platform_oci_container_service_globals_network_subnet
     upstream_services:
       - *platform_service_node_red_staging_upstream_service
       - *platform_service_drawio_staging_upstream_service

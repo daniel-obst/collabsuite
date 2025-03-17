@@ -50,6 +50,7 @@
         fact_tls_web_proxy_config_html_dir_mode: "{{ tls_web_proxy_config_html_dir_mode }}"
         fact_tls_web_proxy_config_html_file_mode: "{{ tls_web_proxy_config_html_file_mode }}"
 
+        fact_tls_web_proxy_config_includes_locations_config_server_path: "{{ tls_web_proxy_config_includes_locations_config_server_path }}"
         fact_tls_web_proxy_config_includes_locations_config_path: "{{ tls_web_proxy_config_includes_locations_config_path }}"
         fact_tls_web_proxy_config_includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_includes_html_error_pages_conf_path }}"
         fact_tls_web_proxy_config_secondary_includes_html_error_pages_conf_path: "{{ tls_web_proxy_config_secondary_includes_html_error_pages_conf_path }}"
@@ -60,5 +61,6 @@
         fact_tls_web_proxy_config_server_dh_file_path: "{{ tls_web_proxy_config_server_dh_file_path }}"
         fact_tls_web_proxy_config_server_ca_cert_file_path: "{{ tls_web_proxy_config_server_ca_cert_file_path }}"
 
+        fact_tls_web_proxy_config_container_includes_dir_path: "{{ tls_web_proxy_config_container_includes_dir_path }}"
         fact_tls_web_proxy_config_reverse_proxy_conf_container_path: "{{ tls_web_proxy_config_reverse_proxy_conf_container_path }}"
         fact_tls_web_proxy_config_readonly_volumes: "{{ tls_web_proxy_config_readonly_volumes + fact_tls_config_readonly_volumes }}"

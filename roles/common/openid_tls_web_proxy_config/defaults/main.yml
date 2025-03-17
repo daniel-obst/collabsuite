@@ -1,6 +1,7 @@
 ---
 openid_tls_web_proxy_config_ssl_ca_certificates_path: "{{ facts_machine_linux_machine_ca_cert_path }}"
 
+openid_tls_web_proxy_config_set_openidc_location_exceptions: false
 openid_tls_web_proxy_config_set_deny_root_uri_location: true
 openid_tls_web_proxy_config_set_x_forwarded_host: true
 

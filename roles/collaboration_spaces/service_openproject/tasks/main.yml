@@ -39,6 +39,7 @@
     force: true
   vars:
     service_uri: "{{ service_openproject_service_uri }}"
+    openid_user_pod: "{{ service_openproject_openid_user_pod }}"
     server_url: "{{ service_openproject_server_url }}"
     includes_path_reverse_proxy_conf: "{{ service_openproject_reverse_proxy_conf_container_path }}"
 

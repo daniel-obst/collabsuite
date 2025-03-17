@@ -28,7 +28,7 @@ service_external_gateway_config_auth_service_uri: "{{ service_external_gateway_a
 service_external_gateway_config_auth_gateway_url: "https://{{ service_external_gateway_auth_gateway.fqdn_server }}:{{ service_external_gateway_auth_gateway.firewall_port }}"
 service_external_gateway_config_internal_gateway_url: "https://{{ service_external_gateway_internal_gateway.server }}:{{ service_external_gateway_internal_gateway.port }}"
 service_external_gateway_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
-service_external_gateway_server_locations_conf_server_path: "{{ fact_tls_web_proxy_config_includes_dir }}/locations.conf"
+service_external_gateway_server_locations_conf_server_path: "{{ fact_tls_web_proxy_config_includes_locations_config_server_path }}"
 
 # service
 service_external_gateway_oci_service:

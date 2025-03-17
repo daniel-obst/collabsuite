@@ -1,7 +1,6 @@
-
 location /{{ service_uri }}/ {
-  set        $userPod {{ server_url }};
+  set        {{ openid_user_pod }} "";
   rewrite    ^/{{ service_uri }}(/.*)$ $1 break;
-  proxy_pass $userPod;
+  proxy_pass {{ server_url }};
   include    {{ includes_path_reverse_proxy_conf }};
 }

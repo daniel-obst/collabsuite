@@ -27,15 +27,20 @@
 
     - name: TLS (web proxy service config) - set facts
       ansible.builtin.set_fact:
-        fact_tls_web_proxy_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
-        fact_tls_web_proxy_service_config_includes_dir: "{{ fact_tls_web_proxy_config_includes_dir }}"
-        fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
-        fact_tls_web_proxy_service_config_tls_dir: "{{ fact_tls_web_proxy_config_tls_dir }}"
         fact_tls_web_proxy_service_config_uid: "{{ fact_tls_web_proxy_config_uid }}"
         fact_tls_web_proxy_service_config_gid: "{{ fact_tls_web_proxy_config_gid }}"
-        fact_tls_web_proxy_service_config_conf_file_mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+
+        fact_tls_web_proxy_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
         fact_tls_web_proxy_service_conf_dir_mode: "{{ fact_tls_web_proxy_config_conf_dir_mode }}"
+        fact_tls_web_proxy_service_config_conf_file_mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+
+        fact_tls_web_proxy_service_config_includes_dir: "{{ fact_tls_web_proxy_config_includes_dir }}"
+        fact_tls_web_proxy_service_config_includes_locations_config_server_path: "{{ tls_web_proxy_service_config_includes_locations_config_server_path }}"
+
         fact_tls_web_proxy_service_config_html_dir: "{{ fact_tls_web_proxy_config_html_dir }}"
         fact_tls_web_proxy_service_config_html_dir_mode: "{{ fact_tls_web_proxy_config_html_dir_mode }}"
         fact_tls_web_proxy_service_config_html_file_mode: "{{ fact_tls_web_proxy_config_html_file_mode }}"
+        
+        fact_tls_web_proxy_service_config_tls_dir: "{{ fact_tls_web_proxy_config_tls_dir }}"
+        fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"
         fact_tls_web_proxy_service_config_readonly_volumes: "{{ fact_tls_web_proxy_config_readonly_volumes }}"

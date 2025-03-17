@@ -33,9 +33,10 @@ service_rstudio_config_reverse_proxy_enable_web_socket: true
 
 # locations.conf
 service_rstudio_service_uri: "{{ service_rstudio_config.service_uri }}"
-service_rstudio_server_url: "http://${{ gv_openid_http_header_authorization_value }}:8787"
+service_rstudio_openid_user_pod: "{{ gv_openid_user_pod }}"
+service_rstudio_server_url: "http://{{ gv_openid_user_pod }}:8787"
 service_rstudio_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_rstudio_config_locations_server_path: "{{ service_rstudio_config_includes_dir }}/locations.conf"
+service_rstudio_config_locations_server_path: "{{ fact_openid_tls_web_proxy_config_location_conf_server_path }}"
 
 # podman_environment
 service_rstudio_default_password_file_path: "{{ platform_management_passwords_path }}/{{ service_rstudio_env_prefix }}{{ service_rstudio_config.username }}"

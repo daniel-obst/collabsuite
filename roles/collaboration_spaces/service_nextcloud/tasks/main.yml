@@ -44,6 +44,7 @@
         force: true
       vars:
         service_uri: "{{ service_nextcloud_service_uri }}"
+        openid_user_pod: "{{ service_nextcloud_openid_user_pod }}"
         server_url: "{{ service_nextcloud_server_url }}"
         includes_path_reverse_proxy_conf: "{{ service_nextcloud_config_reverse_proxy_conf_container_path }}"
         max_body_size_in_megabytes: "{{ serivce_nextcloud_config_max_body_size_in_megabytes }}"
@@ -78,6 +79,7 @@
         mode: "0755"
         force: true
       vars:
+        wopi_client_url: "{{ service_nextcloud_wopi_client_url }}"
         openid_client_id: "{{ service_nextcloud_openid_client_id }}"
         openid_client_secret_file_path: "{{ service_nextcloud_openid_client_secret_file_path }}"
         openid_discovery_uri: "{{ service_nextcloud_openid_discovery_uri }}"

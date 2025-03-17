@@ -25,9 +25,10 @@ service_openproject_config_reverse_proxy_enable_web_socket: false
 
 # locations.conf
 service_openproject_service_uri: "{{ service_openproject_config.service_uri }}"
+service_openproject_openid_user_pod: "{{ gv_openid_user_pod }}"
 service_openproject_server_url: "http://{{ service_openproject_web_worker }}:8080"
 service_openproject_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_openproject_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_openproject_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_locations_config_server_path }}"
 
 # service_postgresql_init
 service_openproject_pgsql_worker: "pgsqlworker"

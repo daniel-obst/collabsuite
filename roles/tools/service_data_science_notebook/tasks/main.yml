@@ -28,8 +28,9 @@
         force: true
       vars:
         service_uri: "{{ service_data_science_notebook_service_uri }}"
+        openid_user_pod: "{{ service_data_science_notebook_openid_user_pod }}"
         server_url: "{{ service_data_science_notebook_server_url }}"
-        reverse_proxy_conf_path: "{{ service_data_science_notebook_config_reverse_proxy_conf_container_path }}"
+        includes_path_reverse_proxy_conf: "{{ service_data_science_notebook_config_reverse_proxy_conf_container_path }}"
 
     - name: Service (data science notebook) - podman_environment
       ansible.builtin.copy:

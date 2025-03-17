@@ -31,8 +31,9 @@ service_grafana_pgsql_enable_pg_trgm_extension: false
 # locations.conf
 service_grafana_grafana_worker: "grafana_worker"
 service_grafana_service_uri: "{{ service_grafana_config.service_uri }}"
+service_grafana_openid_user_pod: "{{ gv_openid_user_pod }}"
 service_grafana_server_url: "https://{{ service_grafana_grafana_worker }}:3000"
-service_grafana_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_grafana_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_locations_config_server_path }}"
 service_grafana_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
 
 # grafana_podman_environment"

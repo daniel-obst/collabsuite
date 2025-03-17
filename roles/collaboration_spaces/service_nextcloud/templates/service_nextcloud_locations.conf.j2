@@ -1,7 +1,8 @@
 location /{{ service_uri }}/ {
-  set        $userPod {{ server_url }};
+  set        {{ openid_user_pod }} "";
+  set        $upstream {{ server_url }};
   rewrite    ^/{{ service_uri }}(/.*)$ $1 break;
-  proxy_pass $userPod;
+  proxy_pass $upstream;
   include    {{ includes_path_reverse_proxy_conf }};
 
   client_max_body_size {{ max_body_size_in_megabytes }}m;

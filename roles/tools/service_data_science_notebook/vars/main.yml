@@ -28,9 +28,10 @@ service_data_science_notebook_config_reverse_proxy_enable_web_socket: true
 
 # locations.conf
 service_data_science_notebook_service_uri: "{{ service_data_science_notebook_config.service_uri }}"
-service_data_science_notebook_server_url: "http://${{ gv_openid_http_header_authorization_value }}:8888"
+service_data_science_notebook_openid_user_pod: "{{ gv_openid_user_pod }}"
+service_data_science_notebook_server_url: "http://{{ gv_openid_user_pod }}:8888"
 service_data_science_notebook_config_reverse_proxy_conf_container_path: "{{ fact_openid_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_data_science_notebook_config_locations_server_path: "{{ service_data_science_notebook_config_includes_dir }}/locations.conf"
+service_data_science_notebook_config_locations_server_path: "{{ fact_openid_tls_web_proxy_config_location_conf_server_path }}"
 
 # podman_environment
 service_data_science_notebook_config_podman_environment_file_name: "service_data_science_notebook_podman_environment"

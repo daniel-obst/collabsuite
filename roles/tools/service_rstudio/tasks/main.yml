@@ -28,6 +28,7 @@
         force: true
       vars:
         service_uri: "{{ service_rstudio_service_uri }}"
+        openid_user_pod: "{{ service_rstudio_openid_user_pod }}"
         server_url: "{{ service_rstudio_server_url }}"
         includes_path_reverse_proxy_conf: "{{ service_rstudio_config_reverse_proxy_conf_container_path }}"
 

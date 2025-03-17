@@ -19,9 +19,10 @@ service_it_tools_config_reverse_proxy_enable_web_socket: false
 # locations.conf
 service_it_tools_service_uri: "{{ service_it_tools_config.service_uri }}"
 service_it_tools_worker: "ittools_worker"
+service_it_tools_openid_user_pod: "{{ gv_openid_user_pod }}"
 service_it_tools_server_url: "http://{{ service_it_tools_worker }}:80"
 service_it_tools_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-service_it_tools_locations_conf_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
+service_it_tools_locations_conf_server_path: "{{ fact_openid_tls_web_proxy_config_location_conf_server_path }}"
 
 # podman_environment
 service_it_tools_base_uri: "/{{ service_it_tools_config.service_uri }}/"
