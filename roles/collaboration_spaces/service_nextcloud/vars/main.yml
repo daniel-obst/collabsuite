@@ -61,8 +61,6 @@ service_nextcloud_podman_environment_server_path: "{{ fact_tls_web_proxy_service
 # php occ config:app:set --value https://www.collabsuite.ca:443/collabora richdocuments wopi_url
 service_nextcloud_openid_client_id: "{{ service_nextcloud_config_openid_client.client_id }}"
 service_nextcloud_openid_base_uri: "{{ service_nextcloud_config_openid_client.base_uri }}"
-
-#https://server-2.collabsuite.lan:443/collabora
 service_nextcloud_wopi_client_url: "https://{{ service_nextcloud_config_wopi_client.server }}:{{ service_nextcloud_config_wopi_client.port }}/{{ service_nextcloud_config_wopi_client.uri }}"
 
 service_nextcloud_openid_client_secret_file_path: "{{ fact_openid_service_init_client_secret_file_path }}"

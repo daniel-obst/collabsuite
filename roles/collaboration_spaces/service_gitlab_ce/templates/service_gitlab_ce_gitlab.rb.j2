@@ -569,17 +569,42 @@ external_url '{{ gitlab_external_url }}'
 ### OmniAuth Settings
 ###! Docs: https://docs.gitlab.com/ee/integration/omniauth.html
 # gitlab_rails['omniauth_enabled'] = nil
-# gitlab_rails['omniauth_allow_single_sign_on'] = ['saml']
-# gitlab_rails['omniauth_sync_email_from_provider'] = 'saml'
-# gitlab_rails['omniauth_sync_profile_from_provider'] = ['saml']
-# gitlab_rails['omniauth_sync_profile_attributes'] = ['email']
-# gitlab_rails['omniauth_auto_sign_in_with_provider'] = 'saml'
-# gitlab_rails['omniauth_block_auto_created_users'] = true
+gitlab_rails['omniauth_allow_single_sign_on'] = ['openid_connect']
+gitlab_rails['omniauth_sync_email_from_provider'] = 'openid_connect'
+gitlab_rails['omniauth_sync_profile_from_provider'] = ['openid_connect']
+gitlab_rails['omniauth_sync_profile_attributes'] = ['openid_connect']
+gitlab_rails['omniauth_auto_sign_in_with_provider'] = 'openid_connect'
+gitlab_rails['omniauth_block_auto_created_users'] = false
 # gitlab_rails['omniauth_auto_link_ldap_user'] = false
 # gitlab_rails['omniauth_auto_link_saml_user'] = false
 # gitlab_rails['omniauth_auto_link_user'] = ['twitter']
 # gitlab_rails['omniauth_external_providers'] = ['twitter', 'google_oauth2']
 # gitlab_rails['omniauth_allow_bypass_two_factor'] = ['google_oauth2']
+gitlab_rails['omniauth_providers'] = [
+  {
+    name: "openid_connect", # do not change this parameter
+    label: "Collabsuite OpenID", # optional label for login button, defaults to "Openid Connect"
+    args: {
+      name: "openid_connect",
+      scope: ["openid", "profile", "email"],
+      response_type: "code",
+      issuer: "{{ openid_idp_base_uri }}",
+      client_auth_method: "query",
+      discovery: true,
+      uid_field: "preferred_username",
+      pkce: true,
+      client_options: {
+        identifier: "{{ openid_client_id }}",
+        secret: "{{ lookup('openid_client_password', openid_client_secret_file_path) }}",
+        redirect_uri: "{{ openid_redirect_uri }}",
+        gitlab: {
+          groups_attribute: "groups",
+          admin_groups: ["{{ openid_admin_group_name }}"]
+        }
+       }
+     }
+  }
+]
 # gitlab_rails['omniauth_providers'] = [
 #   {
 #     "name" => "google_oauth2",

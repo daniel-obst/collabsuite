@@ -6,11 +6,18 @@ openid_service_init_global_client_info: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_openid_global_client_info.production, platform_openid_global_client_info.staging) }}"
 openid_service_init_identity_provider_gateway: "{{ openid_service_init_global_client_info.identity_provider_gateway }}"
 
-openid_service_init_idp_server: "https://{{ openid_service_init_identity_provider_gateway.domain_web }}:{{ openid_service_init_identity_provider_gateway.port }}"
+openid_service_init_idp_server_no_port: "https://{{ openid_service_init_identity_provider_gateway.domain_web }}"
+openid_service_init_idp_server_with_port: "https://{{ openid_service_init_identity_provider_gateway.domain_web }}:{{ openid_service_init_identity_provider_gateway.port }}"
+openid_service_init_idp_server: "{{ openid_service_init_redirect_uri_exclude_port
+  | ansible.builtin.ternary(openid_service_init_idp_server_no_port, openid_service_init_idp_server_with_port) }}"
+
+openid_service_init_redirect_suffix: "{{ (openid_service_init_redirect_uri_override_suffix | length > 0)
+  | ansible.builtin.ternary(openid_service_init_redirect_uri_override_suffix, openid_service_init_global_client_info.client_redirect_uri_suffix) }}"
+
 openid_service_init_relative_redirect_uri:
   "{{ ((openid_service_init_base_redirect_uri | length > 0)
   | ansible.builtin.ternary(openid_service_init_base_redirect_uri + '/', ''))
-  + openid_service_init_global_client_info.client_redirect_uri_suffix }}"
+  + openid_service_init_redirect_suffix }}"
 
 openid_service_init_post_logout_redirect: "?post_logout_redirect_uri={{ openid_service_init_idp_server }}"
 

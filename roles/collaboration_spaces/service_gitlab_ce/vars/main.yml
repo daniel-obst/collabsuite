@@ -3,6 +3,7 @@ service_gitlab_ce_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_gitlab_ce.production, platform_service_gitlab_ce.staging) }}"
 
 service_gitlab_ce_config_http_gateway: "{{ service_gitlab_ce_config.http_gateway }}"
+service_gitlab_ce_config_openid_client: "{{ service_gitlab_ce_config.openid_client }}"
 
 service_gitlab_ce_env_prefix: "gitlab_ce_"
 
@@ -27,6 +28,20 @@ service_gitlab_ce_config_container_server_crt_file_path: "{{ service_gitlab_ce_c
 service_gitlab_ce_config_container_server_key_file_path: "{{ service_gitlab_ce_config_container_ssl_dir_path }}/{{ fact_oci_container_service_init_key_file | basename }}"
 service_gitlab_ce_config_container_dh_pem_file_path: "{{ service_gitlab_ce_config_container_ssl_dir_path }}/{{ fact_oci_container_service_init_dh_file | basename }}"
 service_gitlab_ce_gitlab_rb_server_path: "{{ service_gitlab_ce_gitlab_config_dir }}/gitlab.rb"
+
+# For admin access, navigate to the following to access the login page
+#   - /gitlab/users/sign_in?auto_sign_in=false
+service_gitlab_ce_openid_client_id: "{{ service_gitlab_ce_config_openid_client.client_id }}"
+service_gitlab_ce_openid_client_secret_file_path: "{{ fact_openid_service_init_client_secret_file_path }}"
+service_gitlab_ce_openid_base_uri: "{{ service_gitlab_ce_config_openid_client.base_uri }}"
+service_gitlab_ce_openid_idp_base_uri: "{{ fact_openid_service_init_idp_base_uri }}"
+service_gitlab_ce_openid_discovery_uri: "{{ fact_openid_service_init_discovery_uri }}"
+service_gitlab_ce_openid_redirect_uri: "{{ fact_openid_service_init_redirect_uri }}"
+service_gitlab_ce_openid_admin_group_name: "{{ service_gitlab_ce_config_openid_client.admin_group_name }}"
+
+service_gitlab_ce_openid_idp_base_uri_exclude_port: true
+service_gitlab_ce_openid_redirect_uri_override_suffix: "{{ service_gitlab_ce_config_openid_client.redirect_uri_override_suffix }}"
+service_gitlab_ce_openid_redirect_uri_override_exclude_port: "{{ service_gitlab_ce_config_openid_client.redirect_uri_override_exclude_port }}"
 
 # locations.conf
 service_gitlab_ce_service_uri: "{{ service_gitlab_ce_config.service_uri }}"

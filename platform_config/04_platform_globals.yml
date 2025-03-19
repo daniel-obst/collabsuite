@@ -253,13 +253,13 @@ platform_container_images:
       platform_registry_path: &platform_container_images_gitlab_ce_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/gitlab/gitlab-ce"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_gitlab_ce_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/gitlab/gitlab-ce"
-      image_tag: &platform_container_images_gitlab_ce_prod_image_tag "17.6.2-ce.0"
+      image_tag: &platform_container_images_gitlab_ce_prod_image_tag "17.9.2-ce.0"
     staging:
       external_registry_path: &platform_container_images_gitlab_ce_staging_external_registry_path "docker.io/gitlab/gitlab-ce"
       platform_registry_path: &platform_container_images_gitlab_ce_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/gitlab/gitlab-ce"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_gitlab_ce_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/gitlab/gitlab-ce"
-      image_tag: &platform_container_images_gitlab_ce_staging_image_tag "17.6.2-ce.0"
+      image_tag: &platform_container_images_gitlab_ce_staging_image_tag "17.9.2-ce.0"
   collabora:
     production:
       external_registry_path: &platform_container_images_collabora_prod_external_registry_path "docker.io/collabora/code"
@@ -810,7 +810,6 @@ platform_service_pgadmin4:
       base_uri: *platform_service_pgadmin4_prod_service_uri
       redirect_uri_override_suffix: "oauth2/authorize"
       redirect_uri_override_exclude_port: true
-      redirect_uri_exclude_port: true
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1136,6 +1135,9 @@ platform_service_gitlab_ce:
       client_id: "gitlab-ce"
       back_channel_service_access_only: false
       base_uri: *platform_service_gitlab_ce_prod_service_uri
+      redirect_uri_override_suffix: "users/auth/openid_connect/callback"
+      redirect_uri_override_exclude_port: true
+      admin_group_name: "gitlab_ce_admin"
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1173,6 +1175,9 @@ platform_service_gitlab_ce:
       client_id: "staging-gitlab-ce"
       back_channel_service_access_only: false
       base_uri: *platform_service_gitlab_ce_staging_service_uri
+      redirect_uri_override_suffix: "users/auth/openid_connect/callback"
+      redirect_uri_override_exclude_port: true
+      admin_group_name: "staging_gitlab_ce_admin"
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1218,7 +1223,6 @@ platform_service_nextcloud:
       back_channel_service_access_only: false
       base_uri: *platform_service_nextcloud_prod_service_uri
       redirect_uri_override_suffix: "apps/user_oidc/code"
-      redirect_uri_override_exclude_port: false
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1263,7 +1267,6 @@ platform_service_nextcloud:
       back_channel_service_access_only: false
       base_uri: *platform_service_nextcloud_staging_service_uri
       redirect_uri_override_suffix: "apps/user_oidc/code"
-      redirect_uri_override_exclude_port: false
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1309,7 +1312,6 @@ platform_service_grafana:
       back_channel_service_access_only: false
       base_uri: *platform_service_grafana_prod_service_uri
       redirect_uri_override_suffix: "login/generic_oauth"
-      redirect_uri_override_exclude_port: false
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1352,7 +1354,6 @@ platform_service_grafana:
       back_channel_service_access_only: false
       base_uri: *platform_service_grafana_staging_service_uri
       redirect_uri_override_suffix: "login/generic_oauth"
-      redirect_uri_override_exclude_port: false
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600

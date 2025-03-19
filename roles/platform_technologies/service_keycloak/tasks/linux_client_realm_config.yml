@@ -75,6 +75,19 @@
   loop: "{{ service_keycloak_clients_init }}"
   delegate_to: localhost
 
+- name: Service (keycloak) - clients (admin groups)
+  community.general.keycloak_group:
+    auth_keycloak_url: "{{ service_keycloak_config_internal_uri }}"
+    auth_client_id: admin-cli
+    auth_realm: "{{ service_keycloak_config_auth_realm }}"
+    auth_username: "{{ service_keycloak_config_admin_username }}"
+    auth_password: "{{ lookup('admin_account_password', service_keycloak_config_admin_password_file) }}"
+    realm: "{{ service_keycloak_config_client_security_realm }}"
+    state: present
+    name: "{{ item.admin_group_name }}"
+  loop: "{{ service_keycloak_config_admin_groups }}"
+  delegate_to: localhost
+
 - name: Service (keycloak) - users init check
   ansible.builtin.stat:
     path: "{{ service_keycloak_users_init_lock_file_path }}"
