@@ -30,14 +30,16 @@ service_openproject_server_url: "http://{{ service_openproject_web_worker }}:808
 service_openproject_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
 service_openproject_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_locations_config_server_path }}"
 
-# service_postgresql_init
-service_openproject_pgsql_worker: "pgsqlworker"
-service_openproject_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
-service_openproject_pgsql_db: "openproject"
-service_openproject_pgsql_user: "{{ service_openproject_config_admin_username }}"
-service_openproject_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
-service_openproject_pgsql_enable_pg_trgm_extension: true
-service_openproject_pgsql_db_hostname_with_port: "{{ service_openproject_pgsql_worker }}:{{ fact_service_postgresql_init_port }}"
+# worker_postgresql
+service_openproject_postgresql_worker: "pgsqlworker"
+service_openproject_postgresql_db: "openproject"
+service_openproject_postgresql_enable_pg_trgm_extension: true
+service_openproject_postgresql_user: "{{ service_openproject_config_admin_username }}"
+service_openproject_postgresql_user_password_file_path: "{{ fact_worker_postgresql_user_password_file_path }}"
+
+service_openproject_postgresql_image_name: "{{ service_openproject_config.worker_pgsql_image_name }}"
+service_openproject_postgresql_image_tag: "{{ service_openproject_config.worker_pgsql_image_tag }}"
+service_openproject_postgresql_db_hostname_with_port: "{{ fact_worker_postgresql_db_hostname_with_port }}"
 
 # podman_environment
 # - https://www.openproject.org/docs/installation-and-operations/configuration/environment/
@@ -73,15 +75,7 @@ service_openproject_oci_service:
   added_capabilities: []
 
 # See https://github.com/opf/openproject/tree/dev/docker/prod for each script
-service_openproject_oci_service_workers:
-  - image_name: "{{ service_openproject_config.worker_pgsql_image_name }}"
-    image_tag: "{{ service_openproject_config.worker_pgsql_image_tag }}"
-    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
-    added_capabilities: []
-    containers:
-      - container_name: "{{ service_openproject_pgsql_worker }}"
-        volumes: "{{ fact_service_postgresql_init_volumes }}"
-        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
+service_openproject_workers:
   - image_name: "{{ service_openproject_config.worker_memcached_image_name }}"
     image_tag: "{{ service_openproject_config.worker_memcached_image_tag }}"
     env_file: ""
@@ -131,3 +125,5 @@ service_openproject_oci_service_workers:
         volumes:
           - "openproject_assets:/var/openproject/assets"
         readonly_volumes: []
+
+service_openproject_oci_service_workers: "{{ service_openproject_workers + fact_worker_postgresql_oci_service_workers }}"

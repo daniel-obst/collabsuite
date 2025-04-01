@@ -24,15 +24,17 @@
         openid_service_init_client_id: "{{ service_grafana_openid_client_id }}"
         openid_service_init_base_uri: "{{ service_grafana_openid_base_uri }}"
 
-    - name: Service (grafana) - database configuration
+    - name: Service (ckan) - database configuration
       ansible.builtin.include_role:
-        name: service_postgresql_init
+        name: worker_postgresql
       vars:
-        service_postgresql_init_service_name: "{{ service_grafana_service_name }}"
-        service_postgresql_init_service_config_dir: "{{ service_grafana_service_config_dir }}"
-        service_postgresql_init_pgsql_db: "{{ service_grafana_pgsql_db }}"
-        service_postgresql_init_pgsql_user: "{{ service_grafana_pgsql_user }}"
-        service_postgresql_init_enable_pg_trgm_extension: "{{ service_grafana_pgsql_enable_pg_trgm_extension }}"
+        worker_postgresql_service_name: "{{ service_grafana_service_name }}"
+        worker_postgresql_worker_name: "{{ service_grafana_postgresql_worker }}"
+        worker_postgresql_pgsql_db: "{{ service_grafana_postgresql_db }}"
+        worker_postgresql_pgsql_user: "{{ service_grafana_postgresql_user }}"
+        worker_postgresql_pgsql_image_name: "{{ service_grafana_postgresql_image_name }}"
+        worker_postgresql_pgsql_image_tag: "{{ service_grafana_postgresql_image_tag }}"
+        worker_postgresql_enable_pg_trgm_extension: "{{ service_grafana_postgresql_enable_pg_trgm_extension }}"
 
     - name: Service (grafana) - locations.conf
       ansible.builtin.template:
@@ -60,9 +62,9 @@
         server_domain: "{{ service_grafana_server_domain }}"
         https_root_url: "{{ service_grafana_https_root_url }}"
         host_with_port: "{{ service_grafana_host_with_port }}"
-        pgsql_db: "{{ service_grafana_pgsql_db }}"
-        pgsql_user: "{{ service_grafana_pgsql_user }}"
-        pgsql_password_file_path: "{{ service_grafana_pgsql_user_password_file_path }}"
+        pgsql_db: "{{ service_grafana_postgresql_db }}"
+        pgsql_user: "{{ service_grafana_postgresql_user }}"
+        pgsql_password_file_path: "{{ service_grafana_postgresql_user_password_file_path }}"
         admin_user: "{{ service_grafana_admin_user }}"
         admin_user_password_file_path: "{{ service_grafana_admin_user_password_file_path }}"
         admin_email: "{{ service_grafana_admin_email }}"

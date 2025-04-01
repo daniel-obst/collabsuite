@@ -1,0 +1,48 @@
+---
+- name: Platform (postgresql) init
+  when: facts_machine_linux_distro
+  block:
+    - name: Platform (postgresql) - pgsql_podman_environment
+      ansible.builtin.template:
+        src: "{{ platform_postgresql_pgsql_podman_environment_filename }}"
+        dest: "{{ platform_postgresql_pgsql_podman_environment_server_path }}"
+        owner: "{{ platform_postgresql_user_uid }}"
+        group: "{{ platform_postgresql_user_gid }}"
+        mode: "{{ platform_postgresql_file_mode }}"
+        force: true
+      vars:
+        pgsql_password_file_path: "{{ platform_postgresql_pgsql_postgres_password_file_path }}"
+
+    - name: Platform (postgresql) - 01_pgsql_init.sh
+      ansible.builtin.template:
+        src: "{{ platform_postgresql_pgsql_init_sh_filename }}"
+        dest: "{{ platform_postgresql_pgsql_init_sh_server_path }}"
+        owner: "{{ platform_postgresql_user_uid }}"
+        group: "{{ platform_postgresql_user_gid }}"
+        mode: "{{ platform_postgresql_executable_file_mode }}"
+        force: true
+      vars:
+        pgsql_db: "{{ platform_postgresql_pgsql_db }}"
+        pgsql_user: "{{ platform_postgresql_pgsql_user }}"
+        pgsql_password_file_path: "{{ platform_postgresql_pgsql_user_password_file_path }}"
+
+    - name: Platform (postgresql) - 02_pgsql_initpg_trgm_extension.sh
+      ansible.builtin.template:
+        src: "platform_postgresql_pgsql_init_pg_trgm_extension.sh.j2"
+        dest: "{{ platform_postgresql_pgsql_init_pg_trgm_extension_sh_server_path }}"
+        owner: "{{ platform_postgresql_user_uid }}"
+        group: "{{ platform_postgresql_user_gid }}"
+        mode: "{{ platform_postgresql_executable_file_mode }}"
+        force: true
+      vars:
+        pgsql_db: "{{ platform_postgresql_pgsql_db }}"
+      when: platform_postgresql_enable_pg_trgm_extension
+
+    - name: Platform (postgresql) - set facts
+      set_fact:
+        fact_platform_postgresql_podman_environment_server_path: "{{ platform_postgresql_pgsql_podman_environment_server_path }}"
+        fact_platform_postgresql_postgres_password_file_path: "{{ platform_postgresql_pgsql_postgres_password_file_path }}"
+        fact_platform_postgresql_user_password_file_path: "{{ platform_postgresql_pgsql_user_password_file_path }}"
+        fact_platform_postgresql_volumes: "{{ platform_postgresql_volumes }}"
+        fact_platform_postgresql_readonly_volumes: "{{ platform_postgresql_readonly_volumes }}"
+        fact_platform_postgresql_container_port: "{{ platform_postgresql_container_port }}"

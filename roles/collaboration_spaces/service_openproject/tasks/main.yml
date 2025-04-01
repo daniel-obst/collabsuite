@@ -19,55 +19,57 @@
         tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_openproject_config_reverse_proxy_enable_web_socket }}"
         tls_web_proxy_service_config_http_gateway: "{{ service_openproject_config_http_gateway }}"
 
-- name: Service (openproject) - database configuration
-  ansible.builtin.include_role:
-    name: service_postgresql_init
-  vars:
-    service_postgresql_init_service_name: "{{ service_openproject_service_name }}"
-    service_postgresql_init_service_config_dir: "{{ service_openproject_service_config_dir }}"
-    service_postgresql_init_pgsql_db: "{{ service_openproject_pgsql_db }}"
-    service_postgresql_init_pgsql_user: "{{ service_openproject_pgsql_user }}"
-    service_postgresql_init_enable_pg_trgm_extension: "{{ service_openproject_pgsql_enable_pg_trgm_extension }}"
+    - name: Service (openproject) - database configuration
+      ansible.builtin.include_role:
+        name: worker_postgresql
+      vars:
+        worker_postgresql_service_name: "{{ service_openproject_service_name }}"
+        worker_postgresql_worker_name: "{{ service_openproject_postgresql_worker }}"
+        worker_postgresql_pgsql_db: "{{ service_openproject_postgresql_db }}"
+        worker_postgresql_pgsql_user: "{{ service_openproject_postgresql_user }}"
+        worker_postgresql_pgsql_image_name: "{{ service_openproject_postgresql_image_name }}"
+        worker_postgresql_pgsql_image_tag: "{{ service_openproject_postgresql_image_tag }}"
+        worker_postgresql_enable_pg_trgm_extension: "{{ service_openproject_postgresql_enable_pg_trgm_extension }}"
 
-- name: Service (openproject) - locations.conf
-  ansible.builtin.template:
-    src: "service_openproject_locations.conf.j2"
-    dest: "{{ service_openproject_config_locations_server_path }}"
-    owner: "{{ fact_tls_web_proxy_config_uid }}"
-    group: "{{ fact_tls_web_proxy_config_gid }}"
-    mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
-    force: true
-  vars:
-    service_uri: "{{ service_openproject_service_uri }}"
-    openid_user_pod: "{{ service_openproject_openid_user_pod }}"
-    server_url: "{{ service_openproject_server_url }}"
-    includes_path_reverse_proxy_conf: "{{ service_openproject_reverse_proxy_conf_container_path }}"
+    - name: Service (openproject) - locations.conf
+      ansible.builtin.template:
+        src: "service_openproject_locations.conf.j2"
+        dest: "{{ service_openproject_config_locations_server_path }}"
+        owner: "{{ fact_tls_web_proxy_config_uid }}"
+        group: "{{ fact_tls_web_proxy_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+        force: true
+      vars:
+        service_uri: "{{ service_openproject_service_uri }}"
+        openid_user_pod: "{{ service_openproject_openid_user_pod }}"
+        server_url: "{{ service_openproject_server_url }}"
+        includes_path_reverse_proxy_conf: "{{ service_openproject_reverse_proxy_conf_container_path }}"
 
-- name: Service (openproject) - openproject_podman_environment
-  ansible.builtin.template:
-    src: "service_openproject_podman_environment.j2"
-    dest: "{{ service_openproject_podman_environment_server_path }}"
-    owner: "{{ fact_tls_web_proxy_config_uid }}"
-    group: "{{ fact_tls_web_proxy_config_gid }}"
-    mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
-    force: true
-  vars:
-    service_uri: "{{ service_openproject_service_uri }}"
-    openproject_hostname: "{{ service_openproject_hostname }}"
-    db_hostname_with_port: "{{ service_openproject_pgsql_db_hostname_with_port }}"
-    db_user: "{{ service_openproject_pgsql_user }}"
-    db_user_password_file_path: "{{ service_openproject_pgsql_user_password_file_path }}"
-    db_name: "{{ service_openproject_pgsql_db }}"
-    admin_user: "{{ service_openproject_admin_user }}"
-    admin_password_file_path: "{{ service_openproject_admin_user_password_file_path }}"
-    admin_user_email: "{{ service_openproject_admin_user_email }}"
-    openproject_secret_key_file_path: "{{ service_openproject_secret_key_file_path }}"
-    root_ca_file_path: "{{ service_openproject_root_ca_file_path }}"
-    memcached_host_with_port: "{{ service_openproject_memcached_host_with_port }}"
+    - name: Service (openproject) - openproject_podman_environment
+      ansible.builtin.template:
+        src: "service_openproject_podman_environment.j2"
+        dest: "{{ service_openproject_podman_environment_server_path }}"
+        owner: "{{ fact_tls_web_proxy_config_uid }}"
+        group: "{{ fact_tls_web_proxy_config_gid }}"
+        mode: "{{ fact_tls_web_proxy_config_conf_file_mode }}"
+        force: true
+      vars:
+        service_uri: "{{ service_openproject_service_uri }}"
+        openproject_hostname: "{{ service_openproject_hostname }}"
+        db_hostname_with_port: "{{ service_openproject_postgresql_db_hostname_with_port }}"
+        db_user: "{{ service_openproject_postgresql_user }}"
+        db_user_password_file_path: "{{ service_openproject_postgresql_user_password_file_path }}"
+        db_name: "{{ service_openproject_postgresql_db }}"
+        admin_user: "{{ service_openproject_admin_user }}"
+        admin_password_file_path: "{{ service_openproject_admin_user_password_file_path }}"
+        admin_user_email: "{{ service_openproject_admin_user_email }}"
+        openproject_secret_key_file_path: "{{ service_openproject_secret_key_file_path }}"
+        root_ca_file_path: "{{ service_openproject_root_ca_file_path }}"
+        memcached_host_with_port: "{{ service_openproject_memcached_host_with_port }}"
 
-- name: Service (openproject) - deploy service
-  ansible.builtin.include_role:
-    name: oci_container_service
-  vars:
-    oci_container_service_config: "{{ service_openproject_oci_service }}"
-    oci_container_service_workers: "{{ service_openproject_oci_service_workers }}"
+    - name: Service (openproject) - deploy service
+      ansible.builtin.include_role:
+        name: oci_container_service
+      vars:
+        oci_container_service_config: "{{ service_openproject_oci_service }}"
+        oci_container_service_workers: "{{ service_openproject_oci_service_workers }}"

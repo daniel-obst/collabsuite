@@ -331,13 +331,13 @@ platform_container_images:
       platform_registry_path: &platform_container_images_openproject_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/openproject/openproject"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_openproject_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/openproject/openproject"
-      image_tag: &platform_container_images_openproject_prod_image_tag "15.2.1-slim"
+      image_tag: &platform_container_images_openproject_prod_image_tag "15.4.1-slim"
     staging:
       external_registry_path: &platform_container_images_openproject_staging_external_registry_path "docker.io/openproject/openproject"
       platform_registry_path: &platform_container_images_openproject_staging_platform_registry_path "{{ platform_container_images_staging_platform_registry_path }}/openproject/openproject"
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_openproject_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/openproject/openproject"
-      image_tag: &platform_container_images_openproject_staging_image_tag "15.2.1-slim"
+      image_tag: &platform_container_images_openproject_staging_image_tag "15.4.1-slim"
   it_tools:
     production:
       external_registry_path: &platform_container_images_it_tools_prod_external_registry_path "docker.io/corentinth/it-tools"
@@ -364,6 +364,19 @@ platform_container_images:
       platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
       image_name: &platform_container_images_ckan_base_staging_image_name "{{ platform_container_images_staging_registry_image_path }}/ckan/ckan-base"
       image_tag: &platform_container_images_ckan_base_staging_image_tag "2.11.2"
+  ckan_base_xloader:
+    production:
+      external_registry_path: &platform_container_images_ckan_base_xloader_prod_external_registry_path "docker.io/ckan/ckan-base-xloader"
+      platform_registry_path: &platform_container_images_ckan_base_xloader_prod_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/ckan/ckan-base-xloader"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_ckan_base_xloader_prod_image_name "{{ platform_container_images_prod_registry_image_path }}/ckan/ckan-base-xloader"
+      image_tag: &platform_container_images_ckan_base_xloader_prod_image_tag "1.0.1"
+    staging:
+      external_registry_path: &platform_container_images_ckan_base_xloader_staging_external_registry_path "docker.io/ckan/ckan-base-xloader"
+      platform_registry_path: &platform_container_images_ckan_base_xloader_staging_platform_registry_path "{{ platform_container_images_prod_platform_registry_path }}/ckan/ckan-base-xloader"
+      platform_registry_supported_platform_arch: *platform_registry_globals_linux_amd64
+      image_name: &platform_container_images_ckan_base_xloader_staging_image_name "{{ platform_container_images_prod_registry_image_path }}/ckan/ckan-base-xloader"
+      image_tag: &platform_container_images_ckan_base_xloader_staging_image_tag "1.0.1"
   ckan_solr:
     production:
       external_registry_path: &platform_container_images_ckan_solr_prod_external_registry_path "docker.io/ckan/ckan-solr"
@@ -1442,50 +1455,6 @@ platform_service_redmine:
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
 
-platform_service_node_red_pgsql:
-  production:
-    fqdn_service: "node-red-pgsql-{{ ansible_service_domain }}"
-    fqdn_server: *platform_globals_server_3
-    firewall_port: &platform_service_node_red_pgsql_prod_firewall_port "4438"
-    server_port: &platform_service_node_red_pgsql_prod_server_port "4438"
-    service_image_name: *platform_container_images_postgresql_16_prod_image_name
-    service_image_tag: *platform_container_images_postgresql_16_prod_image_tag
-    service_uri: "node-red-pgsql"
-    username: &platform_service_node_red_pgsql_prod_username "noderedpgsql"
-    db: "cars"
-    db_user: "user1"
-    service_account: &platform_service_node_red_pgsql_prod_service_account
-      username: *platform_service_node_red_pgsql_prod_username
-      gecos: "node-red pgsql user"
-    service_forward_port: &platform_service_node_red_pgsql_prod_forward_port
-      destination_port: *platform_service_node_red_pgsql_prod_firewall_port
-      protocol: "tcp"
-      redirect_port: *platform_service_node_red_pgsql_prod_server_port
-      service_name: *platform_service_node_red_pgsql_prod_username
-      username: *platform_service_node_red_pgsql_prod_username
-      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
-  staging:
-    fqdn_service: "staging-node-red-pgsql-{{ ansible_service_domain }}"
-    fqdn_server: *platform_globals_server_3
-    firewall_port: &platform_service_node_red_pgsql_staging_firewall_port "5438"
-    server_port: &platform_service_node_red_pgsql_staging_server_port "5438"
-    service_image_name: *platform_container_images_postgresql_16_prod_image_name
-    service_image_tag: *platform_container_images_postgresql_16_prod_image_tag
-    service_uri: "staging-node-red-pgsql"
-    username: &platform_service_node_red_pgsql_staging_username "stagingnoderedpgsql"
-    db: "stagingcars"
-    db_user: "staginguser1"
-    service_account: &platform_service_node_red_pgsql_staging_service_account
-      username: *platform_service_node_red_pgsql_staging_username
-      gecos: "node-red pgsql user (staging)"
-    service_forward_port: &platform_service_node_red_pgsql_staging_forward_port
-      destination_port: *platform_service_node_red_pgsql_staging_firewall_port
-      protocol: "tcp"
-      redirect_port: *platform_service_node_red_pgsql_staging_server_port
-      service_name: *platform_service_node_red_pgsql_staging_username
-      username: *platform_service_node_red_pgsql_staging_username
-      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
-
 platform_service_data_science_notebook:
   production:
     fqdn_service: "data-science-notebook-{{ ansible_service_domain }}"
@@ -1744,6 +1713,8 @@ platform_service_ckan:
     worker_ckan_solr_image_tag: *platform_container_images_ckan_solr_prod_image_tag
     worker_ckan_base_image_name: *platform_container_images_ckan_base_prod_image_name
     worker_ckan_base_image_tag: *platform_container_images_ckan_base_prod_image_tag
+    worker_ckan_base_xloader_image_name: *platform_container_images_ckan_base_xloader_prod_image_name
+    worker_ckan_base_xloader_image_tag: *platform_container_images_ckan_base_xloader_prod_image_tag
     service_uri: &platform_service_ckan_prod_service_uri "ckan"
     username: &platform_service_ckan_prod_username "ckan"
     admin_username: "admin"
@@ -1779,6 +1750,8 @@ platform_service_ckan:
     worker_ckan_solr_image_tag: *platform_container_images_ckan_solr_staging_image_tag
     worker_ckan_base_image_name: *platform_container_images_ckan_base_staging_image_name
     worker_ckan_base_image_tag: *platform_container_images_ckan_base_staging_image_tag
+    worker_ckan_base_xloader_image_name: *platform_container_images_ckan_base_xloader_staging_image_name
+    worker_ckan_base_xloader_image_tag: *platform_container_images_ckan_base_xloader_staging_image_tag
     service_uri: &platform_service_ckan_staging_service_uri "ckan"
     username: &platform_service_ckan_staging_username "stagingckan"
     admin_username: "stagingadmin"
@@ -1968,6 +1941,90 @@ platform_service_certbot:
       restricted_to_ipv4_with_cidr: ""
     http_gateway: *platform_global_external_gateway_staging_info
 
+platform_service_shared_node_red_database:
+  production:
+    fqdn_service: "node-red-pgsql-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_shared_node_red_database_prod_firewall_port "4438"
+    server_port: &platform_service_shared_node_red_database_prod_server_port "4438"
+    service_image_name: *platform_container_images_postgresql_16_prod_image_name
+    service_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    service_uri: "node-red-pgsql"
+    username: &platform_service_shared_node_red_database_prod_username "noderedpgsql"
+    db_name: "cars"
+    db_user: "user1"
+    service_account: &platform_service_shared_node_red_database_prod_service_account
+      username: *platform_service_shared_node_red_database_prod_username
+      gecos: "Shared node-red database pgsql user"
+    service_forward_port: &platform_service_shared_node_red_database_prod_forward_port
+      destination_port: *platform_service_shared_node_red_database_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_shared_node_red_database_prod_server_port
+      service_name: *platform_service_shared_node_red_database_prod_username
+      username: *platform_service_shared_node_red_database_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+  staging:
+    fqdn_service: "staging-node-red-pgsql-{{ ansible_service_domain }}"
+    fqdn_server: *platform_globals_server_3
+    firewall_port: &platform_service_shared_node_red_database_staging_firewall_port "5438"
+    server_port: &platform_service_shared_node_red_database_staging_server_port "5438"
+    service_image_name: *platform_container_images_postgresql_16_staging_image_name
+    service_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    service_uri: "staging-node-red-pgsql"
+    username: &platform_service_shared_node_red_database_staging_username "stagingnoderedpgsql"
+    db_name: "stagingcars"
+    db_user: "staginguser1"
+    service_account: &platform_service_shared_node_red_database_staging_service_account
+      username: *platform_service_shared_node_red_database_staging_username
+      gecos: "Shared node-red database pgsql user (staging)"
+    service_forward_port: &platform_service_shared_node_red_database_staging_forward_port
+      destination_port: *platform_service_shared_node_red_database_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_shared_node_red_database_staging_server_port
+      service_name: *platform_service_shared_node_red_database_staging_username
+      username: *platform_service_shared_node_red_database_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+
+platform_service_shared_cancer_database:
+  production:
+    firewall_port: &platform_service_shared_cancer_database_prod_firewall_port "4442"
+    server_port: &platform_service_shared_cancer_database_prod_server_port "4442"
+    service_image_name: *platform_container_images_postgresql_16_prod_image_name
+    service_image_tag: *platform_container_images_postgresql_16_prod_image_tag
+    service_uri: "sharedcancerdatabase"
+    username: &platform_service_shared_cancer_database_prod_username "sharedcancerdatabase"
+    db_name: "CancerData"
+    db_user: *platform_service_shared_cancer_database_prod_username
+    service_account: &platform_service_shared_cancer_database_prod_service_account
+      username: *platform_service_shared_cancer_database_prod_username
+      gecos: "Shared cancer database pgsql user"
+    service_forward_port: &platform_service_shared_cancer_database_prod_forward_port
+      destination_port: *platform_service_shared_cancer_database_prod_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_shared_cancer_database_prod_server_port
+      service_name: *platform_service_shared_cancer_database_prod_username
+      username: *platform_service_shared_cancer_database_prod_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+  staging:
+    firewall_port: &platform_service_shared_cancer_database_staging_firewall_port "5442"
+    server_port: &platform_service_shared_cancer_database_staging_server_port "5442"
+    service_image_name: *platform_container_images_postgresql_16_staging_image_name
+    service_image_tag: *platform_container_images_postgresql_16_staging_image_tag
+    service_uri: "stagingsharedcancerdatabase"
+    username: &platform_service_shared_cancer_database_staging_username "stagingsharedcancerdatabase"
+    db_name: "StagingCancerData"
+    db_user: *platform_service_shared_cancer_database_staging_username
+    service_account: &platform_service_shared_cancer_database_staging_service_account
+      username: *platform_service_shared_cancer_database_staging_username
+      gecos: "Shared cancer database pgsql user (staging)"
+    service_forward_port: &platform_service_shared_cancer_database_staging_forward_port
+      destination_port: *platform_service_shared_cancer_database_staging_firewall_port
+      protocol: "tcp"
+      redirect_port: *platform_service_shared_cancer_database_staging_server_port
+      service_name: *platform_service_shared_cancer_database_staging_username
+      username: *platform_service_shared_cancer_database_staging_username
+      restricted_to_ipv4_with_cidr: *platform_globals_rfc1918_class_a
+
 #################################################
 # Platform - Identity Management Configurations #
 #################################################
@@ -2109,31 +2166,35 @@ platform_server_3_server_config:
       - *platform_service_nextcloud_prod_service_account
       - *platform_service_grafana_prod_service_account
       - *platform_service_redmine_prod_service_account
-      - *platform_service_node_red_pgsql_prod_service_account
       - *platform_service_openproject_prod_service_account
       - *platform_service_ckan_prod_service_account
+      - *platform_service_shared_node_red_database_prod_service_account
+      - *platform_service_shared_cancer_database_prod_service_account
     services_forward_ports:
       - *platform_service_gitlab_ce_prod_forward_port
       - *platform_service_nextcloud_prod_forward_port
       - *platform_service_grafana_prod_forward_port
       - *platform_service_redmine_prod_forward_port
-      - *platform_service_node_red_pgsql_prod_forward_port
       - *platform_service_openproject_prod_forward_port
       - *platform_service_ckan_prod_forward_port
+      - *platform_service_shared_node_red_database_prod_forward_port
+      - *platform_service_shared_cancer_database_prod_forward_port
   staging:
     services_user_accounts:
       - *platform_service_gitlab_ce_staging_service_account
       - *platform_service_nextcloud_staging_service_account
       - *platform_service_grafana_staging_service_account
       - *platform_service_redmine_staging_service_account
-      - *platform_service_node_red_pgsql_staging_service_account
       - *platform_service_openproject_staging_service_account
       - *platform_service_ckan_staging_service_account
+      - *platform_service_shared_node_red_database_staging_service_account
+      - *platform_service_shared_cancer_database_staging_service_account
     services_forward_ports:
       - *platform_service_gitlab_ce_staging_forward_port
       - *platform_service_nextcloud_staging_forward_port
       - *platform_service_grafana_staging_forward_port
       - *platform_service_redmine_staging_forward_port
-      - *platform_service_node_red_pgsql_staging_forward_port
       - *platform_service_openproject_staging_forward_port
       - *platform_service_ckan_staging_forward_port
+      - *platform_service_shared_node_red_database_staging_forward_port
+      - *platform_service_shared_cancer_database_staging_forward_port

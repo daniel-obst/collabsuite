@@ -16,13 +16,15 @@
 
 - name: Service (quay.io) - database configuration
   ansible.builtin.include_role:
-    name: service_postgresql_init
+    name: worker_postgresql
   vars:
-    service_postgresql_init_service_name: "{{ service_quay_io_service_name }}"
-    service_postgresql_init_service_config_dir: "{{ service_quay_io_service_config_dir }}"
-    service_postgresql_init_pgsql_db: "{{ service_quay_io_pgsql_db }}"
-    service_postgresql_init_pgsql_user: "{{ service_quay_io_pgsql_user }}"
-    service_postgresql_init_enable_pg_trgm_extension: "{{ service_quay_io_pgsql_enable_pg_trgm_extension }}"
+    worker_postgresql_service_name: "{{ service_quay_io_service_name }}"
+    worker_postgresql_worker_name: "{{ service_quay_io_postgresql_worker }}"
+    worker_postgresql_pgsql_db: "{{ service_quay_io_postgresql_db }}"
+    worker_postgresql_pgsql_user: "{{ service_quay_io_postgresql_user }}"
+    worker_postgresql_pgsql_image_name: "{{ service_quay_io_postgresql_image_name }}"
+    worker_postgresql_pgsql_image_tag: "{{ service_quay_io_postgresql_image_tag }}"
+    worker_postgresql_enable_pg_trgm_extension: "{{ service_quay_io_postgresql_enable_pg_trgm_extension }}"
 
 - name: Service (quay.io) - locations.conf
   ansible.builtin.template:
@@ -54,7 +56,7 @@
     redis_password_file: "{{ service_quay_io_redis_password_file }}"
     pgsql_prefix: "{{ service_quay_io_pgsql_prefix }}"
     pgsql_hostname_with_port: "{{ service_quay_io_pgsql_hostname_with_port }}"
-    pgsql_password_file: "{{ service_quay_io_pgsql_user_password_file_path }}"
+    pgsql_password_file: "{{ service_quay_io_postgresql_user_password_file_path }}"
     database_secret_key_file: "{{ service_quay_io_database_secret_key }}"
     secret_key_file: "{{ service_quay_io_secret_key }}"
 

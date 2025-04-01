@@ -2,7 +2,7 @@
 - name: OCI container service (directories)
   when: facts_machine_linux_distro
   block:
-    - name: OCI container service (directories) - web proxy directory
+    - name: OCI container service (directories) - conf.d directory
       ansible.builtin.file:
         path: "{{ oci_container_service_directories_conf_dir }}"
         state: directory

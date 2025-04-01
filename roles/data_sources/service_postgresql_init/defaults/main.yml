@@ -1,3 +1,0 @@
----
-service_postgresql_init_port: "5432"
-service_postgresql_init_enable_pg_trgm_extension: false

@@ -1,0 +1,20 @@
+---
+# Mandatories
+worker_postgresql_pgsql_service_name: "{{ worker_postgresql_service_name | ansible.builtin.mandatory }}"
+worker_postgresql_pgsql_worker_name: "{{ worker_postgresql_worker_name | ansible.builtin.mandatory }}"
+worker_postgresql_pgsql_db: "{{ worker_postgresql_database_name | ansible.builtin.mandatory }}"
+worker_postgresql_pgsql_user: "{{ worker_postgresql_username | ansible.builtin.mandatory }}"
+
+worker_postgresql_pgsql_image_name: "{{ worker_postgresql_image_name | ansible.builtin.mandatory }}"
+worker_postgresql_pgsql_image_tag: "{{ worker_postgresql_image_tag | ansible.builtin.mandatory }}"
+
+# workers
+worker_postgresql_oci_service_workers:
+  - image_name: "{{ worker_postgresql_pgsql_image_name }}"
+    image_tag: "{{ worker_postgresql_pgsql_image_tag }}"
+    env_file: "{{ fact_platform_postgresql_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ worker_postgresql_pgsql_worker_name }}"
+        volumes: "{{ fact_platform_postgresql_volumes }}"
+        readonly_volumes: "{{ fact_platform_postgresql_readonly_volumes }}"

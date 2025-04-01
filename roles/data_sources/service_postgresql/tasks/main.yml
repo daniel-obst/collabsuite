@@ -1,0 +1,21 @@
+---
+- name: Service (postgresql)
+  when: facts_machine_linux_distro
+  block:
+    - name: Service (postgresql) - init
+      ansible.builtin.include_role:
+        name: platform_postgresql
+      vars:
+        platform_postgresql_service_name: "{{ service_postgresql_pgsql_service_name }}"
+        platform_postgresql_database_name: "{{ service_postgresql_pgsql_db }}"
+        platform_postgresql_username: "{{ service_postgresql_pgsql_user }}"
+        platform_postgresql_image_name: "{{ service_postgresql_pgsql_image_name }}"
+        platform_postgresql_image_tag: "{{ service_postgresql_pgsql_image_tag }}"
+        platform_postgresql_enable_pg_trgm_extension: "{{ service_postgresql_enable_pg_trgm_extension }}"
+
+    - name: Service (postgresql) - deploy service
+      ansible.builtin.include_role:
+        name: oci_container_service
+      vars:
+        oci_container_service_config: "{{ service_postgresql_oci_service }}"
+        oci_container_service_workers: []

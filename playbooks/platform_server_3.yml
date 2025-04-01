@@ -2,7 +2,8 @@
 - name: Platform (server 3) - environment
   hosts: platform_server_3
   tags: [servers, platform_server_3_servers, services, services_gitlab_ce, services_nextcloud, 
-        services_grafana, services_redmine, services_node_red_pgsql, services_openproject,
+        services_grafana, services_redmine, services_openproject,
+        services_shared_node_red_database, services_shared_cancer_database,
         #services_ckan
         ]
   connection: local
@@ -104,25 +105,6 @@
   roles:
     - role: service_redmine
 
-# Service: node-red pgsql #
-- name: Platform (server 3) - node-red (pgsql - service)
-  hosts: platform_server_3
-  tags: [services, services_node_red_pgsql]
-  connection: local
-  become: false
-  roles:
-    - role: service_node_red_pgsql_init
-
-- name: Platform (server 3) - node-red (pgsql service - deploy)
-  hosts: platform_server_3
-  tags: [services, services_node_red_pgsql]
-  become: false
-  vars:
-    ansible_user: "{{ fact_oci_container_service_init_username }}"
-    ansible_ssh_private_key_file: "{{ fact_oci_container_service_init_private_key_file }}"
-  roles:
-    - role: service_node_red_pgsql
-
 # Service: openproject #
 - name: Platform (server 3) - openproject (service)
   hosts: platform_server_3
@@ -160,3 +142,61 @@
 #     ansible_ssh_private_key_file: "{{ fact_oci_container_service_init_private_key_file }}"
 #   roles:
 #     - role: service_ckan
+
+# Service: node-red database #
+- name: Platform (server 3) - shared node-red database - (service)
+  hosts: platform_server_3
+  tags: [services, services_shared_node_red_database]
+  connection: local
+  become: false
+  roles:
+    - role: service_postgresql_init
+      vars:
+        service_postgresql_init_username: "{{ platform_service_shared_node_red_database.production.username }}"
+
+- name: Platform (server 3) - shared node-red database - (service - deploy)
+  hosts: platform_server_3
+  tags: [services, services_shared_node_red_database]
+  become: false
+  vars:
+    ansible_user: "{{ fact_oci_container_service_init_username }}"
+    ansible_ssh_private_key_file: "{{ fact_oci_container_service_init_private_key_file }}"
+  roles:
+    - role: service_postgresql
+      vars:
+        service_postgresql_deploy_as_service: true
+        service_postgresql_service_name: "{{ platform_service_shared_node_red_database.production.username }}"
+        service_postgresql_server_port: "{{ platform_service_shared_node_red_database.production.server_port }}"
+        service_postgresql_database_name: "{{ platform_service_shared_node_red_database.production.db_name }}"
+        service_postgresql_database_username: "{{ platform_service_shared_node_red_database.production.db_user }}"
+        service_postgresql_image_name: "{{ platform_service_shared_node_red_database.production.service_image_name }}"
+        service_postgresql_image_tag: "{{ platform_service_shared_node_red_database.production.service_image_tag }}"
+
+# Service: shared cancer database #
+- name: Platform (server 3) - shared cancer database - (service)
+  hosts: platform_server_3
+  tags: [services, services_shared_cancer_database]
+  connection: local
+  become: false
+  roles:
+    - role: service_postgresql_init
+      vars:
+        service_postgresql_init_username: "{{ platform_service_shared_cancer_database.production.username }}"
+
+- name: Platform (server 3) - shared cancer database - (service - deploy)
+  hosts: platform_server_3
+  tags: [services, services_shared_cancer_database]
+  become: false
+  vars:
+    ansible_user: "{{ fact_oci_container_service_init_username }}"
+    ansible_ssh_private_key_file: "{{ fact_oci_container_service_init_private_key_file }}"
+  roles:
+    - role: service_postgresql
+      vars:
+        service_postgresql_deploy_as_service: true
+        service_postgresql_service_name: "{{ platform_service_shared_cancer_database.production.username }}"
+        service_postgresql_server_port: "{{ platform_service_shared_cancer_database.production.server_port }}"
+        service_postgresql_database_name: "{{ platform_service_shared_cancer_database.production.db_name }}"
+        service_postgresql_database_username: "{{ platform_service_shared_cancer_database.production.db_user }}"
+        service_postgresql_image_name: "{{ platform_service_shared_cancer_database.production.service_image_name }}"
+        service_postgresql_image_tag: "{{ platform_service_shared_cancer_database.production.service_image_tag }}"

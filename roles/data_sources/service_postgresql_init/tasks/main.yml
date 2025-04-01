@@ -1,48 +1,10 @@
 ---
-- name: Service (postgresql) init
+- name: Service (postgresql) - init
   when: facts_machine_linux_distro
   block:
-    - name: Service (postgresql) - pgsql_podman_environment
-      ansible.builtin.template:
-        src: "service_postgresql_init_pgsql_podman_environment.j2"
-        dest: "{{ service_postgresql_init_pgsql_podman_environment_server_path }}"
-        owner: "{{ service_postgresql_init_config_uid }}"
-        group: "{{ service_postgresql_init_config_gid }}"
-        mode: "{{ service_postgresql_init_conf_file_mode }}"
-        force: true
+    - name: Service (postgresql) - container service init
+      ansible.builtin.include_role:
+        name: oci_container_service_init
       vars:
-        pgsql_password_file_path: "{{ service_postgresql_init_pgsql_postgres_password_file_path }}"
-
-    - name: Service (postgresql) - 01_pgsql_init.sh
-      ansible.builtin.template:
-        src: "service_postgresql_init_pgsql_init.sh.j2"
-        dest: "{{ service_postgresql_init_pgsql_init_sh_server_path }}"
-        owner: "{{ service_postgresql_init_config_uid }}"
-        group: "{{ service_postgresql_init_config_gid }}"
-        mode: "{{ service_postgresql_init_executable_file_mode }}"
-        force: true
-      vars:
-        pgsql_db: "{{ service_postgresql_init_pgsql_db }}"
-        pgsql_user: "{{ service_postgresql_init_pgsql_user }}"
-        pgsql_password_file_path: "{{ service_postgresql_init_pgsql_user_password_file_path }}"
-
-    - name: Service (postgresql) - 02_pgsql_initpg_trgm_extension.sh
-      ansible.builtin.template:
-        src: "service_postgresql_init_pgsql_init_pg_trgm_extension.sh.j2"
-        dest: "{{ service_postgresql_init_pgsql_init_pg_trgm_extension_sh_server_path }}"
-        owner: "{{ service_postgresql_init_config_uid }}"
-        group: "{{ service_postgresql_init_config_gid }}"
-        mode: "{{ service_postgresql_init_executable_file_mode }}"
-        force: true
-      vars:
-        pgsql_db: "{{ service_postgresql_init_pgsql_db }}"
-      when: service_postgresql_init_enable_pg_trgm_extension
-
-    - name: Service (postgresql) - set facts
-      set_fact:
-        fact_service_postgresql_init_pgsql_podman_environment_server_path: "{{ service_postgresql_init_pgsql_podman_environment_server_path }}"
-        fact_service_postgresql_init_pgsql_postgres_password_file_path: "{{ service_postgresql_init_pgsql_postgres_password_file_path }}"
-        fact_service_postgresql_init_pgsql_user_password_file_path: "{{ service_postgresql_init_pgsql_user_password_file_path }}"
-        fact_service_postgresql_init_volumes: "{{ service_postgresql_init_volumes }}"
-        fact_service_postgresql_init_readonly_volumes: "{{ service_postgresql_init_readonly_volumes }}"
-        fact_service_postgresql_init_port: "{{ service_postgresql_init_port }}"
+        oci_container_service_init_username: "{{ service_postgresql_init_username | ansible.builtin.mandatory }}"
+        oci_container_service_init_process_service_cert: "{{ service_postgresql_init_process_service_cert }}"

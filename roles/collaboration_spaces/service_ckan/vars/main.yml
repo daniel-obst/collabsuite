@@ -1,4 +1,13 @@
 ---
+service_rstudio_config_user_uid: "{{ fact_openid_tls_web_proxy_service_config_uid }}"
+service_rstudio_config_user_gid: "{{ fact_openid_tls_web_proxy_service_config_gid }}"
+
+service_rstudio_config_conf_dir: "{{ fact_openid_tls_web_proxy_service_config_dir }}"
+service_rstudio_config_conf_file_mode: "{{ fact_openid_tls_web_proxy_service_config_conf_file_mode }}"
+
+service_rstudio_config_includes_dir: "{{ fact_openid_tls_web_proxy_service_config_includes_dir }}"
+service_rstudio_config_includes_file_mode: "{{ fact_openid_tls_web_proxy_service_config_includes_file_mode }}"
+
 service_ckan_config: "{{ ansible_deploy_production
   | ansible.builtin.ternary(platform_service_ckan.production, platform_service_ckan.staging) }}"
 
@@ -19,22 +28,34 @@ service_ckan_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca_ce
 service_ckan_config_reverse_proxy_additional_headers: []
 service_ckan_config_reverse_proxy_enable_web_socket: true
 
-# service_postgresql_init
-service_ckan_pgsql_worker: "pgsql_worker"
-service_ckan_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
-service_ckan_pgsql_user: "{{ service_ckan_config.admin_username }}"
-service_ckan_pgsql_db: "ckan"
-service_ckan_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
-service_ckan_pgsql_enable_pg_trgm_extension: false
+# worker_postgresql
+service_ckan_postgresql_worker: "pgsql_worker"
+service_ckan_postgresql_db: "ckan"
+service_ckan_postgresql_user: "{{ service_ckan_config.admin_username }}"
+service_ckan_postgresql_user_password_file_path: "{{ fact_worker_postgresql_user_password_file_path }}"
+
+service_ckan_postgresql_image_name: "{{ service_ckan_config.worker_pgsql_image_name }}"
+service_ckan_postgresql_image_tag: "{{ service_ckan_config.worker_pgsql_image_tag }}"
 
 # locations.conf
-service_ckan_base_worker: "ckan_base_worker"
 service_ckan_service_uri: "{{ service_ckan_config.service_uri }}"
 service_ckan_server_url: "http://{{ service_ckan_base_worker }}:5000"
 service_ckan_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_dir }}/locations.conf"
 service_ckan_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
 
-# ckan_podman_environment"
+# ckan_redis_podman_environment
+service_ckan_redis_worker: "ckan_redis_worker"
+service_ckan_redis_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/grafana_podman_environment"
+
+# ckan_solr_podman_environment
+service_ckan_solr_worker: "ckan_solr_worker"
+
+# ckan_base_xloader_podman_environment
+service_ckan_base_xloader_worker: "ckan_base_xloader_worker"
+
+# ckan_base_podman_environment
+service_ckan_base_worker: "ckan_base_worker"
+
 # service_ckan_server_domain: "{{ ansible_host_domain }}"
 # service_ckan_https_root_url:
 #   "https://{{ service_ckan_config.http_gateway.server }}:{{ service_ckan_config.http_gateway.port }}/{{ service_ckan_config.service_uri }}/"
@@ -56,16 +77,7 @@ service_ckan_oci_service:
   env_file: ""
   added_capabilities: []
 
-service_ckan_oci_service_workers:
-  - image_name: "{{ service_ckan_config.worker_pgsql_image_name }}"
-    image_tag: "{{ service_ckan_config.worker_pgsql_image_tag }}"
-    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
-    added_capabilities: []
-    containers:
-      - container_name: "{{ service_ckan_pgsql_worker }}"
-        volumes: "{{ fact_service_postgresql_init_volumes }}"
-        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
-
+service_ckan_workers:
   - image_name: "{{ service_ckan_config.worker_redis_image_name }}"
     image_tag: "{{ service_ckan_config.worker_redis_image_tag }}"
     env_file: ""
@@ -74,7 +86,6 @@ service_ckan_oci_service_workers:
       - container_name: "{{ service_ckan_redis_worker }}"
         volumes: [] 
         readonly_volumes: []
-
   - image_name: "{{ service_ckan_config.worker_ckan_solr_image_name }}"
     image_tag: "{{ service_ckan_config.worker_ckan_solr_image_tag }}"
     env_file: ""
@@ -84,7 +95,14 @@ service_ckan_oci_service_workers:
         volumes:
           - "ckan_solr_data:/var/solr" 
         readonly_volumes: []
-
+  - image_name: "{{ service_ckan_config.worker_ckan_base_xloader_image_name }}"
+    image_tag: "{{ service_ckan_config.worker_ckan_base_xloader_image_tag }}"
+    env_file: "{{ service_ckan_ckan_podman_environment_server_path }}"
+    added_capabilities: []
+    containers:
+      - container_name: "{{ service_ckan_base_xloader }}"
+        volumes: []
+        readonly_volumes: []
   - image_name: "{{ service_ckan_config.worker_ckan_base_image_name }}"
     image_tag: "{{ service_ckan_config.worker_ckan_base_image_tag }}"
     env_file: "{{ service_ckan_ckan_podman_environment_server_path }}"
@@ -94,3 +112,5 @@ service_ckan_oci_service_workers:
         volumes:
           - "ckan_storage:/var/lib/ckan"
         readonly_volumes: []
+
+service_ckan_oci_service_workers: "{{ service_ckan_workers + fact_worker_postgresql_oci_service_workers }}"

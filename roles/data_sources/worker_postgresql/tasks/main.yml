@@ -1,0 +1,22 @@
+---
+- name: Worker (postgresql)
+  when: facts_machine_linux_distro
+  block:
+    - name: Worker (postgresql) - init
+      ansible.builtin.include_role:
+        name: platform_postgresql
+      vars:
+        platform_postgresql_service_name: "{{ worker_postgresql_pgsql_service_name }}"
+        platform_postgresql_database_name: "{{ worker_postgresql_pgsql_db }}"
+        platform_postgresql_username: "{{ worker_postgresql_pgsql_user }}"
+        platform_postgresql_image_name: "{{ worker_postgresql_pgsql_image_name }}"
+        platform_postgresql_image_tag: "{{ worker_postgresql_pgsql_image_tag }}"
+        platform_postgresql_enable_pg_trgm_extension: "{{ worker_postgresql_enable_pg_trgm_extension }}"
+
+    - name: Worker (postgresql) - set facts
+      set_fact:
+        fact_worker_postgresql_user_password_file_path: "{{ fact_platform_postgresql_user_password_file_path }}"
+        fact_worker_postgresql_db_hostname: "{{ worker_postgresql_pgsql_worker_name }}"
+        fact_worker_postgresql_db_port: "{{ fact_platform_postgresql_container_port }}"
+        fact_worker_postgresql_db_hostname_with_port: "{{ worker_postgresql_pgsql_worker_name }}:{{ fact_platform_postgresql_container_port }}"
+        fact_worker_postgresql_oci_service_workers: "{{ worker_postgresql_oci_service_workers }}"

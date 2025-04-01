@@ -28,13 +28,15 @@
 
 - name: Service (keycloak) - database configuration
   ansible.builtin.include_role:
-    name: service_postgresql_init
+    name: worker_postgresql
   vars:
-    service_postgresql_init_service_name: "{{ service_keycloak_service_name }}"
-    service_postgresql_init_service_config_dir: "{{ service_keycloak_service_config_dir }}"
-    service_postgresql_init_pgsql_db: "{{ service_keycloak_pgsql_db }}"
-    service_postgresql_init_pgsql_user: "{{ service_keycloak_pgsql_user }}"
-    service_postgresql_init_enable_pg_trgm_extension: "{{ service_keycloak_pgsql_enable_pg_trgm_extension }}"
+    worker_postgresql_service_name: "{{ service_keycloak_service_name }}"
+    worker_postgresql_worker_name: "{{ service_keycloak_postgresql_worker }}"
+    worker_postgresql_pgsql_db: "{{ service_keycloak_postgresql_db }}"
+    worker_postgresql_pgsql_user: "{{ service_keycloak_postgresql_user }}"
+    worker_postgresql_pgsql_image_name: "{{ service_keycloak_postgresql_image_name }}"
+    worker_postgresql_pgsql_image_tag: "{{ service_keycloak_postgresql_image_tag }}"
+    worker_postgresql_enable_pg_trgm_extension: "{{ service_keycloak_postgresql_enable_pg_trgm_extension }}"
 
 - name: Service (keycloak) - locations.conf (internal)
   ansible.builtin.template:
@@ -66,9 +68,9 @@
     max_queued_requests: "{{ service_keycloak_config_max_queued_requests }}"
     external_base_uri: "{{ service_keycloak_config_external_uri }}"
     internal_base_uri: "{{ service_keycloak_config_internal_uri }}"
-    db_username: "{{ service_keycloak_pgsql_user }}"
-    db_password_file_path: "{{ service_keycloak_pgsql_user_password_file_path }}"
-    db_name: "{{ service_keycloak_pgsql_db }}"
+    db_username: "{{ service_keycloak_postgresql_user }}"
+    db_password_file_path: "{{ service_keycloak_postgresql_user_password_file_path }}"
+    db_name: "{{ service_keycloak_postgresql_db }}"
     db_hostname: "{{ service_keycloak_url_host }}"
     db_port: "{{ service_keycloak_url_port }}"
 

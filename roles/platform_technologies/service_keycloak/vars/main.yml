@@ -45,13 +45,15 @@ service_keycloak_secondary_config_reverse_proxy_additional_headers: []
 service_keycloak_secondary_config_reverse_proxy_enable_web_socket: true
 service_keycloak_secondary_config_locations_server_path: "{{ fact_tls_web_proxy_config_includes_dir }}/locations_secondary.conf"
 
-# service_postgresql_init
-service_keycloak_pgsql_worker: "pgsql_worker"
-service_keycloak_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
-service_keycloak_pgsql_db: "keycloak"
-service_keycloak_pgsql_user: "{{ service_keycloak_config_admin_username }}"
-service_keycloak_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
-service_keycloak_pgsql_enable_pg_trgm_extension: true
+# worker_postgresql
+service_keycloak_postgresql_worker: "pgsql_worker"
+service_keycloak_postgresql_db: "keycloak"
+service_keycloak_postgresql_user: "{{ service_keycloak_config_admin_username }}"
+service_keycloak_postgresql_user_password_file_path: "{{ fact_worker_postgresql_user_password_file_path }}"
+
+service_keycloak_postgresql_image_name: "{{ service_keycloak_config.worker_pgsql_image_name }}"
+service_keycloak_postgresql_image_tag: "{{ service_keycloak_config.worker_pgsql_image_tag }}"
+service_keycloak_postgresql_enable_pg_trgm_extension: true
 
 # podman_environment
 service_keycloak_config_bootstrap_admin_username: "{{ service_keycloak_config.bootstrap_admin_username }}"
@@ -66,8 +68,8 @@ service_keycloak_config_external_uri:
 service_keycloak_config_internal_uri:
   "https://{{ service_keycloak_config.fqdn_server }}:{{ service_keycloak_config.firewall_port }}/{{ service_keycloak_config.service_uri }}"
 service_keycloak_config_max_queued_requests: "{{ service_keycloak_config.max_queued_requests }}"
-service_keycloak_url_host: "{{ service_keycloak_pgsql_worker }}"
-service_keycloak_url_port: "5432"
+service_keycloak_url_host: "{{ fact_worker_postgresql_db_hostname }}"
+service_keycloak_url_port: "{{ fact_worker_postgresql_db_port }}"
 service_keycloak_podman_environment_server_path: "{{ fact_tls_web_proxy_config_dir }}/podman_environment"
 
 # service (init)
@@ -132,16 +134,7 @@ service_keycloak_oci_service:
   env_file: ""
   added_capabilities: []
 
-service_keycloak_oci_service_workers:
-  - image_name: "{{ service_keycloak_config.worker_pgsql_image_name }}"
-    image_tag: "{{ service_keycloak_config.worker_pgsql_image_tag }}"
-    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
-    added_capabilities: []
-    containers:
-      - container_name: "{{ service_keycloak_pgsql_worker }}"
-        volumes: "{{ fact_service_postgresql_init_volumes }}"
-        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
-
+service_keycloak_workers:
   - image_name: "{{ service_keycloak_config.worker_keycloak_image_name }}"
     image_tag: "{{ service_keycloak_config.worker_keycloak_image_tag }}"
     env_file: "{{ service_keycloak_podman_environment_server_path }}"
@@ -152,3 +145,5 @@ service_keycloak_oci_service_workers:
           - "./data:/opt/keycloak/data"
           - "./{{ fact_tls_web_proxy_config_tls_dir }}:/opt/keycloak/tls"
         readonly_volumes: []
+
+service_keycloak_oci_service_workers: "{{ fact_worker_postgresql_oci_service_workers + service_keycloak_workers }}"

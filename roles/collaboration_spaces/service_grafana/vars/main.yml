@@ -20,13 +20,14 @@ service_grafana_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca
 service_grafana_config_reverse_proxy_additional_headers: []
 service_grafana_config_reverse_proxy_enable_web_socket: true
 
-# service_postgresql_init
-service_grafana_pgsql_worker: "pgsql_worker"
-service_grafana_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
-service_grafana_pgsql_user: "{{ service_grafana_config.admin_username }}"
-service_grafana_pgsql_db: "grafana"
-service_grafana_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
-service_grafana_pgsql_enable_pg_trgm_extension: false
+# worker_postgresql
+service_grafana_postgresql_worker: "pgsql_worker"
+service_grafana_postgresql_db: "grafana"
+service_grafana_postgresql_user: "{{ service_grafana_config.admin_username }}"
+service_grafana_postgresql_user_password_file_path: "{{ fact_worker_postgresql_user_password_file_path }}"
+service_grafana_postgresql_image_name: "{{ service_grafana_config.worker_pgsql_image_name }}"
+service_grafana_postgresql_image_tag: "{{ service_grafana_config.worker_pgsql_image_tag }}"
+service_grafana_postgresql_enable_pg_trgm_extension: false
 
 # locations.conf
 service_grafana_grafana_worker: "grafana_worker"
@@ -40,7 +41,7 @@ service_grafana_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_servic
 service_grafana_server_domain: "{{ service_grafana_config.http_gateway.domain }}"
 service_grafana_https_root_url:
   "https://{{ service_grafana_config.http_gateway.domain_web }}:{{ service_grafana_config.http_gateway.port }}/{{ service_grafana_config.service_uri }}/"
-service_grafana_host_with_port: "{{ service_grafana_pgsql_worker }}:5432"
+service_grafana_host_with_port: "{{ fact_worker_postgresql_db_hostname_with_port }}"
 service_grafana_admin_user: "{{ service_grafana_config.admin_username }}"
 service_grafana_admin_user_password_file_path: "{{ service_grafana_password_path_prefix }}{{ service_grafana_admin_user }}"
 service_grafana_admin_email: "{{ service_grafana_config.admin_email }}"
@@ -75,16 +76,7 @@ service_grafana_oci_service:
   env_file: ""
   added_capabilities: []
 
-service_grafana_oci_service_workers:
-  - image_name: "{{ service_grafana_config.worker_pgsql_image_name }}"
-    image_tag: "{{ service_grafana_config.worker_pgsql_image_tag }}"
-    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
-    added_capabilities: []
-    containers:
-      - container_name: "{{ service_grafana_pgsql_worker }}"
-        volumes: "{{ fact_service_postgresql_init_volumes }}"
-        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
-
+service_grafana_workers:
   - image_name: "{{ service_grafana_config.worker_grafana_image_name }}"
     image_tag: "{{ service_grafana_config.worker_grafana_image_tag }}"
     env_file: "{{ service_grafana_grafana_podman_environment_server_path }}"
@@ -94,3 +86,5 @@ service_grafana_oci_service_workers:
         volumes:
           - "grafana-storage:/var/lib/grafana"
         readonly_volumes: []
+
+service_grafana_oci_service_workers: "{{ service_grafana_workers + fact_worker_postgresql_oci_service_workers }}"

@@ -28,14 +28,15 @@ service_quay_io_config_key_file_path: "{{ fact_oci_container_service_init_key_fi
 service_quay_io_config_dh_file_path: "{{ fact_oci_container_service_init_dh_file }}"
 service_quay_io_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca_cert_file }}"
 
-# service_postgresql_init
-service_quay_io_pgsql_worker: "pgsql_worker"
-service_quay_io_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
-service_quay_io_pgsql_user: "{{ service_quay_io_registry_admin_username }}"
-service_quay_io_pgsql_db: "quayio"
-service_quay_io_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
+# worker_postgresql
+service_quay_io_postgresql_worker: "pgsql_worker"
+service_quay_io_postgresql_db: "quayio"
+service_quay_io_postgresql_user: "{{ service_quay_io_config.admin_username }}"
+service_quay_io_postgresql_user_password_file_path: "{{ fact_worker_postgresql_user_password_file_path }}"
+service_quay_io_postgresql_image_name: "{{ service_quay_io_config.worker_pgsql_image_name }}"
+service_quay_io_postgresql_image_tag: "{{ service_quay_io_config.worker_pgsql_image_tag }}"
 service_quay_io_database_secret_key: "{{ service_quay_io_password_path_prefix }}database_secret_key"
-service_quay_io_pgsql_enable_pg_trgm_extension: true
+service_quay_io_postgresql_enable_pg_trgm_extension: true
 
 # locations.conf
 service_quay_io_server_url: "http://{{ service_quay_io_quay_worker }}:8080"
@@ -50,8 +51,8 @@ service_quay_io_firewall_port: "{{ service_quay_io_config.firewall_port }}"
 service_quay_io_secret_key: "{{ service_quay_io_password_path_prefix }}secret_key"
 service_quay_io_branding_long_title: "{{ service_quay_io_config.branding_long_title }}"
 service_quay_io_branding_short_title: "{{ service_quay_io_config.branding_short_title }}"
-service_quay_io_pgsql_prefix: "postgresql://{{ service_quay_io_pgsql_user }}"
-service_quay_io_pgsql_hostname_with_port: "{{ service_quay_io_pgsql_worker }}:5432/{{ service_quay_io_pgsql_db }}"
+service_quay_io_pgsql_prefix: "postgresql://{{ service_quay_io_postgresql_user }}"
+service_quay_io_pgsql_hostname_with_port: "{{ fact_worker_postgresql_db_hostname }}:{{ fact_worker_postgresql_db_port }}/{{ service_quay_io_postgresql_db }}"
 service_quay_io_hostname_with_port: "{{ service_quay_io_server_hostname }}:{{ service_quay_io_firewall_port }}"
 service_quay_io_config_server_path: "{{ fact_tls_web_proxy_config_dir }}/quay_io_config.yaml"
 
@@ -84,7 +85,7 @@ service_quay_io_oci_service:
   env_file: ""
   added_capabilities: []
 
-service_quay_io_oci_service_workers:
+service_quay_io_workers:
   - image_name: "{{ service_quay_io_config.worker_quay_image_name }}"
     image_tag: "{{ service_quay_io_config.worker_quay_image_tag }}"
     env_file: ""
@@ -95,14 +96,6 @@ service_quay_io_oci_service_workers:
           - "storage:/datastorage"
           - "./{{ fact_tls_web_proxy_config_dir }}/quay_io_config.yaml:/conf/stack/config.yaml"
         readonly_volumes: []
-  - image_name: "{{ service_quay_io_config.worker_pgsql_image_name }}"
-    image_tag: "{{ service_quay_io_config.worker_pgsql_image_tag }}"
-    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
-    added_capabilities: []
-    containers:
-      - container_name: "{{ service_quay_io_pgsql_worker }}"
-        volumes: "{{ fact_service_postgresql_init_volumes }}"
-        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
   - image_name: "{{ service_quay_io_config.worker_redis_image_name }}"
     image_tag: "{{ service_quay_io_config.worker_redis_image_tag }}"
     env_file: "{{ service_quay_io_redis_podman_environment_server_path }}"
@@ -111,3 +104,5 @@ service_quay_io_oci_service_workers:
       - container_name: "{{ service_quay_io_redis_worker }}"
         volumes: []
         readonly_volumes: []
+
+service_quay_io_oci_service_workers: "{{ service_quay_io_workers + fact_worker_postgresql_oci_service_workers }}"

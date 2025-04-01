@@ -19,13 +19,14 @@ service_redmine_config_ca_cert_file_path: "{{ fact_oci_container_service_init_ca
 service_redmine_config_reverse_proxy_additional_headers: []
 service_redmine_config_reverse_proxy_enable_web_socket: false
 
-# service_postgresql_init
-service_redmine_pgsql_worker: "pgsql_worker"
-service_redmine_service_config_dir: "{{ fact_tls_web_proxy_config_dir }}"
-service_redmine_pgsql_user: "{{ service_redmine_config.admin_username }}"
-service_redmine_pgsql_db: "redmine"
-service_redmine_pgsql_user_password_file_path: "{{ fact_service_postgresql_init_pgsql_user_password_file_path }}"
-service_redmine_pgsql_enable_pg_trgm_extension: false
+# worker_postgresql
+service_redmine_postgresql_worker: "pgsql_worker"
+service_redmine_postgresql_db: "redmine"
+service_redmine_postgresql_user: "{{ service_redmine_config.admin_username }}"
+service_redmine_postgresql_user_password_file_path: "{{ fact_worker_postgresql_user_password_file_path }}"
+service_redmine_postgresql_image_name: "{{ service_redmine_config.worker_pgsql_image_name }}"
+service_redmine_postgresql_image_tag: "{{ service_redmine_config.worker_pgsql_image_tag }}"
+service_redmine_postgresql_enable_pg_trgm_extension: false
 
 # locations.conf
 service_redmine_redmine_worker: "redmine_worker"
@@ -41,8 +42,8 @@ service_redmine_env: "{{ ansible_deploy_production | ansible.builtin.ternary('pr
 service_redmine_admin_username: "{{ service_redmine_config.admin_username }}"
 service_redmine_admin_password_file_path: "{{ service_redmine_password_path_prefix }}admin"
 service_redmine_admin_email: "{{ service_redmine_config.admin_email }}"
-service_redmine_pgsql_host: "{{ service_redmine_pgsql_worker }}"
-service_redmine_pgsql_port: "5432"
+service_redmine_postgresql_host: "{{ fact_worker_postgresql_db_hostname }}"
+service_redmine_postgresql_port: "{{ fact_worker_postgresql_db_port }}"
 service_redmine_redmine_podman_environment_server_path: "{{ fact_tls_web_proxy_service_config_dir }}/redmine_podman_environment"
 
 # config.ru
@@ -60,16 +61,7 @@ service_redmine_oci_service:
   env_file: ""
   added_capabilities: []
 
-service_redmine_oci_service_workers:
-  - image_name: "{{ service_redmine_config.worker_pgsql_image_name }}"
-    image_tag: "{{ service_redmine_config.worker_pgsql_image_tag }}"
-    env_file: "{{ fact_service_postgresql_init_pgsql_podman_environment_server_path }}"
-    added_capabilities: []
-    containers:
-      - container_name: "{{ service_redmine_pgsql_worker }}"
-        volumes: "{{ fact_service_postgresql_init_volumes }}"
-        readonly_volumes: "{{ fact_service_postgresql_init_readonly_volumes }}"
-
+service_redmine_workers:
   - image_name: "{{ service_redmine_config.worker_redmine_image_name }}"
     image_tag: "{{ service_redmine_config.worker_redmine_image_tag }}"
     env_file: "{{ service_redmine_redmine_podman_environment_server_path }}"
@@ -80,3 +72,5 @@ service_redmine_oci_service_workers:
           - "redmine_files:/usr/src/redmine/files"
         readonly_volumes:
           - "./{{ service_redmine_config_ru_server_path }}:/usr/src/redmine/config.ru"
+
+service_redmine_oci_service_workers: "{{ service_redmine_workers + fact_worker_postgresql_oci_service_workers }}"

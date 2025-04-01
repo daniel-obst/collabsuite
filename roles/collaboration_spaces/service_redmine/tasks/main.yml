@@ -19,13 +19,15 @@
 
     - name: Service (redmine) - database configuration
       ansible.builtin.include_role:
-        name: service_postgresql_init
+        name: worker_postgresql
       vars:
-        service_postgresql_init_service_name: "{{ service_redmine_service_name }}"
-        service_postgresql_init_service_config_dir: "{{ service_redmine_service_config_dir }}"
-        service_postgresql_init_pgsql_db: "{{ service_redmine_pgsql_db }}"
-        service_postgresql_init_pgsql_user: "{{ service_redmine_pgsql_user }}"
-        service_postgresql_init_enable_pg_trgm_extension: "{{ service_redmine_pgsql_enable_pg_trgm_extension }}"
+        worker_postgresql_service_name: "{{ service_redmine_service_name }}"
+        worker_postgresql_worker_name: "{{ service_redmine_postgresql_worker }}"
+        worker_postgresql_pgsql_db: "{{ service_redmine_postgresql_db }}"
+        worker_postgresql_pgsql_user: "{{ service_redmine_postgresql_user }}"
+        worker_postgresql_pgsql_image_name: "{{ service_redmine_postgresql_image_name }}"
+        worker_postgresql_pgsql_image_tag: "{{ service_redmine_postgresql_image_tag }}"
+        worker_postgresql_enable_pg_trgm_extension: "{{ service_redmine_postgresql_enable_pg_trgm_extension }}"
 
     - name: Service (redmine) - locations.conf
       ansible.builtin.template:
@@ -56,11 +58,11 @@
         # admin_username: "{{ service_redmine_admin_username }}"
         # admin_password_file_path: "{{ service_redmine_admin_password_file_path }}"
         # admin_email: "{{ service_redmine_admin_email }}"
-        pgsql_host: "{{ service_redmine_pgsql_host }}"
-        pgsql_port: "{{ service_redmine_pgsql_port }}"
-        pgsql_db: "{{ service_redmine_pgsql_db }}"
-        pgsql_user: "{{ service_redmine_pgsql_user }}"
-        pgsql_password_file_path: "{{ service_redmine_pgsql_user_password_file_path }}"
+        pgsql_host: "{{ service_redmine_postgresql_host }}"
+        pgsql_port: "{{ service_redmine_postgresql_port }}"
+        pgsql_db: "{{ service_redmine_postgresql_db }}"
+        pgsql_user: "{{ service_redmine_postgresql_user }}"
+        pgsql_password_file_path: "{{ service_redmine_postgresql_user_password_file_path }}"
 
     - name: Service (redmine) - config.ru
       ansible.builtin.template:

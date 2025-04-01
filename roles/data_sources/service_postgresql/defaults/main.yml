@@ -1,0 +1,2 @@
+---
+service_postgresql_enable_pg_trgm_extension: false

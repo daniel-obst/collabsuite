@@ -24,15 +24,17 @@
         openid_service_init_client_id: "{{ service_nextcloud_openid_client_id }}"
         openid_service_init_base_uri: "{{ service_nextcloud_openid_base_uri }}"
 
-    - name: Service (nextcloud) - database configuration
+    - name: Service (ckan) - database configuration
       ansible.builtin.include_role:
-        name: service_postgresql_init
+        name: worker_postgresql
       vars:
-        service_postgresql_init_service_name: "{{ service_nextcloud_service_name }}"
-        service_postgresql_init_service_config_dir: "{{ service_nextcloud_service_config_dir }}"
-        service_postgresql_init_pgsql_db: "{{ service_nextcloud_pgsql_db }}"
-        service_postgresql_init_pgsql_user: "{{ service_nextcloud_pgsql_user }}"
-        service_postgresql_init_enable_pg_trgm_extension: "{{ service_nextcloud_pgsql_enable_pg_trgm_extension }}"
+        worker_postgresql_service_name: "{{ service_nextcloud_service_name }}"
+        worker_postgresql_worker_name: "{{ service_nextcloud_postgresql_worker }}"
+        worker_postgresql_pgsql_db: "{{ service_nextcloud_postgresql_db }}"
+        worker_postgresql_pgsql_user: "{{ service_nextcloud_postgresql_user }}"
+        worker_postgresql_pgsql_image_name: "{{ service_nextcloud_postgresql_image_name }}"
+        worker_postgresql_pgsql_image_tag: "{{ service_nextcloud_postgresql_image_tag }}"
+        worker_postgresql_enable_pg_trgm_extension: "{{ service_nextcloud_postgresql_enable_pg_trgm_extension }}"
 
     - name: Service (nextcloud) - locations.conf
       ansible.builtin.template:
@@ -60,9 +62,9 @@
       vars:
         admin_username: "{{ service_nextcloud_admin_username }}"
         password_file_path: "{{ service_nextcloud_password_file_path }}"
-        db_name: "{{ service_nextcloud_pgsql_db }}"
-        db_username: "{{ service_nextcloud_pgsql_user }}"
-        db_password_file_path: "{{ service_nextcloud_pgsql_user_password_file_path }}"
+        db_name: "{{ service_nextcloud_postgresql_db }}"
+        db_username: "{{ service_nextcloud_postgresql_user }}"
+        db_password_file_path: "{{ service_nextcloud_postgresql_user_password_file_path }}"
         db_hostname_with_port: "{{ service_nextcloud_db_host_with_port }}"
         trusted_domains: "{{ service_nextcloud_trusted_domains }}"
         trusted_proxies: "{{ service_nextcloud_trusted_proxies }}"

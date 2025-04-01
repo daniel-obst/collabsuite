@@ -9,8 +9,9 @@
 - name: Platform - trusted gateways (playbook)
   ansible.builtin.import_playbook: playbooks/platform_internal_gateways.yml
 
-- name: Platform - domain name providers (playbook)
-  ansible.builtin.import_playbook: playbooks/platform_domain_name_providers.yml
+# Uncomment when an internal DNS is integrated
+# - name: Platform - domain name providers (playbook)
+#   ansible.builtin.import_playbook: playbooks/platform_domain_name_providers.yml
 
 - name: Platform - identity providers (playbook)
   ansible.builtin.import_playbook: playbooks/platform_identity_providers.yml
