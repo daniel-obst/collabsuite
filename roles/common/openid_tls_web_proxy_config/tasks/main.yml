@@ -8,6 +8,8 @@
       vars:
         openid_service_init_client_id: "{{ openid_tls_web_proxy_config_client_id }}"
         openid_service_init_base_uri: "{{ openid_tls_web_proxy_config_base_uri }}"
+        openid_service_init_base_url_exclude_port: "{{ openid_tls_web_proxy_config_openid_base_url_exclude_port }}"
+        openid_service_init_redirect_uri_suffix_override: "{{ openid_tls_web_proxy_config_openid_redirect_uri_suffix_override }}"
 
     - name: OpenID - TLS (web proxy config) - proxy configuration
       ansible.builtin.include_role:

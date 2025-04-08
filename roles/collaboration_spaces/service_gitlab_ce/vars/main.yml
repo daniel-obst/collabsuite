@@ -39,9 +39,8 @@ service_gitlab_ce_openid_discovery_uri: "{{ fact_openid_service_init_discovery_u
 service_gitlab_ce_openid_redirect_uri: "{{ fact_openid_service_init_redirect_uri }}"
 service_gitlab_ce_openid_admin_group_name: "{{ service_gitlab_ce_config_openid_client.admin_group_name }}"
 
-service_gitlab_ce_openid_idp_base_uri_exclude_port: true
-service_gitlab_ce_openid_redirect_uri_override_suffix: "{{ service_gitlab_ce_config_openid_client.redirect_uri_override_suffix }}"
-service_gitlab_ce_openid_redirect_uri_override_exclude_port: "{{ service_gitlab_ce_config_openid_client.redirect_uri_override_exclude_port }}"
+service_gitlab_ce_openid_base_url_exclude_port: "{{ service_gitlab_ce_config_openid_client.base_url_exclude_port }}"
+service_gitlab_ce_openid_redirect_uri_suffix_override: "{{ service_gitlab_ce_config_openid_client.redirect_uri_suffix_override }}"
 
 # locations.conf
 service_gitlab_ce_service_uri: "{{ service_gitlab_ce_config.service_uri }}"

@@ -9,12 +9,14 @@ platform_globals:
     internal_network_dns_ip: &platform_globals_prod_internal_network_dns_ip
       "{{ facts_platform_environment.external_server.production.platform_internal_network_dns }}"
     landing_page_title: "Collabsuite (v2.0)"
+    base_url_exclude_port: &platform_globals_prod_base_url_exclude_port true
   staging:
     https_port: &platform_globals_staging_https_port "8444"
     https_redirect_port: &platform_globals_staging_https_redirect_port "8444"
     internal_network_dns_ip: &platform_globals_staging_internal_network_dns_ip
       "{{ facts_platform_environment.external_server.staging.platform_internal_network_dns }}"
     landing_page_title: "Collabsuite (v2.0 - staging)"
+    base_url_exclude_port: &platform_globals_staging_base_url_exclude_port false
   rfc1918:
     class_a: &platform_globals_rfc1918_class_a "10.0.0.0/8"
     class_b: &platform_globals_rfc1918_class_b "172.16.0.0/12"
@@ -666,6 +668,9 @@ platform_service_node_red:
       client_id: "node-red"
       back_channel_service_access_only: false
       base_uri: *platform_service_node_red_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -703,6 +708,9 @@ platform_service_node_red:
       client_id: "staging-node-red"
       back_channel_service_access_only: false
       base_uri: *platform_service_node_red_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -742,6 +750,9 @@ platform_service_drawio:
       client_id: "drawio"
       back_channel_service_access_only: false
       base_uri: *platform_service_drawio_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -779,6 +790,9 @@ platform_service_drawio:
       client_id: "staging-drawio"
       back_channel_service_access_only: false
       base_uri: *platform_service_drawio_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -821,8 +835,9 @@ platform_service_pgadmin4:
       client_id: "pgadmin4"
       back_channel_service_access_only: false
       base_uri: *platform_service_pgadmin4_prod_service_uri
-      redirect_uri_override_suffix: "oauth2/authorize"
-      redirect_uri_override_exclude_port: true
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: "oauth2/authorize"
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -863,8 +878,9 @@ platform_service_pgadmin4:
       client_id: "staging-pgadmin4"
       back_channel_service_access_only: false
       base_uri: *platform_service_pgadmin4_staging_service_uri
-      redirect_uri_override_suffix: "oauth2/authorize"
-      redirect_uri_override_exclude_port: true
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: "oauth2/authorize"
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -905,6 +921,9 @@ platform_service_rstudio:
       client_id: "rstudio"
       back_channel_service_access_only: false
       base_uri: *platform_service_rstudio_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -943,6 +962,9 @@ platform_service_rstudio:
       client_id: "staging-rstudio"
       back_channel_service_access_only: false
       base_uri: *platform_service_rstudio_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -983,6 +1005,9 @@ platform_service_code_server:
       client_id: "code-server"
       back_channel_service_access_only: false
       base_uri: *platform_service_code_server_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1021,6 +1046,9 @@ platform_service_code_server:
       client_id: "staging-code-server"
       back_channel_service_access_only: false
       base_uri: *platform_service_code_server_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1061,6 +1089,9 @@ platform_service_collabora:
       client_id: "collabora"
       back_channel_service_access_only: true
       base_uri: *platform_service_collabora_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1104,6 +1135,9 @@ platform_service_collabora:
       client_id: "staging-collabora"
       back_channel_service_access_only: true
       base_uri: *platform_service_collabora_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1148,8 +1182,8 @@ platform_service_gitlab_ce:
       client_id: "gitlab-ce"
       back_channel_service_access_only: false
       base_uri: *platform_service_gitlab_ce_prod_service_uri
-      redirect_uri_override_suffix: "users/auth/openid_connect/callback"
-      redirect_uri_override_exclude_port: true
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: "users/auth/openid_connect/callback"
       admin_group_name: "gitlab_ce_admin"
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
@@ -1188,8 +1222,8 @@ platform_service_gitlab_ce:
       client_id: "staging-gitlab-ce"
       back_channel_service_access_only: false
       base_uri: *platform_service_gitlab_ce_staging_service_uri
-      redirect_uri_override_suffix: "users/auth/openid_connect/callback"
-      redirect_uri_override_exclude_port: true
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: "users/auth/openid_connect/callback"
       admin_group_name: "staging_gitlab_ce_admin"
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
@@ -1235,7 +1269,9 @@ platform_service_nextcloud:
       client_id: "nextcloud"
       back_channel_service_access_only: false
       base_uri: *platform_service_nextcloud_prod_service_uri
-      redirect_uri_override_suffix: "apps/user_oidc/code"
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: "apps/user_oidc/code"
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1279,7 +1315,9 @@ platform_service_nextcloud:
       client_id: "staging-nextcloud"
       back_channel_service_access_only: false
       base_uri: *platform_service_nextcloud_staging_service_uri
-      redirect_uri_override_suffix: "apps/user_oidc/code"
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: "apps/user_oidc/code"
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1324,7 +1362,9 @@ platform_service_grafana:
       client_id: "grafana"
       back_channel_service_access_only: false
       base_uri: *platform_service_grafana_prod_service_uri
-      redirect_uri_override_suffix: "login/generic_oauth"
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: "login/generic_oauth"
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1366,7 +1406,9 @@ platform_service_grafana:
       client_id: "staging-grafana"
       back_channel_service_access_only: false
       base_uri: *platform_service_grafana_staging_service_uri
-      redirect_uri_override_suffix: "login/generic_oauth"
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: "login/generic_oauth"
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1410,6 +1452,9 @@ platform_service_redmine:
       client_id: "redmine"
       back_channel_service_access_only: false
       base_uri: *platform_service_redmine_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1451,6 +1496,9 @@ platform_service_redmine:
       client_id: "staging-redmine"
       back_channel_service_access_only: false
       base_uri: *platform_service_redmine_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1491,6 +1539,9 @@ platform_service_data_science_notebook:
       client_id: "data-science-notebook"
       back_channel_service_access_only: false
       base_uri: *platform_service_data_science_notebook_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1529,6 +1580,9 @@ platform_service_data_science_notebook:
       client_id: "staging-data-science-notebook"
       back_channel_service_access_only: false
       base_uri: *platform_service_data_science_notebook_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1574,6 +1628,9 @@ platform_service_openproject:
       client_id: "openproject"
       back_channel_service_access_only: false
       base_uri: *platform_service_openproject_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1617,6 +1674,9 @@ platform_service_openproject:
       client_id: "staging-openproject"
       back_channel_service_access_only: false
       base_uri: *platform_service_openproject_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1656,6 +1716,9 @@ platform_service_it_tools:
       client_id: "it-tools"
       back_channel_service_access_only: false
       base_uri: *platform_service_it_tools_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1693,6 +1756,9 @@ platform_service_it_tools:
       client_id: "staging-it-tools"
       back_channel_service_access_only: false
       base_uri: *platform_service_it_tools_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1800,6 +1866,9 @@ platform_service_internal_gateway:
       client_id: "internal-gateway"
       back_channel_service_access_only: false
       base_uri: *platform_service_internal_gateway_prod_service_uri
+      base_url_exclude_port: *platform_globals_prod_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600
@@ -1846,6 +1915,9 @@ platform_service_internal_gateway:
       client_id: "staging-internal-gateway"
       back_channel_service_access_only: false
       base_uri: *platform_service_internal_gateway_staging_service_uri
+      base_url_exclude_port: *platform_globals_staging_base_url_exclude_port
+      redirect_uri_suffix_override: ""
+      admin_group_name: ""
       shared_memory_zone_mb: 20
       idling_timeout_seconds: 1800
       rolling_timeout_seconds: 3600

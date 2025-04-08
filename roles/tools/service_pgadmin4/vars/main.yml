@@ -52,6 +52,8 @@ service_pgadmin4_config_podman_environment_server_path: "{{ fact_tls_web_proxy_s
 #   - https://www.pgadmin.org/docs/pgadmin4/9.1/container_deployment.html
 service_pgadmin4_openid_client_id: "{{ service_pgadmin4_config_openid_client.client_id }}"
 service_pgadmin4_openid_base_uri: "{{ service_pgadmin4_config_openid_client.base_uri }}"
+service_pgadmin4_openid_base_url_exclude_port: "{{ service_pgadmin4_config_openid_client.base_url_exclude_port }}"
+service_pgadmin4_openid_redirect_uri_suffix_override: "{{ service_pgadmin4_config_openid_client.redirect_uri_suffix_override }}"
 
 service_pgadmin4_init_database_uri_prefix: "postgresql+psycopg://{{ service_pgadmin4_postgresql_user }}"
 service_pgadmin4_init_database_uri_suffix: "{{ fact_worker_postgresql_db_hostname_with_port }}/{{ service_pgadmin4_postgresql_db }}"

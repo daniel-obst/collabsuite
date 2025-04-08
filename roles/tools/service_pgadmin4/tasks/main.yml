@@ -25,6 +25,8 @@
       vars:
         openid_service_init_client_id: "{{ service_pgadmin4_openid_client_id }}"
         openid_service_init_base_uri: "{{ service_pgadmin4_openid_base_uri }}"
+        openid_service_init_base_url_exclude_port: "{{ service_pgadmin4_openid_base_url_exclude_port }}"
+        openid_service_init_redirect_uri_suffix_override: "{{ service_pgadmin4_openid_redirect_uri_suffix_override }}"
 
     - name: Service (pgadmin4) - database configuration
       ansible.builtin.include_role:

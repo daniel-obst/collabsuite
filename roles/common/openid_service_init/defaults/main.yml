@@ -1,4 +1,0 @@
----
-openid_service_init_idp_base_uri_exclude_port: false
-openid_service_init_redirect_uri_exclude_port: false
-openid_service_init_redirect_uri_override_suffix: ""

@@ -38,9 +38,11 @@ service_grafana_config_locations_server_path: "{{ fact_tls_web_proxy_service_con
 service_grafana_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
 
 # grafana_podman_environment"
+service_grafana_https_root_url_port: "{{ service_grafana_openid_base_url_exclude_port
+  | ansible.builtin.ternary('', ':' + service_grafana_config.http_gateway.port) }}"
 service_grafana_server_domain: "{{ service_grafana_config.http_gateway.domain }}"
 service_grafana_https_root_url:
-  "https://{{ service_grafana_config.http_gateway.domain_web }}:{{ service_grafana_config.http_gateway.port }}/{{ service_grafana_config.service_uri }}/"
+  "https://{{ service_grafana_config.http_gateway.domain_web }}{{ service_grafana_https_root_url_port }}/{{ service_grafana_config.service_uri }}/"
 service_grafana_host_with_port: "{{ fact_worker_postgresql_db_hostname_with_port }}"
 service_grafana_admin_user: "{{ service_grafana_config.admin_username }}"
 service_grafana_admin_user_password_file_path: "{{ service_grafana_password_path_prefix }}{{ service_grafana_admin_user }}"
@@ -54,6 +56,8 @@ service_grafana_admin_email: "{{ service_grafana_config.admin_email }}"
 #   - GF_AUTH_GENERIC_OAUTH_SIGNOUT_REDIRECT_URL="{{ openid_service_init_redirect_after_logout_uri }}"
 service_grafana_openid_client_id: "{{ service_grafana_config_openid_client.client_id }}"
 service_grafana_openid_base_uri: "{{ service_grafana_config_openid_client.base_uri }}"
+service_grafana_openid_base_url_exclude_port: "{{ service_grafana_config_openid_client.base_url_exclude_port }}"
+service_grafana_openid_redirect_uri_suffix_override: "{{ service_grafana_config_openid_client.redirect_uri_suffix_override }}"
 
 service_grafana_openid_client_secret_file_path: "{{ fact_openid_service_init_client_secret_file_path }}"
 service_grafana_openid_discovery_uri: "{{ fact_openid_service_init_discovery_uri }}"

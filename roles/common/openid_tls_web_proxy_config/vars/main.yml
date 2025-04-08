@@ -60,6 +60,8 @@ openid_tls_web_proxy_config_enable_session_cache: "{{ openid_tls_web_proxy_confi
 openid_tls_web_proxy_config_session_cache_domain: "{{ openid_tls_web_proxy_config_openid_client.domain }}"
 openid_tls_web_proxy_config_client_id: "{{ openid_tls_web_proxy_config_openid_client.client_id }}"
 openid_tls_web_proxy_config_base_uri: "{{ openid_tls_web_proxy_config_openid_client.base_uri }}"
+openid_tls_web_proxy_config_openid_base_url_exclude_port: "{{ openid_tls_web_proxy_config_openid_client.base_url_exclude_port }}"
+openid_tls_web_proxy_config_openid_redirect_uri_suffix_override: "{{ openid_tls_web_proxy_config_openid_client.redirect_uri_suffix_override }}"
 openid_tls_web_proxy_config_client_enable_login: "{{ openid_tls_web_proxy_config_openid_client.enable_login }}"
 openid_tls_web_proxy_config_cache_shared_memory_zone_mb: "{{ openid_tls_web_proxy_config_openid_client.shared_memory_zone_mb }}"
 openid_tls_web_proxy_config_cache_idling_timeout_seconds: "{{ openid_tls_web_proxy_config_openid_client.idling_timeout_seconds }}"

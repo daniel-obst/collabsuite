@@ -92,7 +92,7 @@ service_keycloak_config_client_security_web_origins: "{{ service_keycloak_openid
 service_keycloak_config_client_base_secret_file_path: "{{ service_keycloak_openid_client_info.base_secret_file_path }}"
 service_keycloak_config_client_default_redirect_uri: "{{ service_keycloak_config_external_root_uri }}/{{ service_keycloak_config_client_redirect_uri_suffix }}"
 
-service_keycloak_config_admin_groups: "{{ service_keycloak_clients_config | selectattr('admin_group_name', 'defined') }}"
+service_keycloak_config_admin_groups: "{{ service_keycloak_clients_config | selectattr('admin_group_name', 'defined') | rejectattr('admin_group_name', 'match', '^$') }}"
 
 service_keycloak_config_internationalization_enabled: "{{ service_keycloak_openid_client_info.internationalization_enabled }}"
 service_keycloak_config_login_with_email_allowed: "{{ service_keycloak_openid_client_info.login_with_email_allowed }}"
