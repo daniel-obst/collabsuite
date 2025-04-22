@@ -24,6 +24,7 @@ service_nextcloud_config_ca_cert_file_path: "{{ fact_oci_container_service_init_
 
 service_nextcloud_config_reverse_proxy_additional_headers: []
 service_nextcloud_config_reverse_proxy_enable_web_socket: true
+service_nextcloud_config_reverse_proxy_set_host_with_port : "{{ not service_nextcloud_openid_base_url_exclude_port }}"
 service_nextcloud_config_locations_server_path: "{{ fact_tls_web_proxy_service_config_includes_locations_config_server_path }}"
 
 # worker_postgresql

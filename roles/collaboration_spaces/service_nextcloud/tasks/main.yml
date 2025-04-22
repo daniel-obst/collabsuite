@@ -15,6 +15,7 @@
         tls_web_proxy_service_config_network_dns: "{{ service_nextcloud_service_network_dns }}"
         tls_web_proxy_service_config_reverse_proxy_additional_headers: "{{ service_nextcloud_config_reverse_proxy_additional_headers }}"
         tls_web_proxy_service_config_reverse_proxy_enable_web_socket: "{{ service_nextcloud_config_reverse_proxy_enable_web_socket }}"
+        tls_web_proxy_service_config_reverse_proxy_set_host_with_port: "{{ service_nextcloud_config_reverse_proxy_set_host_with_port }}"
         tls_web_proxy_service_config_http_gateway: "{{ service_nextcloud_config_http_gateway }}"
 
     - name: Service (nextcloud) - openid facts
@@ -26,7 +27,7 @@
         openid_service_init_base_url_exclude_port: "{{ service_nextcloud_openid_base_url_exclude_port }}"
         openid_service_init_redirect_uri_suffix_override: "{{ service_nextcloud_openid_redirect_uri_suffix_override }}"
 
-    - name: Service (ckan) - database configuration
+    - name: Service (nextcloud) - database configuration
       ansible.builtin.include_role:
         name: worker_postgresql
       vars:
