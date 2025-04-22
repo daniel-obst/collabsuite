@@ -25,6 +25,7 @@ service_external_gateway_config_set_deny_root_uri_location: false
 
 # locations.conf
 service_external_gateway_config_auth_service_uri: "{{ service_external_gateway_auth_gateway.service_uri }}"
+service_external_gateway_config_max_body_size_in_megabytes: "{{ service_external_gateway_config.max_body_size_in_megabytes }}"
 service_external_gateway_config_auth_gateway_url: "https://{{ service_external_gateway_auth_gateway.fqdn_server }}:{{ service_external_gateway_auth_gateway.firewall_port }}"
 service_external_gateway_config_internal_gateway_url: "https://{{ service_external_gateway_internal_gateway.server }}:{{ service_external_gateway_internal_gateway.port }}"
 service_external_gateway_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_config_reverse_proxy_conf_container_path }}"

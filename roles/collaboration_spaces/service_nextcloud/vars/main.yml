@@ -42,7 +42,7 @@ service_nextcloud_worker: "nextcloud_worker"
 service_nextcloud_openid_user_pod: "{{ gv_openid_user_pod }}"
 service_nextcloud_server_url: "http://{{ service_nextcloud_worker }}:80"
 service_nextcloud_config_reverse_proxy_conf_container_path: "{{ fact_tls_web_proxy_service_config_reverse_proxy_conf_container_path }}"
-serivce_nextcloud_config_max_body_size_in_megabytes: "{{ service_nextcloud_config.max_body_size_in_megabytes }}"
+serivce_nextcloud_config_max_body_size_in_megabytes: "{{ service_nextcloud_config.upstream_service.max_body_size_in_megabytes }}"
 
 # podman_environment
 service_nextcloud_overwrite_port: "{{ service_nextcloud_openid_base_url_exclude_port

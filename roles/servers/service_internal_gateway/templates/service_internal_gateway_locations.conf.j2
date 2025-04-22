@@ -11,6 +11,8 @@ location /{{ service.location_uri }}/ {
 {% else %}
   proxy_pass $upstream;
 
+  client_max_body_size {{ service.max_body_size_in_megabytes }}m;
+
   include {{ includes_path_openidc_conf_path }};
   include {{ includes_path_reverse_proxy_conf }};
 }

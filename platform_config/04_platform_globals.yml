@@ -10,6 +10,7 @@ platform_globals:
       "{{ facts_platform_environment.external_server.production.platform_internal_network_dns }}"
     landing_page_title: "Collabsuite (v2.0)"
     base_url_exclude_port: &platform_globals_prod_base_url_exclude_port true
+    max_body_size_in_megabytes: &platform_globals_prod_max_body_size_in_megabytes 50
   staging:
     https_port: &platform_globals_staging_https_port "8444"
     https_redirect_port: &platform_globals_staging_https_redirect_port "8444"
@@ -17,6 +18,7 @@ platform_globals:
       "{{ facts_platform_environment.external_server.staging.platform_internal_network_dns }}"
     landing_page_title: "Collabsuite (v2.0 - staging)"
     base_url_exclude_port: &platform_globals_staging_base_url_exclude_port false
+    max_body_size_in_megabytes: &platform_globals_staging_max_body_size_in_megabytes 50
   rfc1918:
     class_a: &platform_globals_rfc1918_class_a "10.0.0.0/8"
     class_b: &platform_globals_rfc1918_class_b "172.16.0.0/12"
@@ -650,6 +652,7 @@ platform_service_node_red:
       upstream_server_firewall_port: *platform_service_node_red_prod_firewall_port
       location_uri: *platform_service_node_red_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_node_red_prod_service_account
       username: &platform_service_node_red_prod_username "nodered"
       gecos: "node-red user"
@@ -690,6 +693,7 @@ platform_service_node_red:
       upstream_server_firewall_port: *platform_service_node_red_staging_firewall_port
       location_uri: *platform_service_node_red_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_node_red_staging_service_account
       username: &platform_service_node_red_staging_username "stagingnodered"
       gecos: "node-red user (staging)"
@@ -732,6 +736,7 @@ platform_service_drawio:
       upstream_server_firewall_port: *platform_service_drawio_prod_firewall_port
       location_uri: *platform_service_drawio_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_drawio_prod_service_account
       username: &platform_service_drawio_prod_username "drawio"
       gecos: "drawio user"
@@ -772,6 +777,7 @@ platform_service_drawio:
       upstream_server_firewall_port: *platform_service_drawio_staging_firewall_port
       location_uri: *platform_service_drawio_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_drawio_staging_service_account
       username: &platform_service_drawio_staging_username "stagingdrawio"
       gecos: "drawio user (staging)"
@@ -817,6 +823,7 @@ platform_service_pgadmin4:
       upstream_server_firewall_port: *platform_service_pgadmin4_prod_firewall_port
       location_uri: *platform_service_pgadmin4_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_pgadmin4_prod_service_account
       username: *platform_service_pgadmin4_prod_username
       gecos: "pgadmin4 user"
@@ -860,6 +867,7 @@ platform_service_pgadmin4:
       upstream_server_firewall_port: *platform_service_pgadmin4_staging_firewall_port
       location_uri: *platform_service_pgadmin4_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_pgadmin4_staging_service_account
       username: *platform_service_pgadmin4_staging_username
       gecos: "pgadmin4 user (staging)"
@@ -903,6 +911,7 @@ platform_service_rstudio:
       upstream_server_firewall_port: *platform_service_rstudio_prod_firewall_port
       location_uri: *platform_service_rstudio_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_rstudio_prod_service_account
       username: *platform_service_rstudio_prod_username
       gecos: "rstudio user"
@@ -944,6 +953,7 @@ platform_service_rstudio:
       upstream_server_firewall_port: *platform_service_rstudio_staging_firewall_port
       location_uri: *platform_service_rstudio_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_rstudio_staging_service_account
       username: *platform_service_rstudio_staging_username
       gecos: "rstudio user (staging)"
@@ -987,6 +997,7 @@ platform_service_code_server:
       upstream_server_firewall_port: *platform_service_code_server_prod_firewall_port
       location_uri: *platform_service_code_server_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_code_server_prod_service_account
       username: *platform_service_code_server_prod_username
       gecos: "code-server user"
@@ -1028,6 +1039,7 @@ platform_service_code_server:
       upstream_server_firewall_port: *platform_service_code_server_staging_firewall_port
       location_uri: *platform_service_code_server_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_code_server_staging_service_account
       username: *platform_service_code_server_staging_username
       gecos: "code-server user (staging)"
@@ -1071,6 +1083,7 @@ platform_service_collabora:
       upstream_server_firewall_port: *platform_service_collabora_prod_firewall_port
       location_uri: *platform_service_collabora_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_collabora_prod_service_account
       username: *platform_service_collabora_prod_username
       gecos: "collabora user"
@@ -1117,6 +1130,7 @@ platform_service_collabora:
       upstream_server_firewall_port: *platform_service_collabora_staging_firewall_port
       location_uri: *platform_service_collabora_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_collabora_staging_service_account
       username: *platform_service_collabora_staging_username
       gecos: "collabora user (staging)"
@@ -1164,6 +1178,7 @@ platform_service_gitlab_ce:
       upstream_server_firewall_port: *platform_globals_prod_https_port
       location_uri: *platform_service_gitlab_ce_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_gitlab_ce_prod_service_account
       username: *platform_service_gitlab_ce_prod_username
       gecos: "gitlab-ce user"
@@ -1204,6 +1219,7 @@ platform_service_gitlab_ce:
       upstream_server_firewall_port: *platform_globals_staging_https_port
       location_uri: *platform_service_gitlab_ce_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_gitlab_ce_staging_service_account
       username: *platform_service_gitlab_ce_staging_username
       gecos: "gitlab-ce user (staging)"
@@ -1244,13 +1260,13 @@ platform_service_nextcloud:
     service_uri: &platform_service_nextcloud_prod_service_uri "nextcloud"
     username: &platform_service_nextcloud_prod_username "nextcloud"
     admin_username: "admin"
-    max_body_size_in_megabytes: 100
     upstream_service: &platform_service_nextcloud_prod_upstream_service
       upstream_server: *platform_globals_server_3
       upstream_server_firewall_port: *platform_service_nextcloud_prod_firewall_port
       location_uri: *platform_service_nextcloud_prod_service_uri
       regex_exception_location_uri: &platform_service_nextcloud_regex_exception_location_uri ".*/apps/richdocuments.*"
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_nextcloud_prod_service_account
       username: *platform_service_nextcloud_prod_username
       gecos: "nextcloud user"
@@ -1290,13 +1306,13 @@ platform_service_nextcloud:
     service_uri: &platform_service_nextcloud_staging_service_uri "nextcloud"
     username: &platform_service_nextcloud_staging_username "stagingnextcloud"
     admin_username: "stagingadmin"
-    max_body_size_in_megabytes: 100
     upstream_service: &platform_service_nextcloud_staging_upstream_service
       upstream_server: *platform_globals_server_3
       upstream_server_firewall_port: *platform_service_nextcloud_staging_firewall_port
       location_uri: *platform_service_nextcloud_staging_service_uri
       regex_exception_location_uri: *platform_service_nextcloud_regex_exception_location_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_nextcloud_staging_service_account
       username: *platform_service_nextcloud_staging_username
       gecos: "nextcloud user (staging)"
@@ -1344,6 +1360,7 @@ platform_service_grafana:
       upstream_server_firewall_port: *platform_service_grafana_prod_firewall_port
       location_uri: *platform_service_grafana_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_grafana_prod_service_account
       username: *platform_service_grafana_prod_username
       gecos: "grafana user"
@@ -1388,6 +1405,7 @@ platform_service_grafana:
       upstream_server_firewall_port: *platform_service_grafana_staging_firewall_port
       location_uri: *platform_service_grafana_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_grafana_staging_service_account
       username: *platform_service_grafana_staging_username
       gecos: "grafana user (staging)"
@@ -1434,6 +1452,7 @@ platform_service_redmine:
       upstream_server_firewall_port: *platform_service_redmine_prod_firewall_port
       location_uri: *platform_service_redmine_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_redmine_prod_service_account
       username: *platform_service_redmine_prod_username
       gecos: "redmine user"
@@ -1478,6 +1497,7 @@ platform_service_redmine:
       upstream_server_firewall_port: *platform_service_redmine_staging_firewall_port
       location_uri: *platform_service_redmine_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_redmine_staging_service_account
       username: *platform_service_redmine_staging_username
       gecos: "redmine user (staging)"
@@ -1521,6 +1541,7 @@ platform_service_data_science_notebook:
       upstream_server_firewall_port: *platform_service_data_science_notebook_prod_firewall_port
       location_uri: *platform_service_data_science_notebook_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_data_science_notebook_prod_service_account
       username: *platform_service_data_science_notebook_prod_username
       gecos: "data science notebook user"
@@ -1562,6 +1583,7 @@ platform_service_data_science_notebook:
       upstream_server_firewall_port: *platform_service_data_science_notebook_staging_firewall_port
       location_uri: *platform_service_data_science_notebook_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_data_science_notebook_staging_service_account
       username: *platform_service_data_science_notebook_staging_username
       gecos: "data science notebook user (staging)"
@@ -1610,6 +1632,7 @@ platform_service_openproject:
       upstream_server_firewall_port: *platform_service_openproject_prod_firewall_port
       location_uri: *platform_service_openproject_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_openproject_prod_service_account
       username: *platform_service_openproject_prod_username
       gecos: "openproject user"
@@ -1656,6 +1679,7 @@ platform_service_openproject:
       upstream_server_firewall_port: *platform_service_openproject_staging_firewall_port
       location_uri: *platform_service_openproject_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_openproject_staging_service_account
       username: *platform_service_openproject_staging_username
       gecos: "openproject user (staging)"
@@ -1698,6 +1722,7 @@ platform_service_it_tools:
       upstream_server_firewall_port: *platform_service_it_tools_prod_firewall_port
       location_uri: *platform_service_it_tools_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_it_tools_prod_service_account
       username: *platform_service_it_tools_prod_username
       gecos: "IT tools user"
@@ -1738,6 +1763,7 @@ platform_service_it_tools:
       upstream_server_firewall_port: *platform_service_it_tools_staging_firewall_port
       location_uri: *platform_service_it_tools_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     service_account: &platform_service_it_tools_staging_service_account
       username: *platform_service_it_tools_staging_username
       gecos: "IT tools user (staging)"
@@ -1790,6 +1816,7 @@ platform_service_ckan:
       upstream_server_firewall_port: *platform_service_ckan_prod_firewall_port
       location_uri: *platform_service_ckan_prod_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_ckan_prod_service_account
       username: *platform_service_ckan_prod_username
       gecos: "ckan user"
@@ -1827,6 +1854,7 @@ platform_service_ckan:
       upstream_server_firewall_port: *platform_service_ckan_staging_firewall_port
       location_uri: *platform_service_ckan_staging_service_uri
       url_rewrite: false
+      max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     service_account: &platform_service_ckan_staging_service_account
       username: *platform_service_ckan_staging_username
       gecos: "ckan user (staging)"
@@ -1956,6 +1984,7 @@ platform_service_external_gateway:
       username: *platform_service_external_gateway_prod_username
       restricted_to_ipv4_with_cidr: ""
     internal_network_dns_ip: *platform_globals_prod_internal_network_dns_ip
+    max_body_size_in_megabytes: *platform_globals_prod_max_body_size_in_megabytes
     auth_gateway: *platform_global_identity_provider_prod_info
     http_gateway: *platform_global_internal_gateway_prod_info
   staging:
@@ -1976,6 +2005,7 @@ platform_service_external_gateway:
       username: *platform_service_external_gateway_staging_username
       restricted_to_ipv4_with_cidr: ""
     internal_network_dns_ip: *platform_globals_staging_internal_network_dns_ip
+    max_body_size_in_megabytes: *platform_globals_staging_max_body_size_in_megabytes
     auth_gateway: *platform_global_identity_provider_staging_info
     http_gateway: *platform_global_internal_gateway_staging_info
 

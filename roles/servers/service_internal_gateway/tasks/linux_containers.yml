@@ -28,7 +28,8 @@
       'location_uri': item.location_uri,
       'upstream_url': 'https://' + item.upstream_server + ':' + item.upstream_server_firewall_port,
       'exception_location_uri': item.regex_exception_location_uri | default(''),
-      'url_rewrite': item.url_rewrite
+      'url_rewrite': item.url_rewrite,
+      'max_body_size_in_megabytes': item.max_body_size_in_megabytes
       }] }}"
   loop: "{{ service_internal_gateway_config_upstream_services }}"
 

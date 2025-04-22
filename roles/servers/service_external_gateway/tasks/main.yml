@@ -29,6 +29,7 @@
         force: true
       vars:
         auth_service_uri: "{{ service_external_gateway_config_auth_service_uri }}"
+        max_body_size_in_megabytes: "{{ service_external_gateway_config_max_body_size_in_megabytes }}"
         auth_gateway_url: "{{ service_external_gateway_config_auth_gateway_url }}"
         internal_gateway_url: "{{ service_external_gateway_config_internal_gateway_url }}"
         includes_path_reverse_proxy_conf: "{{ service_external_gateway_config_reverse_proxy_conf_container_path }}"

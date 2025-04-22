@@ -2,6 +2,8 @@ location  ~* ^/(?!{{ auth_service_uri }}).*$ {
   set        $upstream {{ internal_gateway_url }};
   proxy_pass $upstream;
   include    {{ includes_path_reverse_proxy_conf }};
+
+  client_max_body_size {{ max_body_size_in_megabytes }}m;
 }
 
 location ~* ^/{{ auth_service_uri }}/(realms|resources)/.*$ {
